@@ -15,8 +15,7 @@ margin: auto;
 .navbar{
 position: fixed;
 width: 100%;
-padding: 15px 0;
-background: crimson;
+padding: 30px 0;
 font-family:'Ubuntu', sans-serif;
 }
 .navbar .sticky{
