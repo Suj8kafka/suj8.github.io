@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 — Not Found</title>
+  <link rel="icon" href="Frame 168.png">
+  <meta name="robots" content="noindex">
+
+  <style>
+    :root{
+      --bg-1:#05040a;
+      --bg-2:#071028;
+      --neon:#FF7A18; /* orange accent */
+      --accent-c1:#7C3AED; /* purple */
+      --accent-c2:#06B6D4; /* teal */
+      --muted:#9aa6b8;
+      --glass: rgba(255,255,255,0.03);
+      --text:#F7FAFC;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;-webkit-font-smoothing:antialiased;overflow:hidden}
+    a{color:inherit}
+
+    /* full canvas layers */
+    canvas.layer { position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none }
+
+    /* center stage */
+    .stage { position:relative;z-index:6;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;box-sizing:border-box }
+
+    /* explosive 404 title */
+    .title-wrap { position:relative;display:flex;align-items:center;justify-content:center;gap:16px }
+    .num {
+      font-weight:900;
+      font-size:clamp(64px,18vw,220px);
+      line-height:0.85;
+      letter-spacing:-6px;
+      color:transparent;
+      -webkit-text-stroke:2px rgba(255,255,255,0.06);
+      background:linear-gradient(90deg,var(--accent-c1),var(--neon),var(--accent-c2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      filter:drop-shadow(0 18px 40px rgba(0,0,0,0.7));
+      transform-origin:center;
+      will-change:transform,filter,opacity,text-shadow;
+      animation: pulse 1600ms ease-in-out infinite;
+    }
+
+    /* heavy motion distort / glitch layers */
+    .num::before,
+    .num::after{
+      content:attr(data-char);
+      position:absolute;left:0;top:0;
+      width:100%;height:100%;
+      display:inline-block;
+      -webkit-text-stroke:0;
+      background:linear-gradient(90deg,var(--accent-c1),var(--neon),var(--accent-c2));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      pointer-events:none;
+      mix-blend-mode:screen;
+    }
+    .num::before{transform:translateX(-6px) skewX(-8deg);opacity:0.6;filter:blur(6px) contrast(1.1);animation:glitch-a 2200ms infinite;}
+    .num::after{transform:translateX(6px) skewX(6deg);opacity:0.5;filter:blur(10px) saturate(1.2);animation:glitch-b 2400ms infinite;}
+
+    @keyframes pulse {
+      0% { transform:scale(1) rotate(0deg) ; filter:drop-shadow(0 12px 20px rgba(255,122,24,0.08)); opacity:1 }
+      40% { transform:scale(1.06) rotate(-0.6deg); filter:drop-shadow(0 26px 48px rgba(255,122,24,0.18)); opacity:1 }
+      70% { transform:scale(0.98) rotate(0.4deg); opacity:0.98 }
+      100% { transform:scale(1) rotate(0deg); opacity:1 }
+    }
+    @keyframes glitch-a {
+      0%{clip-path:inset(0 0 0 0)}
+      10%{transform:translate(-8px,-2px) skewX(-6deg) ;opacity:0.85;}
+      20%{transform:translate(0,0) skewX(0);opacity:0.6}
+      30%{transform:translate(-12px,2px) skewX(-8deg);opacity:0.95}
+      100%{transform:none;opacity:0.6}
+    }
+    @keyframes glitch-b {
+      0%{transform:none;opacity:0.5}
+      20%{transform:translate(8px,1px) skewX(6deg);opacity:0.8}
+      40%{transform:translate(-4px,-2px) skewX(-4deg);opacity:0.6}
+      60%{transform:translate(10px,4px) skewX(8deg);opacity:0.85}
+      100%{transform:none;opacity:0.5}
+    }
+
+    /* subtitle with kinetic underline */
+    .subtitle{margin-top:12px;color:var(--muted);font-weight:600;letter-spacing:0.6px;display:flex;gap:12px;align-items:center}
+    .underline{
+      height:3px;width:120px;border-radius:999px;background:linear-gradient(90deg,var(--neon),var(--accent-c1));
+      transform-origin:left; animation:underline-wipe 1600ms cubic-bezier(.2,.9,.2,1) infinite;
+      box-shadow:0 8px 40px rgba(255,122,24,0.14);
+    }
+    @keyframes underline-wipe {
+      0%{transform:scaleX(0)}
+      50%{transform:scaleX(1)}
+      100%{transform:scaleX(0)}
+    }
+
+    /* exploding shards container (canvas overlay sits under title) */
+    .shard-canvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:4; }
+
+    /* subtle link place (small, faint pill) */
+    .subtle {
+      position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:600;border-left:4px solid rgba(255,122,24,0.06);z-index:8;backdrop-filter:blur(4px);
+      transition:transform .18s ease,opacity .2s ease;
+    }
+    .subtle:hover{transform:translateX(-50%) translateY(-4px);color:var(--text)}
+
+    /* strong scanline / CRT flicker overlay */
+    .scanline { position:fixed;inset:0;z-index:5;mix-blend-mode:overlay;opacity:0.08;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);background-size:100% 3px; animation:scan 1600ms linear infinite; }
+    @keyframes scan { 0% { background-position-y:0 } 100% { background-position-y:3px } }
+
+    /* responsive */
+    @media (max-width:640px){
+      .subtitle .underline{width:86px}
+      .subtle{bottom:18px;padding:7px 12px}
+    }
+
+    /* reduced motion respect */
+    @media (prefers-reduced-motion: reduce){
+      .num, .num::before, .num::after, .underline{animation:none}
+      canvas.layer, .shard-canvas { display:none }
+    }
+  </style>
+</head>
+<body>
+  <!-- layered canvases -->
+  <canvas id="bg" class="layer" aria-hidden="true"></canvas>
+  <canvas id="shards" class="shard-canvas" aria-hidden="true"></canvas>
+
+  <!-- scanline overlay -->
+  <div class="scanline" aria-hidden="true"></div>
+
+  <main class="stage" role="main" aria-labelledby="title">
+    <div class="title-wrap" aria-hidden="false">
+      <div class="num" data-char="4" data-index="0" aria-hidden="true">4</div>
+      <div class="num" data-char="0" data-index="1" aria-hidden="true">0</div>
+      <div class="num" data-char="4" data-index="2" aria-hidden="true">4</div>
+    </div>
+
+    <div class="subtitle" aria-hidden="true">
+      <div class="underline" aria-hidden="true"></div>
+      <div style="opacity:0.95">Not found — Click the link below</div>
+    </div>
+  </main>
+
+  <!-- subtle link area (only link, no buttons) -->
+  <a class="subtle" id="altLink" href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noopener noreferrer">Click here</a>
+
+  <script>
+    // canvas bg: intense bands + neon particles
+    (function(){
+      const canvas = document.getElementById('bg');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth;
+      let H = canvas.height = innerHeight;
+      addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+      // neon particles
+      const particles = [];
+      for(let i=0;i<120;i++){
+        particles.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          vx: (Math.random()-0.5)*2.5,
+          vy: (Math.random()-0.5)*1.2,
+          r: 1 + Math.random()*3,
+          hue: Math.random()*360,
+          life: Math.random()*120 + 60
+        });
+      }
+
+      let t=0;
+      function draw(){
+        t += 0.01;
+        // background gradient base
+        const g = ctx.createLinearGradient(0,0,0,H);
+        g.addColorStop(0, 'rgba(2,4,12,0.85)');
+        g.addColorStop(1, 'rgba(6,10,24,0.95)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,W,H);
+
+        // large sweeping neon ribbons
+        for(let i=0;i<5;i++){
+          ctx.beginPath();
+          const pos = Math.sin(t*0.6 + i*0.8) * 0.6;
+          const hh = H*(0.18 + i*0.14) + Math.sin(t*0.9 + i)*90;
+          ctx.ellipse(W*0.5 + Math.cos(t*0.35 + i)*260, hh, W*0.7, 160, 0, 0, Math.PI*2);
+          ctx.fillStyle = `hsla(${210 + i*30},80%,60%,${0.02 + i*0.01})`;
+          ctx.fill();
+        }
+
+        // neon particle bloom with trails
+        for(let p of particles){
+          p.x += p.vx + Math.cos((p.y+p.x)*0.001 + t)*0.3;
+          p.y += p.vy + Math.sin((p.x+p.y)*0.001 + t*0.5)*0.25;
+          p.life--;
+          if(p.x < -20) p.x = W+20;
+          if(p.x > W+20) p.x = -20;
+          if(p.y < -40) p.y = H+20;
+          if(p.y > H+40) p.y = -20;
+          ctx.beginPath();
+          const hue = (p.hue + t*40) % 360;
+          ctx.fillStyle = `hsla(${hue},90%,60%,${0.08})`;
+          ctx.arc(p.x, p.y, p.r*1.6, 0, Math.PI*2);
+          ctx.fill();
+
+          // additive bright core
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${hue},95%,60%,${0.18})`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // shard explosion when page loads and periodic bursts
+    (function(){
+      const c = document.getElementById('shards');
+      const ctx = c.getContext('2d');
+      let W = c.width = innerWidth;
+      let H = c.height = innerHeight;
+      addEventListener('resize', ()=>{ W = c.width = innerWidth; H = c.height = innerHeight; });
+
+      const shards = [];
+      function spawnBurst(cx, cy, colorHue){
+        const count = 36 + Math.floor(Math.random()*40);
+        for(let i=0;i<count;i++){
+          const angle = Math.random()*Math.PI*2;
+          const speed = 2 + Math.random()*10;
+          const life = 60 + Math.random()*80;
+          shards.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle)*speed,
+            vy: Math.sin(angle)*speed,
+            size: 6 + Math.random()*20,
+            life: life,
+            hue: colorHue + (Math.random()*40-20)
+          });
+        }
+      }
+
+      // initial burst around the title position
+      function initialBurst(){
+        const el = document.querySelector('.title-wrap');
+        if(!el) return;
+        const rect = el.getBoundingClientRect();
+        spawnBurst(rect.left + rect.width/2, rect.top + rect.height/2, 24);
+      }
+      // periodic bursts
+      setTimeout(initialBurst, 300);
+      setInterval(()=>{
+        const el = document.querySelector('.title-wrap');
+        if(!el) return;
+        const r = el.getBoundingClientRect();
+        const cx = r.left + (Math.random()*r.width);
+        const cy = r.top + (Math.random()*r.height);
+        spawnBurst(cx, cy, 24 + Math.random()*60);
+      }, 2000 + Math.random()*1800);
+
+      function render(){
+        ctx.clearRect(0,0,W,H);
+        for(let i=shards.length-1;i>=0;i++){
+          const s = shards[i];
+          s.x += s.vx;
+          s.y += s.vy;
+          s.vx *= 0.98; s.vy *= 0.98;
+          s.vy += 0.12; // gravity/subtle
+          s.life--;
+          const alpha = Math.max(0, s.life/140);
+          ctx.save();
+          ctx.translate(s.x, s.y);
+          ctx.rotate((1 - alpha) * 6.28 * 2 * (i%2?1:-1));
+          // colored fragment
+          ctx.fillStyle = `hsla(${s.hue},90%,60%,${alpha})`;
+          ctx.fillRect(-s.size*0.5, -s.size*0.2, s.size, s.size*0.4);
+          // streak
+          ctx.fillStyle = `hsla(${s.hue},95%,60%,${alpha*0.45})`;
+          ctx.fillRect(-s.size*0.6, -s.size*1.2, s.size*0.3, s.size*1.2);
+          ctx.restore();
+          if(s.life <= 0) shards.splice(i,1);
+        }
+        requestAnimationFrame(render);
+      }
+      render();
+    })();
+
+    // intense numeric jitter for added heaviness
+    (function(){
+      const nums = document.querySelectorAll('.num');
+      function jitter(){
+        nums.forEach((el, idx)=>{
+          const amp = 8 + idx*2;
+          const rot = (Math.random()-0.5)*amp*0.05;
+          const tx = (Math.random()-0.5)*amp;
+          const ty = (Math.random()-0.5)*amp*0.2;
+          el.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${1 + (Math.random()-0.5)*0.02})`;
+          el.style.textShadow = `${(Math.random()-0.5)*40}px ${(Math.random()-0.5)*12}px 40px rgba(255,122,24,0.12)`;
+        });
+      }
+      // heavy continuous jitter loop
+      setInterval(jitter, 120);
+      // occasional dramatic shake
+      setInterval(()=>{
+        const wrap = document.querySelector('.title-wrap');
+        wrap.animate([{transform:'translateY(0)'},{transform:'translateY(-18px) rotate(-2deg)'},{transform:'translateY(0)'}], {duration:750, easing:'cubic-bezier(.2,.9,.2,1)'});
+      }, 3500 + Math.random()*2500);
+    })();
+
+    // keyboard: open alt link with Enter if focused
+    (function(){
+      const alt = document.getElementById('altLink');
+      alt.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') window.open(alt.href,'_blank') });
+      // ensure link is keyboard-focusable
+      alt.setAttribute('tabindex','0');
+    })();
+  </script>
+</body>
+</html>
