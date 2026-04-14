@@ -1,2 +1,4 @@
-for optimization 
-fml march 2
+User-agent: *
+Allow: /
+
+Sitemap: https://www.sujeetkhadka.com.np/sitemap.xml
