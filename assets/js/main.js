@@ -57,6 +57,14 @@ document.querySelectorAll(".experience-card").forEach((card) => {
   });
 });
 
+document.querySelectorAll(".company-logo").forEach((logo) => {
+  const image = logo.querySelector("img");
+  image.addEventListener("error", () => {
+    image.remove();
+    logo.querySelector("span").style.display = "block";
+  });
+});
+
 const revealItems = document.querySelectorAll(".experience-node, .article-card, .about-copy");
 const revealObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {

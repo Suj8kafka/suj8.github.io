@@ -102,8 +102,12 @@ h2 { margin-bottom: 18px; font: 600 clamp(40px, 5vw, 69px)/1 var(--display); let
 .experience-card { position: relative; padding: 23px 26px 26px; border: 1px solid var(--line); color: var(--muted); background: var(--paper); box-shadow: 0 8px 18px transparent; transition: transform .3s, box-shadow .3s, color .3s, background .3s, border-color .3s; }
 .experience-card::before { content: ""; position: absolute; top: -10px; left: calc(50% - 10px); width: 18px; height: 18px; background: inherit; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); transform: rotate(45deg); }
 .card-orange, .card-blue, .card-lime, .card-pink { background: var(--paper); }
+.company-logo { position: absolute; top: 18px; right: 18px; width: 38px; height: 38px; display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.82); color: var(--ink); place-items: center; font: 600 10px var(--display); letter-spacing: -.04em; }
+.company-logo img { width: 24px; height: 24px; object-fit: contain; }
+.experience-card .company-logo span { display: none; }
+.experience-card p { padding-right: 48px; }
 .experience-card p { margin-bottom: 14px; font: 10px "DM Mono", monospace; text-transform: uppercase; }
-.experience-card h3 { margin-bottom: 13px; font: 500 24px/1.05 var(--display); letter-spacing: -.06em; }
+.experience-card h3 { max-width: calc(100% - 48px); margin-bottom: 13px; font: 500 24px/1.05 var(--display); letter-spacing: -.06em; }
 .experience-card span { display: block; font-size: 14px; line-height: 1.6; }
 .experience-card b { display: block; margin-top: 20px; text-align: right; font-size: 21px; font-weight: 400; }
 .experience-node:hover { z-index: 5; }.experience-node:hover .node-dot { transform: scale(1.15) rotate(10deg); box-shadow: inset 2px 2px 0 rgba(255,255,255,.45), inset -2px -2px 0 rgba(124,37,15,.35), 5px 5px 0 var(--shadow); }.experience-node:hover .experience-card { transform: translateY(-12px) rotate(-2deg) scale(1.04); color: var(--ink); border-color: var(--ink); filter: saturate(1); opacity: 1; box-shadow: 14px 14px 0 var(--shadow); }.experience-node:hover .card-orange { background: var(--orange) !important; }.experience-node:hover .card-blue { background: var(--blue) !important; }.experience-node:hover .card-lime { background: var(--lime) !important; }.experience-node:hover .card-pink { background: var(--pink) !important; }
