@@ -2,7 +2,12 @@ const root = document.documentElement;
 const themeToggle = document.querySelector(".theme-toggle");
 const header = document.querySelector(".site-header");
 const cursorOrb = document.querySelector(".cursor-orb");
+const pageLoader = document.querySelector(".page-loader");
 const storedTheme = localStorage.getItem("portfolio-theme");
+
+function hidePageLoader() {
+  if (pageLoader) pageLoader.classList.add("is-hidden");
+}
 
 if (storedTheme === "dark") {
   root.dataset.theme = "dark";
@@ -24,6 +29,8 @@ themeToggle.addEventListener("click", () => {
 
 updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
+window.addEventListener("load", hidePageLoader, { once: true });
+if (document.readyState === "complete") hidePageLoader();
 
 function initHeroParticles() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
