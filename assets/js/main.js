@@ -25,6 +25,38 @@ themeToggle.addEventListener("click", () => {
 updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
 
+function initHeroParticles() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (typeof window.particlesJS !== "function") {
+    console.warn("Particle animation could not be initialized.");
+    return;
+  }
+
+  window.particlesJS("particles-js", {
+    particles: {
+      number: { value: 88, density: { enable: true, value_area: 700 } },
+      color: { value: ["#f36b3d", "#a7d7d0", "#d9e68a"] },
+      shape: { type: "circle" },
+      opacity: { value: .78, random: true },
+      size: { value: 3, random: true },
+      line_linked: { enable: true, distance: 145, color: "#686f68", opacity: .42, width: 1 },
+      move: { enable: true, speed: 1, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: { enable: true, mode: "repulse" },
+        onclick: { enable: false, mode: "push" },
+        resize: true
+      },
+      modes: { repulse: { distance: 85, duration: .45 } }
+    },
+    retina_detect: true
+  });
+}
+
+initHeroParticles();
+
 function updateHeader() {
   header.classList.toggle("is-detached", window.scrollY > 28);
 }
