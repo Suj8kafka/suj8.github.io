@@ -142,7 +142,10 @@ startParticles(initHeroParticles);
 let headerScrollFrame = 0;
 function updateHeader() {
   headerScrollFrame = 0;
-  header.classList.toggle("is-detached", window.scrollY > 28);
+  const scrollY = window.scrollY;
+  const isDetached = header.classList.contains("is-detached");
+  const shouldDetach = isDetached ? scrollY > 8 : scrollY > 28;
+  header.classList.toggle("is-detached", shouldDetach);
 }
 
 window.addEventListener("scroll", () => {
@@ -217,8 +220,19 @@ revealItems.forEach((item) => {
 });
 
 const skillsSection = document.querySelector(".skills");
+const skillCards = [...skillsSection.querySelectorAll(".skill-card")];
+let skillFillTimers = [];
 const skillsSectionObserver = new IntersectionObserver(([entry]) => {
+  skillFillTimers.forEach((timer) => window.clearTimeout(timer));
+  skillFillTimers = [];
   skillsSection.classList.toggle("is-active", entry.isIntersecting);
-}, { threshold: 0.2 });
+  if (!entry.isIntersecting) {
+    skillCards.forEach((card) => card.classList.remove("is-filled"));
+    return;
+  }
+  skillCards.forEach((card, index) => {
+    skillFillTimers.push(window.setTimeout(() => card.classList.add("is-filled"), index * 90));
+  });
+}, { threshold: 0.12 });
 
 skillsSectionObserver.observe(skillsSection);
