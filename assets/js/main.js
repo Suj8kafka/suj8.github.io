@@ -34,6 +34,7 @@ if (document.readyState === "complete") hidePageLoader();
 
 function initHeroParticles() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 800) return;
   if (typeof window.particlesJS !== "function") {
     console.warn("Particle animation could not be initialized.");
     return;
@@ -41,7 +42,7 @@ function initHeroParticles() {
 
   window.particlesJS("particles-js", {
     particles: {
-      number: { value: 88, density: { enable: true, value_area: 700 } },
+      number: { value: 56, density: { enable: true, value_area: 700 } },
       color: { value: ["#f36b3d", "#a7d7d0", "#d9e68a"] },
       shape: { type: "circle" },
       opacity: { value: .78, random: true },
@@ -62,38 +63,45 @@ function initHeroParticles() {
   });
 }
 
-initHeroParticles();
+const startParticles = window.requestIdleCallback
+  ? (callback) => window.requestIdleCallback(callback, { timeout: 1200 })
+  : (callback) => window.setTimeout(callback, 300);
+startParticles(initHeroParticles);
 
+let headerScrollFrame = 0;
 function updateHeader() {
+  headerScrollFrame = 0;
   header.classList.toggle("is-detached", window.scrollY > 28);
 }
 
-window.addEventListener("scroll", updateHeader, { passive: true });
+window.addEventListener("scroll", () => {
+  if (!headerScrollFrame) headerScrollFrame = requestAnimationFrame(updateHeader);
+}, { passive: true });
 updateHeader();
 
+let pointerFrame = 0;
+let pointerX = 0;
+let pointerY = 0;
 window.addEventListener("pointermove", (event) => {
   document.body.classList.add("has-pointer");
-  cursorOrb.style.left = `${event.clientX}px`;
-  cursorOrb.style.top = `${event.clientY}px`;
+  pointerX = event.clientX;
+  pointerY = event.clientY;
+  if (!pointerFrame) {
+    pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      cursorOrb.style.setProperty("--cursor-x", `${pointerX}px`);
+      cursorOrb.style.setProperty("--cursor-y", `${pointerY}px`);
+    });
+  }
 });
 
-document.querySelectorAll("a, button, .experience-node").forEach((element) => {
-  element.addEventListener("pointerenter", () => document.body.classList.add("cursor-hover"));
-  element.addEventListener("pointerleave", () => document.body.classList.remove("cursor-hover"));
+document.addEventListener("pointerover", (event) => {
+  if (event.target.closest("a, button, .experience-node")) document.body.classList.add("cursor-hover");
 });
-
-document.querySelectorAll(".experience-card").forEach((card) => {
-  const accent = card.classList.contains("card-blue") ? "#a7d7d0"
-    : card.classList.contains("card-pink") ? "#edbbc2"
-      : card.classList.contains("card-lime") ? "#d9e68a" : "#f36b3d";
-  card.addEventListener("pointerenter", () => {
-    card.classList.add("is-hovered");
-    card.style.setProperty("background", accent, "important");
-  });
-  card.addEventListener("pointerleave", () => {
-    card.classList.remove("is-hovered");
-    card.style.removeProperty("background");
-  });
+document.addEventListener("pointerout", (event) => {
+  if (event.target.closest("a, button, .experience-node") && !event.relatedTarget?.closest("a, button, .experience-node")) {
+    document.body.classList.remove("cursor-hover");
+  }
 });
 
 document.querySelectorAll(".company-logo").forEach((logo) => {
