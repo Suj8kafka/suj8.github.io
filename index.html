@@ -78,6 +78,7 @@
     <a class="wordmark" href="#top" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
     <nav class="nav" aria-label="Main navigation">
       <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
       <a href="#writing">Writing</a>
       <a href="#about">About</a>
       <a href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">Notes <span aria-hidden="true">↗</span></a>
@@ -146,9 +147,75 @@
       <a class="experience-notes" href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">The games and experiments live in my project notebook <span>↗</span></a>
     </section>
 
+    <section class="skills section" id="skills" aria-labelledby="skills-title">
+      <div class="skills-heading">
+        <p class="eyebrow">02 / Tools & craft</p>
+        <h2 id="skills-title">The <em>toolkit.</em></h2>
+        <p class="section-description">A hands-on collection of design skills, tools, and ways of working I use to turn rough ideas into useful products.</p>
+      </div>
+      <div class="skills-grid">
+        <article class="skill-card skill-orange reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="research">
+          <div class="skill-visual visual-research" aria-hidden="true"><span>?</span><i></i><b></b></div>
+          <p class="skill-label">01 / Understand</p>
+          <h3>Research & strategy</h3>
+          <p>Finding the real problem through user flows, interviews, audits, and clear product thinking.</p>
+          <span class="skill-tools">User research · UX strategy</span>
+        </article>
+        <article class="skill-card skill-blue reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="design">
+          <div class="skill-visual visual-interface" aria-hidden="true"><span>UI</span><i></i><b></b></div>
+          <p class="skill-label">02 / Shape</p>
+          <h3>UI/UX design</h3>
+          <p>Building calm, structured interfaces that make digital products easier to understand and use.</p>
+          <span class="skill-tools">Figma · Design systems</span>
+        </article>
+        <article class="skill-card skill-lime reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="prototype">
+          <div class="skill-visual visual-prototype" aria-hidden="true"><span>↗</span><i></i><b></b></div>
+          <p class="skill-label">03 / Test</p>
+          <h3>Prototyping</h3>
+          <p>Moving quickly from wireframes to high-fidelity prototypes, testing ideas before they become expensive.</p>
+          <span class="skill-tools">Wireframing · Usability testing</span>
+        </article>
+        <article class="skill-card skill-pink reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="visual">
+          <div class="skill-visual visual-visual" aria-hidden="true"><span>✦</span><i></i><b></b></div>
+          <p class="skill-label">04 / Express</p>
+          <h3>Visual design</h3>
+          <p>Creating identity, graphics, and visual systems with detail, consistency, and a little character.</p>
+          <span class="skill-tools">Branding · Photoshop</span>
+        </article>
+        <article class="skill-card skill-dark reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="frontend">
+          <div class="skill-visual visual-build" aria-hidden="true"><span>&lt;/&gt;</span><i></i><b></b></div>
+          <p class="skill-label">05 / Build</p>
+          <h3>Front-end basics</h3>
+          <p>Bridging design and implementation with semantic HTML, CSS, JavaScript, and thoughtful handoff.</p>
+          <span class="skill-tools">HTML · CSS · JavaScript</span>
+        </article>
+        <article class="skill-card skill-orange reveal" tabindex="0" role="button" aria-haspopup="dialog" data-skill="collaboration">
+          <div class="skill-visual visual-collaborate" aria-hidden="true"><span>↔</span><i></i><b></b></div>
+          <p class="skill-label">06 / Deliver</p>
+          <h3>Collaboration</h3>
+          <p>Working with developers and content teams to keep the final product faithful, flexible, and useful.</p>
+          <span class="skill-tools">Handoff · Communication</span>
+        </article>
+      </div>
+    </section>
+
+    <div class="skill-modal" aria-hidden="true">
+      <div class="skill-modal-backdrop" data-modal-close></div>
+      <section class="skill-dialog" role="dialog" aria-modal="true" aria-labelledby="skill-dialog-title" tabindex="-1">
+        <div class="skill-dialog-visual" aria-hidden="true"></div>
+        <div class="skill-dialog-content">
+          <button class="skill-dialog-close" type="button" aria-label="Close skill details">×</button>
+          <p class="eyebrow" id="skill-dialog-category"></p>
+          <h2 id="skill-dialog-title"></h2>
+          <p class="skill-dialog-description"></p>
+          <div class="skill-stack" aria-label="Tools and skills"></div>
+        </div>
+      </section>
+    </div>
+
     <section class="writing section" id="writing" aria-labelledby="writing-title">
       <div class="section-heading">
-        <p class="eyebrow">02 / From the notebook</p>
+        <p class="eyebrow">03 / From the notebook</p>
         <h2 id="writing-title">Thinking out<br><em>loud.</em></h2>
         <p class="section-description">Notes on interfaces, product decisions, and the tiny details that shape how digital things feel.</p>
       </div>
@@ -169,7 +236,7 @@
     <section class="about section" id="about" aria-labelledby="about-title">
       <div class="about-image"><img src="assets/images/sujeet-at-exhibition.jpeg" width="960" height="1280" loading="lazy" decoding="async" alt="Sujeet Khadka viewing artwork at an exhibition"></div>
       <div class="about-copy">
-        <p class="eyebrow">03 / A little about me</p>
+        <p class="eyebrow">04 / A little about me</p>
         <h2 id="about-title">Sujeet Khadka:<br><em>curious by nature.</em></h2>
         <p>I’m a designer from Nepal. My work began with a final-year school project and grew through personal experiments in mobile games, small web products, and interface design.</p>
         <p>I learn by making — designing in Figma, building selected ideas with Godot, HTML, CSS, and JavaScript, and using AI-assisted tools to explore and iterate.</p>
@@ -178,7 +245,7 @@
     </section>
 
     <section class="contact section" id="contact" aria-labelledby="contact-title">
-      <p class="eyebrow">04 / Have an idea?</p>
+      <p class="eyebrow">05 / Have an idea?</p>
       <h2 id="contact-title">Let’s make it<br><em>worth using.</em></h2>
       <a class="contact-link" href="mailto:email@sujeetkhadka.com.np">email@sujeetkhadka.com.np <span>↗</span></a>
       <div class="social-links" aria-label="Social profiles">

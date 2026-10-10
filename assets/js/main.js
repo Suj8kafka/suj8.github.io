@@ -3,7 +3,78 @@ const themeToggle = document.querySelector(".theme-toggle");
 const header = document.querySelector(".site-header");
 const cursorOrb = document.querySelector(".cursor-orb");
 const pageLoader = document.querySelector(".page-loader");
+const skillModal = document.querySelector(".skill-modal");
+const skillDialog = document.querySelector(".skill-dialog");
+const skillDialogVisual = document.querySelector(".skill-dialog-visual");
+const skillDialogCategory = document.getElementById("skill-dialog-category");
+const skillDialogTitle = document.getElementById("skill-dialog-title");
+const skillDialogDescription = document.querySelector(".skill-dialog-description");
+const skillStack = document.querySelector(".skill-stack");
+const skillDialogClose = document.querySelector(".skill-dialog-close");
 const storedTheme = localStorage.getItem("portfolio-theme");
+let activeSkillCard = null;
+
+const skillDetails = {
+  research: {
+    category: "Research & strategy",
+    title: "Understand",
+    description: "I start by making the problem visible: what people need, where they get stuck, and which decisions will make the product more useful.",
+    tools: [["User flows", "UX"], ["User research", "People"], ["UX audits", "Clarity"], ["Product thinking", "Strategy"]]
+  },
+  design: {
+    category: "Visual & interaction",
+    title: "Design",
+    description: "I shape clear interfaces with a strong visual hierarchy, thoughtful interaction patterns, and systems that stay consistent as products grow.",
+    tools: [["Figma", "Design"], ["Design systems", "UI"], ["Visual design", "Craft"], ["Interaction design", "UX"]]
+  },
+  prototype: {
+    category: "Wireframes & testing",
+    title: "Prototype",
+    description: "Prototypes turn assumptions into something tangible. I use them to communicate, test, learn, and improve before handoff.",
+    tools: [["Wireframing", "Structure"], ["Prototyping", "Figma"], ["Usability testing", "Learn"], ["Responsive UI", "Systems"]]
+  },
+  visual: {
+    category: "Brand & communication",
+    title: "Express",
+    description: "From identity work to campaign graphics, I use visual language to make products recognizable, expressive, and easy to trust.",
+    tools: [["Branding", "Identity"], ["Typography", "Detail"], ["Composition", "Balance"], ["Photoshop", "Visuals"]]
+  },
+  frontend: {
+    category: "UI & web development",
+    title: "Build",
+    description: "I understand the front end well enough to bridge design and implementation, creating handoffs that are practical and faithful to the intent.",
+    tools: [["HTML", "Semantic"], ["CSS", "Responsive"], ["JavaScript", "Interaction"], ["Git", "Workflow"]]
+  },
+  collaboration: {
+    category: "Team & delivery",
+    title: "Deliver",
+    description: "Good work gets better through collaboration. I communicate decisions clearly and stay engaged through build, review, and iteration.",
+    tools: [["Developer handoff", "Clarity"], ["Feedback", "Improve"], ["Documentation", "Systems"], ["Communication", "Team"]]
+  }
+};
+
+function closeSkillModal() {
+  if (!skillModal.classList.contains("is-open")) return;
+  skillModal.classList.remove("is-open");
+  skillModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (activeSkillCard) activeSkillCard.focus({ preventScroll: true });
+}
+
+function openSkillModal(card) {
+  const detail = skillDetails[card.dataset.skill];
+  if (!detail) return;
+  activeSkillCard = card;
+  skillModal.dataset.skill = card.dataset.skill;
+  skillDialogCategory.textContent = detail.category;
+  skillDialogTitle.textContent = detail.title;
+  skillDialogDescription.textContent = detail.description;
+  skillStack.innerHTML = detail.tools.map(([name, label]) => `<span><strong>${name}</strong>${label}</span>`).join("");
+  skillModal.classList.add("is-open");
+  skillModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  window.setTimeout(() => skillDialogClose.focus({ preventScroll: true }), 50);
+}
 
 function hidePageLoader() {
   if (pageLoader) pageLoader.classList.add("is-hidden");
@@ -112,7 +183,25 @@ document.querySelectorAll(".company-logo").forEach((logo) => {
   });
 });
 
-const revealItems = document.querySelectorAll(".experience-node, .article-card, .about-copy");
+document.querySelectorAll(".skill-card").forEach((card) => {
+  card.addEventListener("pointerdown", (event) => event.preventDefault());
+  card.addEventListener("click", () => openSkillModal(card));
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openSkillModal(card);
+    }
+  });
+});
+skillDialogClose.addEventListener("click", closeSkillModal);
+skillModal.addEventListener("click", (event) => {
+  if (event.target.hasAttribute("data-modal-close")) closeSkillModal();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSkillModal();
+});
+
+const revealItems = document.querySelectorAll(".experience-node, .skill-card, .article-card, .about-copy");
 const revealObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -126,3 +215,10 @@ revealItems.forEach((item) => {
   item.classList.add("reveal");
   revealObserver.observe(item);
 });
+
+const skillsSection = document.querySelector(".skills");
+const skillsSectionObserver = new IntersectionObserver(([entry]) => {
+  skillsSection.classList.toggle("is-active", entry.isIntersecting);
+}, { threshold: 0.2 });
+
+skillsSectionObserver.observe(skillsSection);
