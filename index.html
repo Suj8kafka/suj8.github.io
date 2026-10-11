@@ -84,14 +84,32 @@
       <a href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">Notes <span aria-hidden="true">↗</span></a>
     </nav>
     <div class="header-tools">
-      <div class="live-presence" aria-live="polite" title="Anonymous visitors currently on this page">
+      <div class="live-presence-wrap">
+        <button class="live-presence" type="button" aria-expanded="false" aria-controls="live-presence-list" title="Show anonymous visitors currently on this page">
         <span class="live-presence-dot" aria-hidden="true"></span>
         <span class="live-presence-label">Connecting live</span>
+        </button>
+        <div class="live-presence-list" id="live-presence-list" role="status" aria-label="Anonymous visitors currently on this page"></div>
       </div>
       <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-icon">◐</span><span class="theme-label">Dark</span></button>
       <a class="nav-contact" href="#contact">Let's talk <span aria-hidden="true">↓</span></a>
     </div>
   </header>
+  <aside class="presence-panel" aria-hidden="true" aria-labelledby="presence-panel-title">
+    <div class="presence-panel-backdrop" data-presence-close></div>
+    <section class="presence-panel-content" role="dialog" aria-modal="true">
+      <button class="presence-panel-close" type="button" aria-label="Close visitor analytics">×</button>
+      <p class="eyebrow">Live studio</p>
+      <h2 id="presence-panel-title">Who’s exploring.</h2>
+      <p class="presence-panel-summary">Anonymous, approximate visitor activity.</p>
+      <button class="location-consent" type="button">Use my precise location</button>
+      <p class="location-status" aria-live="polite"></p>
+      <div class="presence-analytics">
+        <h3>Countries that have visited</h3>
+        <div class="country-chart" aria-label="Country visit chart"></div>
+      </div>
+    </section>
+  </aside>
 
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
