@@ -31,6 +31,11 @@ const presencePanelClose = document.querySelector(".presence-panel-close");
 const locationConsent = document.querySelector(".location-consent");
 const locationStatus = document.querySelector(".location-status");
 const countryChart = document.querySelector(".country-chart");
+const cloudflareStatus = document.querySelector(".cloudflare-analytics-status");
+const cloudflareGrid = document.querySelector(".cloudflare-analytics-grid");
+const cloudflareStats = document.querySelectorAll("[data-cloudflare-stat]");
+const cloudflareLists = document.querySelectorAll("[data-cloudflare-list]");
+const cloudflareAnalyticsUrl = "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev";
 const remoteCursors = new Map();
 const remoteCursorTimers = new Map();
 const cursorColors = ["#f36b3d", "#5c9e9a", "#9aa84b", "#c06a78", "#6e7bd9"];
@@ -191,6 +196,50 @@ function updateCountryCount(snapshot) {
   renderCountryChart();
 }
 
+function formatAnalyticsNumber(value) {
+  return new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function renderCloudflareList(type, entries) {
+  const list = document.querySelector(`[data-cloudflare-list="${type}"]`);
+  if (!list || !Array.isArray(entries) || !entries.length) return;
+  const items = list.querySelector(".cloudflare-list-items");
+  items.innerHTML = "";
+  entries.forEach(({ name, value }) => {
+    const row = document.createElement("div");
+    row.className = "cloudflare-list-row";
+    row.innerHTML = "<span></span><strong></strong>";
+    row.querySelector("span").textContent = name;
+    row.querySelector("strong").textContent = formatAnalyticsNumber(value);
+    items.append(row);
+  });
+  list.hidden = false;
+}
+
+async function loadCloudflareAnalytics() {
+  if (!cloudflareStatus) return;
+  if (cloudflareAnalyticsUrl.includes("YOUR-WORKER")) {
+    cloudflareStatus.textContent = "Connect a Cloudflare Worker to show site activity.";
+    return;
+  }
+  try {
+    const response = await fetch(cloudflareAnalyticsUrl, { headers: { accept: "application/json" } });
+    if (!response.ok) throw new Error(`Analytics request returned ${response.status}`);
+    const data = await response.json();
+    cloudflareStats.forEach((stat) => {
+      stat.textContent = formatAnalyticsNumber(Number(data[stat.dataset.cloudflareStat]) || 0);
+    });
+    cloudflareGrid.hidden = false;
+    renderCloudflareList("paths", data.paths);
+    renderCloudflareList("countries", data.countries);
+    cloudflareStatus.textContent = data.updatedAt ? `Updated ${new Date(data.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "Updated just now";
+  } catch (error) {
+    console.warn("Cloudflare analytics could not be loaded.", error);
+    cloudflareStatus.textContent = "Analytics are temporarily unavailable.";
+    cloudflareStatus.classList.add("is-error");
+  }
+}
+
 function openPresencePanel() {
   presencePanel?.classList.add("is-open");
   presencePanel?.setAttribute("aria-hidden", "false");
@@ -342,3 +391,4 @@ document.addEventListener("click", (event) => {
 });
 
 startPresence();
+loadCloudflareAnalytics();
