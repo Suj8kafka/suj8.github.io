@@ -50,11 +50,53 @@ let visitorLocationSource = "ip";
 let database = null;
 let countryCounts = {};
 let latestVisitors = {};
+const STALE_MS = 90000;          // hide cursors not updated for 90 s
+const DELETE_STALE_MS = 300000;  // delete records not updated for 5 min
+const HEARTBEAT_MS = 20000;
+let isLeaving = false;
+let serverOffset = 0;
+let rawVisitors = {};
+let lastX = 0;
+let lastY = 0;
 
 function setPresenceStatus(message, state = "connected") {
   if (!presenceLabel || !presenceDot) return;
   presenceLabel.textContent = message;
   presenceDot.dataset.state = state;
+}
+
+function buildPresence(x = lastX, y = lastY) {
+  return {
+    x, y,
+    section: currentSection,
+    color: cursorColor,
+    label: `Visitor ${visitorNumber}`,
+    country: visitorCountry,
+    location: visitorLocation,
+    locationSource: visitorLocationSource,
+    lastSeen: serverTimestamp()
+  };
+}
+
+async function announcePresence() {
+  if (!presenceRef || isLeaving) return;
+  try {
+    await onDisconnect(presenceRef).remove();
+    await set(presenceRef, buildPresence());
+  } catch (error) {
+    console.error("Firebase presence announce failed.", error);
+  }
+}
+
+function cleanStaleVisitors() {
+  if (!database || isLeaving) return;
+  const now = Date.now() + serverOffset;
+  Object.entries(rawVisitors).forEach(([uid, visitor]) => {
+    if (uid === presenceRef?.key) return;
+    if (typeof visitor.lastSeen === "number" && now - visitor.lastSeen > DELETE_STALE_MS) {
+      remove(ref(database, `presence/${uid}`)).catch(() => {});
+    }
+  });
 }
 
 function getSectionAtViewportCenter() {
@@ -134,7 +176,19 @@ function renderVisitorList(visitors) {
 }
 
 function renderRemoteCursors(snapshot) {
-  const visitors = snapshot.val() || {};
+  rawVisitors = snapshot.val() || {};
+  refreshPresenceView();
+}
+
+function refreshPresenceView() {
+  const now = Date.now() + serverOffset;
+  const visitors = {};
+  Object.entries(rawVisitors).forEach(([uid, visitor]) => {
+    const isMe = uid === presenceRef?.key;
+    if (isMe || (typeof visitor.lastSeen === "number" && now - visitor.lastSeen < STALE_MS)) {
+      visitors[uid] = visitor;
+    }
+  });
   latestVisitors = visitors;
   const activeIds = new Set(Object.keys(visitors));
   const otherVisitors = Object.entries(visitors).filter(([uid]) => uid !== presenceRef?.key);
@@ -180,7 +234,7 @@ function renderCountryChart() {
     return;
   }
   const maximum = countries[0][1];
-  countries.slice(0, 8).forEach(([country, count]) => {
+  countries.forEach(([country, count]) => {
     const row = document.createElement("div");
     row.className = "country-chart-row";
     row.innerHTML = '<span class="country-chart-name"></span><span class="country-chart-track"><i></i></span><strong></strong>';
@@ -286,11 +340,7 @@ async function usePreciseLocation() {
         visitorLocation = locality ? `${locality}, ${preciseCountry}`.slice(0, 60) : visitorCountry;
         visitorLocationSource = "precise";
         if (locationStatus) locationStatus.textContent = `Showing ${visitorLocation} for this session.`;
-        if (presenceRef) await set(presenceRef, {
-          x: 0, y: 0, section: currentSection, color: cursorColor,
-          label: `Visitor ${visitorNumber}`, country: visitorCountry, location: visitorLocation,
-          locationSource: visitorLocationSource, lastSeen: serverTimestamp()
-        });
+        if (presenceRef && !isLeaving) await set(presenceRef, buildPresence());
       }
     } catch (error) {
       console.warn("Precise visitor location could not be resolved.", error);
@@ -312,20 +362,20 @@ async function startPresence() {
     presenceRef = ref(database, `presence/${credential.user.uid}`);
 
     await detectIpCountry();
-
-    await onDisconnect(presenceRef).remove();
-    await set(presenceRef, {
-      x: 0,
-      y: 0,
-      section: currentSection,
-      color: cursorColor,
-      label: `Visitor ${visitorNumber}`,
-      country: visitorCountry,
-      location: visitorLocation,
-      locationSource: visitorLocationSource,
-      lastSeen: serverTimestamp()
-    });
+    await announcePresence();
     await recordCountryVisit();
+
+    onValue(ref(database, ".info/serverTimeOffset"), (snap) => {
+      serverOffset = snap.val() || 0;
+    });
+
+    let wasConnected = false;
+    onValue(ref(database, ".info/connected"), (snap) => {
+      if (snap.val() === true) {
+        if (wasConnected) announcePresence(); // re-register after a reconnect
+        wasConnected = true;
+      }
+    });
 
     onValue(ref(database, "presence"), renderRemoteCursors, (error) => {
       console.error("Firebase presence could not be read.", error);
@@ -335,6 +385,16 @@ async function startPresence() {
       console.error("Country analytics could not be read.", error);
     });
 
+    window.setInterval(() => {
+      if (document.hidden || isLeaving) return;
+      set(presenceRef, buildPresence()).catch((error) => console.error("Heartbeat failed.", error));
+    }, HEARTBEAT_MS);
+
+    window.setInterval(() => {
+      refreshPresenceView();
+      cleanStaleVisitors();
+    }, 10000);
+
     setPresenceStatus("You’re here alone");
   } catch (error) {
     console.error("Firebase anonymous presence could not be started.", error);
@@ -343,21 +403,14 @@ async function startPresence() {
 }
 
 window.addEventListener("pointermove", (event) => {
-  if (!presenceRef) return;
+  if (!presenceRef || isLeaving || document.hidden) return;
   const now = performance.now();
   if (now - lastCursorUpdate < 120) return;
   lastCursorUpdate = now;
-  set(presenceRef, {
-    x: Math.round(event.clientX),
-    y: Math.round(event.clientY + window.scrollY),
-    section: currentSection,
-    color: cursorColor,
-    label: `Visitor ${visitorNumber}`,
-    country: visitorCountry,
-    location: visitorLocation,
-    locationSource: visitorLocationSource,
-    lastSeen: serverTimestamp()
-  }).catch((error) => console.error("Firebase cursor update failed.", error));
+  lastX = Math.round(event.clientX);
+  lastY = Math.round(event.clientY + window.scrollY);
+  set(presenceRef, buildPresence(lastX, lastY))
+    .catch((error) => console.error("Firebase cursor update failed.", error));
 }, { passive: true });
 
 window.addEventListener("scroll", () => {
@@ -366,7 +419,24 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 window.addEventListener("pagehide", () => {
+  isLeaving = true;
   if (presenceRef) remove(presenceRef).catch((error) => console.error("Firebase presence cleanup failed.", error));
+});
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {   // page restored from back/forward cache
+    isLeaving = false;
+    announcePresence();
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!presenceRef) return;
+  if (document.hidden) {
+    remove(presenceRef).catch(() => {});   // hidden tab = not "here"
+  } else if (!isLeaving) {
+    announcePresence();
+  }
 });
 
 presenceButton?.addEventListener("click", () => {
