@@ -37,6 +37,7 @@ const cloudflareStats = document.querySelectorAll("[data-cloudflare-stat]");
 const cloudflareLists = document.querySelectorAll("[data-cloudflare-list]");
 const cloudflareAnalyticsUrl = "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev";
 const remoteCursors = new Map();
+const enableCursorEffects = false;
 const remoteCursorTimers = new Map();
 const cursorColors = ["#f36b3d", "#5c9e9a", "#9aa84b", "#c06a78", "#6e7bd9"];
 const visitorNumber = Math.floor(1000 + Math.random() * 9000);
@@ -176,6 +177,7 @@ function renderVisitorList(visitors) {
 }
 
 function renderRemoteCursors(snapshot) {
+  if (!enableCursorEffects) return;
   rawVisitors = snapshot.val() || {};
   refreshPresenceView();
 }
@@ -403,6 +405,7 @@ async function startPresence() {
 }
 
 window.addEventListener("pointermove", (event) => {
+  if (!enableCursorEffects) return;
   if (!presenceRef || isLeaving || document.hidden) return;
   const now = performance.now();
   if (now - lastCursorUpdate < 120) return;

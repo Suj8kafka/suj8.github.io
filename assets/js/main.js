@@ -2,6 +2,7 @@ const root = document.documentElement;
 const themeToggle = document.querySelector(".theme-toggle");
 const header = document.querySelector(".site-header");
 const cursorOrb = document.querySelector(".cursor-orb");
+const enableCursorEffects = false;
 const pageLoader = document.querySelector(".page-loader");
 const skillModal = document.querySelector(".skill-modal");
 const skillDialog = document.querySelector(".skill-dialog");
@@ -53,6 +54,15 @@ const skillDetails = {
   }
 };
 
+const skillModalIcons = {
+  research: "icon-asterisk",
+  design: null,
+  prototype: "icon-arrow-up-right",
+  visual: "icon-asterisk",
+  frontend: null,
+  collaboration: "icon-arrow-left-right"
+};
+
 function closeSkillModal() {
   if (!skillModal.classList.contains("is-open")) return;
   skillModal.classList.remove("is-open");
@@ -66,6 +76,12 @@ function openSkillModal(card) {
   if (!detail) return;
   activeSkillCard = card;
   skillModal.dataset.skill = card.dataset.skill;
+  const iconId = skillModalIcons[card.dataset.skill];
+  skillDialogVisual.innerHTML = `<div class="skill-dialog-visual-icon${card.dataset.skill === "frontend" ? " is-code" : ""}">${
+    iconId
+      ? `<svg class="icon" aria-hidden="true"><use href="#${iconId}"></use></svg>`
+      : card.dataset.skill === "design" ? "UI" : "&lt;/&gt;"
+  }</div>`;
   skillDialogCategory.textContent = detail.category;
   skillDialogTitle.textContent = detail.title;
   skillDialogDescription.textContent = detail.description;
@@ -113,13 +129,13 @@ function initHeroParticles() {
 
   window.particlesJS("particles-js", {
     particles: {
-      number: { value: 56, density: { enable: true, value_area: 700 } },
+      number: { value: 24, density: { enable: true, value_area: 700 } },
       color: { value: ["#f36b3d", "#a7d7d0", "#d9e68a"] },
       shape: { type: "circle" },
       opacity: { value: .78, random: true },
       size: { value: 3, random: true },
       line_linked: { enable: true, distance: 145, color: "#686f68", opacity: .42, width: 1 },
-      move: { enable: true, speed: 1, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
+      move: { enable: true, speed: .5, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }
     },
     interactivity: {
       detect_on: "canvas",
@@ -156,27 +172,31 @@ updateHeader();
 let pointerFrame = 0;
 let pointerX = 0;
 let pointerY = 0;
-window.addEventListener("pointermove", (event) => {
-  document.body.classList.add("has-pointer");
-  pointerX = event.clientX;
-  pointerY = event.clientY;
-  if (!pointerFrame) {
-    pointerFrame = requestAnimationFrame(() => {
-      pointerFrame = 0;
-      cursorOrb.style.setProperty("--cursor-x", `${pointerX}px`);
-      cursorOrb.style.setProperty("--cursor-y", `${pointerY}px`);
-    });
-  }
-});
+if (enableCursorEffects) {
+  window.addEventListener("pointermove", (event) => {
+    document.body.classList.add("has-pointer");
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!pointerFrame) {
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = 0;
+        cursorOrb.style.setProperty("--cursor-x", `${pointerX}px`);
+        cursorOrb.style.setProperty("--cursor-y", `${pointerY}px`);
+      });
+    }
+  });
 
-document.addEventListener("pointerover", (event) => {
-  if (event.target.closest("a, button, .experience-node")) document.body.classList.add("cursor-hover");
-});
-document.addEventListener("pointerout", (event) => {
-  if (event.target.closest("a, button, .experience-node") && !event.relatedTarget?.closest("a, button, .experience-node")) {
-    document.body.classList.remove("cursor-hover");
-  }
-});
+  document.addEventListener("pointerover", (event) => {
+    if (event.target.closest("a, button, .experience-node")) document.body.classList.add("cursor-hover");
+  });
+  document.addEventListener("pointerout", (event) => {
+    if (event.target.closest("a, button, .experience-node") && !event.relatedTarget?.closest("a, button, .experience-node")) {
+      document.body.classList.remove("cursor-hover");
+    }
+  });
+} else if (cursorOrb) {
+  cursorOrb.hidden = true;
+}
 
 document.querySelectorAll(".company-logo").forEach((logo) => {
   const image = logo.querySelector("img");
