@@ -158,6 +158,65 @@ startParticles(initHeroParticles);
 let headerScrollFrame = 0;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let scrollSettleTimer;
+let parallaxFrame = 0;
+const heroSection = document.querySelector(".hero");
+const sectionIllustrations = [...document.querySelectorAll(".section-illustration")];
+const parallaxLayers = [
+  [".depth-grid", .12],
+  [".depth-orbit-one", .32],
+  [".depth-orbit-two", .44],
+  [".depth-card-wire", .38],
+  [".depth-card-ui", .55],
+  [".depth-board", .48],
+  [".depth-device", .62],
+  [".depth-swatches", .42],
+  [".depth-cursor", .7],
+  [".depth-label-ux", .5],
+  [".depth-label-build", .3]
+].flatMap(([selector, speed]) => [...document.querySelectorAll(selector)].map((element) => ({ element, speed })));
+parallaxLayers.forEach(({ element }) => element.classList.add("parallax-layer"));
+
+function updateParallax() {
+  parallaxFrame = 0;
+  if (prefersReducedMotion.matches) return;
+  const heroProgress = heroSection
+    ? Math.max(0, Math.min(1, (window.scrollY - heroSection.offsetTop) / Math.max(1, heroSection.offsetHeight)))
+    : 0;
+  parallaxLayers.forEach(({ element, speed }) => {
+    const offset = heroProgress * speed * -260;
+    const baseRotation = Number.parseFloat(getComputedStyle(element).getPropertyValue("--parallax-base-rotation")) || 0;
+    const rotation = baseRotation + heroProgress * speed * 18;
+    element.style.setProperty("--parallax-offset", `${offset.toFixed(2)}px`);
+    element.style.setProperty("--parallax-rotation", `${rotation.toFixed(2)}deg`);
+  });
+  sectionIllustrations.forEach((element, index) => {
+    const section = element.parentElement;
+    const bounds = section.getBoundingClientRect();
+    const sectionProgress = Math.max(0, Math.min(1,
+      (window.scrollY + window.innerHeight - section.offsetTop) / Math.max(1, window.innerHeight + bounds.height)));
+    const direction = index % 2 ? -1 : 1;
+    const offset = (sectionProgress - .5) * 360 * direction;
+    element.style.setProperty("--section-offset", `${offset.toFixed(2)}px`);
+  });
+}
+
+function requestParallaxUpdate() {
+  if (!parallaxFrame) parallaxFrame = requestAnimationFrame(updateParallax);
+}
+
+const heroDepthScene = document.querySelector(".hero-depth-scene");
+heroDepthScene?.parentElement.addEventListener("pointermove", (event) => {
+  if (prefersReducedMotion.matches) return;
+  const bounds = heroDepthScene.getBoundingClientRect();
+  const x = ((event.clientX - bounds.left) / bounds.width - .5) * 20;
+  const y = ((event.clientY - bounds.top) / bounds.height - .5) * 14;
+  heroDepthScene.style.setProperty("--micro-x", `${x.toFixed(2)}px`);
+  heroDepthScene.style.setProperty("--micro-y", `${y.toFixed(2)}px`);
+});
+heroDepthScene?.parentElement.addEventListener("pointerleave", () => {
+  heroDepthScene.style.setProperty("--micro-x", "0px");
+  heroDepthScene.style.setProperty("--micro-y", "0px");
+});
 
 function updateHeader() {
   headerScrollFrame = 0;
@@ -165,6 +224,7 @@ function updateHeader() {
   const isDetached = header.classList.contains("is-detached");
   const shouldDetach = isDetached ? scrollY > 8 : scrollY > 28;
   header.classList.toggle("is-detached", shouldDetach);
+  updateParallax();
 }
 
 window.addEventListener("scroll", () => {
@@ -174,8 +234,11 @@ window.addEventListener("scroll", () => {
     scrollSettleTimer = window.setTimeout(() => header.classList.remove("is-scrolling"), 140);
   }
   if (!headerScrollFrame) headerScrollFrame = requestAnimationFrame(updateHeader);
+  requestParallaxUpdate();
 }, { passive: true });
 updateHeader();
+requestParallaxUpdate();
+window.addEventListener("resize", requestParallaxUpdate, { passive: true });
 
 const backToTop = document.querySelector("[data-back-to-top]");
 let blurResetTimer;
@@ -191,6 +254,66 @@ backToTop?.addEventListener("click", (event) => {
       document.body.classList.remove("is-returning-top");
     }, 850);
   }
+});
+
+const contactScrollLink = document.querySelector("[data-contact-scroll]");
+const contactSection = document.getElementById("contact");
+let contactScrollFrame = 0;
+let contactFinishTimer;
+
+contactScrollLink?.addEventListener("click", (event) => {
+  if (prefersReducedMotion.matches || !contactSection) return;
+  event.preventDefault();
+  window.cancelAnimationFrame(contactScrollFrame);
+  window.clearTimeout(contactFinishTimer);
+
+  const start = window.scrollY;
+  const target = Math.max(0, contactSection.getBoundingClientRect().top + start);
+  const distance = target - start;
+  const duration = Math.min(1250, Math.max(700, Math.abs(distance) * .55));
+  const startedAt = performance.now();
+  let previousY = start;
+  let previousTime = startedAt;
+  let displayedSpeed = 0;
+
+  document.body.classList.add("is-contact-scrolling");
+
+  const finishContactScroll = () => {
+    document.body.classList.remove("is-contact-scrolling");
+    document.body.style.removeProperty("--contact-scroll-blur");
+    document.body.style.removeProperty("--contact-scroll-streak");
+    contactScrollFrame = 0;
+  };
+
+  const animateContactScroll = (now) => {
+    const elapsed = now - startedAt;
+    const progress = Math.min(1, elapsed / duration);
+    const easedProgress = progress < .5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    const nextY = start + distance * easedProgress;
+    const deltaTime = Math.max(1, now - previousTime);
+    const velocity = Math.abs(nextY - previousY) / deltaTime;
+    const speedFactor = Math.min(1, velocity / 2.4);
+    displayedSpeed += (speedFactor - displayedSpeed) * .28;
+    const blur = Math.min(9, displayedSpeed * 9);
+
+    window.scrollTo({ top: nextY, behavior: "instant" });
+    document.body.style.setProperty("--contact-scroll-blur", `${blur.toFixed(2)}px`);
+    document.body.style.setProperty("--contact-scroll-streak", `${(displayedSpeed * .8).toFixed(2)}`);
+    previousY = nextY;
+    previousTime = now;
+
+    if (progress < 1) {
+      contactScrollFrame = window.requestAnimationFrame(animateContactScroll);
+    } else {
+      document.body.style.setProperty("--contact-scroll-blur", "0px");
+      document.body.style.setProperty("--contact-scroll-streak", "0");
+      contactFinishTimer = window.setTimeout(finishContactScroll, 120);
+    }
+  };
+
+  contactScrollFrame = window.requestAnimationFrame(animateContactScroll);
 });
 
 document.querySelectorAll(".company-logo").forEach((logo) => {
