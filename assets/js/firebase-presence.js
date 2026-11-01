@@ -36,29 +36,19 @@ const cloudflareGrid = document.querySelector(".cloudflare-analytics-grid");
 const cloudflareStats = document.querySelectorAll("[data-cloudflare-stat]");
 const cloudflareLists = document.querySelectorAll("[data-cloudflare-list]");
 const cloudflareAnalyticsUrl = "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev";
-const remoteCursors = new Map();
-const enableCursorEffects = false;
-const remoteCursorTimers = new Map();
-const cursorColors = ["#f36b3d", "#5c9e9a", "#9aa84b", "#c06a78", "#6e7bd9"];
 const visitorNumber = Math.floor(1000 + Math.random() * 9000);
-const cursorColor = cursorColors[Math.floor(Math.random() * cursorColors.length)];
 let presenceRef = null;
-let lastCursorUpdate = 0;
 let currentSection = "hero";
 let visitorCountry = "Location unavailable";
 let visitorLocation = "Location unavailable";
 let visitorLocationSource = "ip";
 let database = null;
 let countryCounts = {};
-let latestVisitors = {};
-const STALE_MS = 90000;          // hide cursors not updated for 90 s
 const DELETE_STALE_MS = 300000;  // delete records not updated for 5 min
 const HEARTBEAT_MS = 20000;
 let isLeaving = false;
 let serverOffset = 0;
 let rawVisitors = {};
-let lastX = 0;
-let lastY = 0;
 
 function setPresenceStatus(message, state = "connected") {
   if (!presenceLabel || !presenceDot) return;
@@ -66,11 +56,9 @@ function setPresenceStatus(message, state = "connected") {
   presenceDot.dataset.state = state;
 }
 
-function buildPresence(x = lastX, y = lastY) {
+function buildPresence() {
   return {
-    x, y,
     section: currentSection,
-    color: cursorColor,
     label: `Visitor ${visitorNumber}`,
     country: visitorCountry,
     location: visitorLocation,
@@ -107,28 +95,6 @@ function getSectionAtViewportCenter() {
     return bounds.top <= target && bounds.bottom >= target;
   });
   return section?.id || "hero";
-}
-
-function removeRemoteCursor(uid) {
-  const cursor = remoteCursors.get(uid);
-  if (cursor) cursor.remove();
-  remoteCursors.delete(uid);
-  const timer = remoteCursorTimers.get(uid);
-  if (timer) window.clearTimeout(timer);
-  remoteCursorTimers.delete(uid);
-}
-
-function refreshRemoteCursor(uid, cursor) {
-  cursor.classList.remove("is-stale");
-  const previousTimer = remoteCursorTimers.get(uid);
-  if (previousTimer) window.clearTimeout(previousTimer);
-  remoteCursorTimers.set(uid, window.setTimeout(() => {
-    cursor.classList.add("is-stale");
-  }, 5000));
-}
-
-function positionRemoteCursor(cursor, visitor) {
-  cursor.style.transform = `translate3d(${visitor.x}px, ${visitor.y - window.scrollY}px, 0)`;
 }
 
 function formatSection(section) {
@@ -176,55 +142,22 @@ function renderVisitorList(visitors) {
   presenceList.append(analyticsButton);
 }
 
-function renderRemoteCursors(snapshot) {
-  if (!enableCursorEffects) return;
+function renderPresenceSnapshot(snapshot) {
   rawVisitors = snapshot.val() || {};
   refreshPresenceView();
 }
 
 function refreshPresenceView() {
-  const now = Date.now() + serverOffset;
   const visitors = {};
   Object.entries(rawVisitors).forEach(([uid, visitor]) => {
     const isMe = uid === presenceRef?.key;
-    if (isMe || (typeof visitor.lastSeen === "number" && now - visitor.lastSeen < STALE_MS)) {
+    if (isMe || typeof visitor.lastSeen === "number") {
       visitors[uid] = visitor;
     }
   });
-  latestVisitors = visitors;
-  const activeIds = new Set(Object.keys(visitors));
-  const otherVisitors = Object.entries(visitors).filter(([uid]) => uid !== presenceRef?.key);
-
-  remoteCursors.forEach((_, uid) => {
-    if (!activeIds.has(uid)) removeRemoteCursor(uid);
-  });
-
-  otherVisitors.forEach(([uid, visitor]) => {
-    if (typeof visitor.x !== "number" || typeof visitor.y !== "number") return;
-    let cursor = remoteCursors.get(uid);
-    if (!cursor) {
-      cursor = document.createElement("div");
-      cursor.className = "remote-cursor";
-      cursor.innerHTML = '<span class="remote-cursor-arrow" aria-hidden="true"></span><span class="remote-cursor-label"></span>';
-      document.body.append(cursor);
-      remoteCursors.set(uid, cursor);
-    }
-    refreshRemoteCursor(uid, cursor);
-    cursor.style.setProperty("--cursor-color", visitor.color || "#f36b3d");
-    positionRemoteCursor(cursor, visitor);
-    cursor.querySelector(".remote-cursor-label").textContent = visitor.label || "Visitor";
-  });
-
   renderVisitorList(visitors);
-  const count = otherVisitors.length;
+  const count = Object.keys(visitors).filter((uid) => uid !== presenceRef?.key).length;
   setPresenceStatus(count === 0 ? "You’re here alone" : `${count} other${count === 1 ? "" : "s"} here`);
-}
-
-function repositionRemoteCursors() {
-  remoteCursors.forEach((cursor, uid) => {
-    const visitor = latestVisitors[uid];
-    if (visitor) positionRemoteCursor(cursor, visitor);
-  });
 }
 
 function renderCountryChart() {
@@ -379,7 +312,7 @@ async function startPresence() {
       }
     });
 
-    onValue(ref(database, "presence"), renderRemoteCursors, (error) => {
+    onValue(ref(database, "presence"), renderPresenceSnapshot, (error) => {
       console.error("Firebase presence could not be read.", error);
       setPresenceStatus("Live presence unavailable", "error");
     });
@@ -404,21 +337,8 @@ async function startPresence() {
   }
 }
 
-window.addEventListener("pointermove", (event) => {
-  if (!enableCursorEffects) return;
-  if (!presenceRef || isLeaving || document.hidden) return;
-  const now = performance.now();
-  if (now - lastCursorUpdate < 120) return;
-  lastCursorUpdate = now;
-  lastX = Math.round(event.clientX);
-  lastY = Math.round(event.clientY + window.scrollY);
-  set(presenceRef, buildPresence(lastX, lastY))
-    .catch((error) => console.error("Firebase cursor update failed.", error));
-}, { passive: true });
-
 window.addEventListener("scroll", () => {
   currentSection = getSectionAtViewportCenter();
-  repositionRemoteCursors();
 }, { passive: true });
 
 window.addEventListener("pagehide", () => {

@@ -1,8 +1,6 @@
 const root = document.documentElement;
 const themeToggle = document.querySelector(".theme-toggle");
 const header = document.querySelector(".site-header");
-const cursorOrb = document.querySelector(".cursor-orb");
-const enableCursorEffects = false;
 const pageLoader = document.querySelector(".page-loader");
 const skillModal = document.querySelector(".skill-modal");
 const skillDialog = document.querySelector(".skill-dialog");
@@ -168,35 +166,6 @@ window.addEventListener("scroll", () => {
   if (!headerScrollFrame) headerScrollFrame = requestAnimationFrame(updateHeader);
 }, { passive: true });
 updateHeader();
-
-let pointerFrame = 0;
-let pointerX = 0;
-let pointerY = 0;
-if (enableCursorEffects) {
-  window.addEventListener("pointermove", (event) => {
-    document.body.classList.add("has-pointer");
-    pointerX = event.clientX;
-    pointerY = event.clientY;
-    if (!pointerFrame) {
-      pointerFrame = requestAnimationFrame(() => {
-        pointerFrame = 0;
-        cursorOrb.style.setProperty("--cursor-x", `${pointerX}px`);
-        cursorOrb.style.setProperty("--cursor-y", `${pointerY}px`);
-      });
-    }
-  });
-
-  document.addEventListener("pointerover", (event) => {
-    if (event.target.closest("a, button, .experience-node")) document.body.classList.add("cursor-hover");
-  });
-  document.addEventListener("pointerout", (event) => {
-    if (event.target.closest("a, button, .experience-node") && !event.relatedTarget?.closest("a, button, .experience-node")) {
-      document.body.classList.remove("cursor-hover");
-    }
-  });
-} else if (cursorOrb) {
-  cursorOrb.hidden = true;
-}
 
 document.querySelectorAll(".company-logo").forEach((logo) => {
   const image = logo.querySelector("img");
