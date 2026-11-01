@@ -1,5 +1,4 @@
 const root = document.documentElement;
-const themeToggle = document.querySelector(".theme-toggle");
 const header = document.querySelector(".site-header");
 const pageLoader = document.querySelector(".page-loader");
 const skillModal = document.querySelector(".skill-modal");
@@ -11,6 +10,9 @@ const skillDialogDescription = document.querySelector(".skill-dialog-description
 const skillStack = document.querySelector(".skill-stack");
 const skillDialogClose = document.querySelector(".skill-dialog-close");
 const storedTheme = localStorage.getItem("portfolio-theme");
+const themeChoices = document.querySelectorAll("[data-theme-choice]");
+const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+let themePreference = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "auto";
 let activeSkillCard = null;
 
 const skillDetails = {
@@ -53,11 +55,11 @@ const skillDetails = {
 };
 
 const skillModalIcons = {
-  research: "icon-asterisk",
-  design: null,
+  research: "icon-search",
+  design: "icon-layout",
   prototype: "icon-arrow-up-right",
   visual: "icon-asterisk",
-  frontend: null,
+  frontend: "icon-code",
   collaboration: "icon-arrow-left-right"
 };
 
@@ -75,11 +77,7 @@ function openSkillModal(card) {
   activeSkillCard = card;
   skillModal.dataset.skill = card.dataset.skill;
   const iconId = skillModalIcons[card.dataset.skill];
-  skillDialogVisual.innerHTML = `<div class="skill-dialog-visual-icon${card.dataset.skill === "frontend" ? " is-code" : ""}">${
-    iconId
-      ? `<svg class="icon" aria-hidden="true"><use href="#${iconId}"></use></svg>`
-      : card.dataset.skill === "design" ? "UI" : "&lt;/&gt;"
-  }</div>`;
+  skillDialogVisual.innerHTML = `<div class="skill-dialog-visual-icon"><svg class="icon" aria-hidden="true"><use href="#${iconId}"></use></svg></div>`;
   skillDialogCategory.textContent = detail.category;
   skillDialogTitle.textContent = detail.title;
   skillDialogDescription.textContent = detail.description;
@@ -94,24 +92,28 @@ function hidePageLoader() {
   if (pageLoader) pageLoader.classList.add("is-hidden");
 }
 
-if (storedTheme === "dark") {
-  root.dataset.theme = "dark";
+function applyTheme(preference) {
+  themePreference = preference;
+  root.dataset.theme = preference === "auto" ? (systemTheme.matches ? "dark" : "light") : preference;
+  localStorage.setItem("portfolio-theme", preference);
+  updateThemeControl();
 }
 
 function updateThemeControl() {
-  const isDark = root.dataset.theme === "dark";
-  themeToggle.setAttribute("aria-pressed", String(isDark));
-  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
-  themeToggle.querySelector(".theme-label").textContent = isDark ? "Light" : "Dark";
+  themeChoices.forEach((choice) => {
+    choice.setAttribute("aria-pressed", String(choice.dataset.themeChoice === themePreference));
+  });
 }
 
-themeToggle.addEventListener("click", () => {
-  const isDark = root.dataset.theme !== "dark";
-  root.dataset.theme = isDark ? "dark" : "light";
-  localStorage.setItem("portfolio-theme", root.dataset.theme);
-  updateThemeControl();
+themeChoices.forEach((choice) => {
+  choice.addEventListener("click", () => applyTheme(choice.dataset.themeChoice));
 });
 
+systemTheme.addEventListener("change", () => {
+  if (themePreference === "auto") applyTheme("auto");
+});
+
+applyTheme(themePreference);
 updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
 window.addEventListener("load", hidePageLoader, { once: true });
@@ -128,7 +130,7 @@ function initHeroParticles() {
   window.particlesJS("particles-js", {
     particles: {
       number: { value: 24, density: { enable: true, value_area: 700 } },
-      color: { value: ["#f36b3d", "#a7d7d0", "#d9e68a"] },
+      color: { value: ["#356dff", "#a7d7d0", "#d9e68a"] },
       shape: { type: "circle" },
       opacity: { value: .78, random: true },
       size: { value: 3, random: true },
@@ -154,6 +156,9 @@ const startParticles = window.requestIdleCallback
 startParticles(initHeroParticles);
 
 let headerScrollFrame = 0;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let scrollSettleTimer;
+
 function updateHeader() {
   headerScrollFrame = 0;
   const scrollY = window.scrollY;
@@ -163,9 +168,30 @@ function updateHeader() {
 }
 
 window.addEventListener("scroll", () => {
+  if (!prefersReducedMotion.matches) {
+    header.classList.add("is-scrolling");
+    window.clearTimeout(scrollSettleTimer);
+    scrollSettleTimer = window.setTimeout(() => header.classList.remove("is-scrolling"), 140);
+  }
   if (!headerScrollFrame) headerScrollFrame = requestAnimationFrame(updateHeader);
 }, { passive: true });
 updateHeader();
+
+const backToTop = document.querySelector("[data-back-to-top]");
+let blurResetTimer;
+
+backToTop?.addEventListener("click", (event) => {
+  event.preventDefault();
+  const useMotionBlur = !prefersReducedMotion.matches;
+  document.body.classList.toggle("is-returning-top", useMotionBlur);
+  window.clearTimeout(blurResetTimer);
+  window.scrollTo({ top: 0, behavior: useMotionBlur ? "smooth" : "auto" });
+  if (useMotionBlur) {
+    blurResetTimer = window.setTimeout(() => {
+      document.body.classList.remove("is-returning-top");
+    }, 850);
+  }
+});
 
 document.querySelectorAll(".company-logo").forEach((logo) => {
   const image = logo.querySelector("img");
