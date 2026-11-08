@@ -1,6 +1,5 @@
 const root = document.documentElement;
 const header = document.querySelector(".site-header");
-const pageLoader = document.querySelector(".page-loader");
 const skillModal = document.querySelector(".skill-modal");
 const skillDialog = document.querySelector(".skill-dialog");
 const skillDialogVisual = document.querySelector(".skill-dialog-visual");
@@ -88,10 +87,6 @@ function openSkillModal(card) {
   window.setTimeout(() => skillDialogClose.focus({ preventScroll: true }), 50);
 }
 
-function hidePageLoader() {
-  if (pageLoader) pageLoader.classList.add("is-hidden");
-}
-
 function applyTheme(preference) {
   themePreference = preference;
   root.dataset.theme = preference === "auto" ? (systemTheme.matches ? "dark" : "light") : preference;
@@ -116,8 +111,6 @@ systemTheme.addEventListener("change", () => {
 applyTheme(themePreference);
 updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
-window.addEventListener("load", hidePageLoader, { once: true });
-if (document.readyState === "complete") hidePageLoader();
 
 function initHeroParticles() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -153,7 +146,25 @@ function initHeroParticles() {
 const startParticles = window.requestIdleCallback
   ? (callback) => window.requestIdleCallback(callback, { timeout: 1200 })
   : (callback) => window.setTimeout(callback, 300);
-startParticles(initHeroParticles);
+let heroEntranceStarted = false;
+function startHeroEntrance() {
+  if (heroEntranceStarted) return;
+  heroEntranceStarted = true;
+  startParticles(initHeroParticles);
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.querySelectorAll(".hero-copy, .hero-art").forEach((element, index) => {
+    element.animate([
+      { opacity: 0, transform: "translateY(18px)" },
+      { opacity: 1, transform: "translateY(0)" }
+    ], { duration: 600, delay: index * 90, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" });
+  });
+}
+document.addEventListener("loader:done", startHeroEntrance, { once: true });
+if (root.dataset.loaderDone === "true") startHeroEntrance();
+// The hero also works if the loader script is missing or blocked.
+window.addEventListener("load", () => {
+  if (!root.classList.contains("loader-running")) startHeroEntrance();
+}, { once: true });
 
 let headerScrollFrame = 0;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");

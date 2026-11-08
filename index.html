@@ -28,11 +28,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+Devanagari:wght@300;400&family=Noto+Sans+SC:wght@400&family=Noto+Naskh+Arabic:wght@400&family=Noto+Sans+Bengali:wght@400&display=swap"
     rel="stylesheet">
   <link rel="preload" as="image" href="assets/images/sujeet-at-exhibition.jpeg" fetchpriority="high">
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="loader/files/loader.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -75,6 +76,28 @@
 </head>
 
 <body>
+<div id="loader" role="region" aria-label="Optional welcome intro" data-palette="0">
+  <div class="ld-wash ld-wash-one" aria-hidden="true"></div>
+  <div class="ld-wash ld-wash-two" aria-hidden="true"></div>
+  <div class="ld-wash ld-wash-three" aria-hidden="true"></div>
+  <svg class="ld-graphic" viewBox="0 0 720 480" aria-hidden="true" focusable="false">
+    <path d="M90 180a280 160 0 0 1 540 0M90 300a280 160 0 0 0 540 0" />
+    <path d="M126 112h24m-12-12v24M574 368h24m-12-12v24" />
+    <circle cx="610" cy="135" r="12" />
+    <circle cx="110" cy="346" r="8" />
+    <circle class="ld-dot" cx="226" cy="72" r="3" />
+    <circle class="ld-dot" cx="494" cy="408" r="3" />
+  </svg>
+  <div class="ld-top" aria-hidden="true">Sujeet<i>.</i></div>
+  <div class="ld-stage" aria-hidden="true">
+    <p class="ld-kicker">A little hello from Nepal</p>
+    <div id="ld-word" class="ld-word" data-f="headline" lang="en">Hello</div>
+    <span id="ld-lang" class="ld-language">English</span>
+    <div class="ld-bar"><div id="ld-fill" class="ld-fill"></div></div>
+  </div>
+  <button class="ld-skip" type="button">Skip intro</button>
+</div>
+  <noscript><style>#loader { display: none !important; }</style></noscript>
   <svg class="icon-sprite" aria-hidden="true" width="0" height="0">
     <symbol id="icon-arrow-up-right" viewBox="0 0 16 16">
       <path d="M3 13 13 3M5 3h8v8" />
@@ -111,41 +134,32 @@
     <symbol id="icon-code" viewBox="0 0 24 24">
       <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
     </symbol>
-    <symbol id="icon-figma" viewBox="0 0 24 24">
-      <path fill="currentColor" stroke="none" d="M8 2h4v6H8a3 3 0 1 1 0-6Zm4 0h4a3 3 0 1 1 0 6h-4V2ZM8 8h4v6H8a3 3 0 1 1 0-6Zm4 0h4a3 3 0 1 1 0 0 6h-4V8Zm0 6h3a3 3 0 1 1-3 3v-3Z" />
+    <!-- Brand paths: Font Awesome Free 6.7.2 by @fontawesome (Copyright 2024 Fonticons, Inc.).
+         Icons licensed CC BY 4.0: https://fontawesome.com/license/free
+         Source: https://github.com/FortAwesome/Font-Awesome/tree/6.7.2/svgs/brands
+         Adapted to inline symbols with inherited colour; original viewBoxes retained. -->
+    <symbol id="icon-figma" viewBox="0 0 384 512">
+      <path fill="currentColor" stroke="none" d="M14 95.7924C14 42.8877 56.8878 0 109.793 0H274.161C327.066 0 369.954 42.8877 369.954 95.7924C369.954 129.292 352.758 158.776 326.711 175.897C352.758 193.019 369.954 222.502 369.954 256.002C369.954 308.907 327.066 351.795 274.161 351.795H272.081C247.279 351.795 224.678 342.369 207.666 326.904V415.167C207.666 468.777 163.657 512 110.309 512C57.5361 512 14 469.243 14 416.207C14 382.709 31.1945 353.227 57.2392 336.105C31.1945 318.983 14 289.5 14 256.002C14 222.502 31.196 193.019 57.2425 175.897C31.196 158.776 14 129.292 14 95.7924ZM176.288 191.587H109.793C74.2172 191.587 45.3778 220.427 45.3778 256.002C45.3778 291.44 73.9948 320.194 109.381 320.416C109.518 320.415 109.655 320.415 109.793 320.415H176.288V191.587ZM207.666 256.002C207.666 291.577 236.505 320.417 272.081 320.417H274.161C309.737 320.417 338.576 291.577 338.576 256.002C338.576 220.427 309.737 191.587 274.161 191.587H272.081C236.505 191.587 207.666 220.427 207.666 256.002ZM109.793 351.795C109.655 351.795 109.518 351.794 109.381 351.794C73.9948 352.015 45.3778 380.769 45.3778 416.207C45.3778 451.652 74.6025 480.622 110.309 480.622C146.591 480.622 176.288 451.186 176.288 415.167V351.795H109.793ZM109.793 31.3778C74.2172 31.3778 45.3778 60.2173 45.3778 95.7924C45.3778 131.368 74.2172 160.207 109.793 160.207H176.288V31.3778H109.793ZM207.666 160.207H274.161C309.737 160.207 338.576 131.368 338.576 95.7924C338.576 60.2173 309.737 31.3778 274.161 31.3778H207.666V160.207Z" />
     </symbol>
-    <symbol id="icon-github" viewBox="0 0 24 24">
-      <path fill="currentColor" stroke="none" d="M12 2.5a9.5 9.5 0 0 0-3 18.51c.48.09.65-.21.65-.46v-1.68c-2.65.58-3.21-1.12-3.21-1.12-.43-1.1-1.06-1.39-1.06-1.39-.87-.59.07-.58.07-.58.96.07 1.47.99 1.47.99.85 1.46 2.23 1.04 2.78.8.09-.62.33-1.04.61-1.28-2.12-.24-4.35-1.06-4.35-4.73 0-1.05.38-1.9 1-2.57-.1-.24-.43-1.21.1-2.53 0 0 .82-.26 2.67.98A9.2 9.2 0 0 1 12 7.72a9.2 9.2 0 0 1 2.43.33c1.85-1.24 2.67-.98 2.67-.98.53 1.32.2 2.29.1 2.53.62.67 1 1.52 1 2.57 0 3.68-2.24 4.49-4.37 4.72.34.3.65.87.65 1.76v2.61c0 .25.17.55.66.46A9.5 9.5 0 0 0 12 2.5Z" />
+    <symbol id="icon-github" viewBox="0 0 496 512">
+      <path fill="currentColor" stroke="none" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
     </symbol>
-    <symbol id="icon-linkedin" viewBox="0 0 24 24">
-      <path fill="currentColor" stroke="none" d="M5 8.5A1.5 1.5 0 1 0 5 5.5a1.5 1.5 0 0 0 0 3ZM3.7 10h2.6v10H3.7V10Zm4.2 0h2.5v1.37h.04c.35-.66 1.2-1.7 2.98-1.7 3.19 0 3.78 2.1 3.78 4.84V20h-2.6v-4.86c0-1.16-.02-2.65-1.62-2.65s-1.87 1.26-1.87 2.56V20H7.9V10Z" />
+    <symbol id="icon-linkedin" viewBox="0 0 448 512">
+      <path fill="currentColor" stroke="none" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
     </symbol>
-    <symbol id="icon-medium" viewBox="0 0 24 24">
-      <path fill="currentColor" stroke="none" d="M4 6h16v12H4V6Zm2.2 2.5v7h1.2v-5.3l3.1 5.3h.8l3.1-5.3v5.3h1.2v-7h-1.9l-2.7 4.7L8.3 8.5H6.2Zm10.7 0v7h1.2v-7h-1.2Z" />
+    <symbol id="icon-medium" viewBox="0 0 640 512">
+      <path fill="currentColor" stroke="none" d="M180.5,74.262C80.813,74.262,0,155.633,0,256S80.819,437.738,180.5,437.738,361,356.373,361,256,280.191,74.262,180.5,74.262Zm288.25,10.646c-49.845,0-90.245,76.619-90.245,171.095s40.406,171.1,90.251,171.1,90.251-76.619,90.251-171.1H559C559,161.5,518.6,84.908,468.752,84.908Zm139.506,17.821c-17.526,0-31.735,68.628-31.735,153.274s14.2,153.274,31.735,153.274S640,340.631,640,256C640,171.351,625.785,102.729,608.258,102.729Z" />
     </symbol>
-    <symbol id="icon-behance" viewBox="0 0 24 24">
-      <path fill="currentColor" stroke="none" d="M3 5h5.3c2.55 0 4.2 1.23 4.2 3.1 0 1.17-.61 2.12-1.67 2.62 1.43.46 2.17 1.49 2.17 3.02 0 2.2-1.77 3.26-4.53 3.26H3V5Zm2.4 2v2.8h2.7c1.27 0 1.92-.46 1.92-1.4 0-.94-.65-1.4-1.92-1.4H5.4Zm0 4.7v3.3h2.9c1.38 0 2.17-.53 2.17-1.65 0-1.13-.79-1.65-2.17-1.65H5.4ZM15.2 11.1c.3-1.11 1.03-1.72 2.05-1.72 1.03 0 1.76.61 2.04 1.72H15.2Zm6.2 1.65c0-2.69-1.66-4.43-4.15-4.43s-4.48 1.91-4.48 4.6 1.87 4.64 4.63 4.64c2.01 0 3.48-.92 4.05-2.53h-2.2c-.33.55-.91.83-1.74.83-1.29 0-2.12-.69-2.33-1.96h6.22v-1.15ZM15.8 6.7h3.2v1h-3.2v-1Z" />
+    <symbol id="icon-behance" viewBox="0 0 576 512">
+      <path fill="currentColor" stroke="none" d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2.6-8.7.6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
     </symbol>
-    <symbol id="icon-dribbble" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M5.5 6.2c4.8 3.1 8.2 7.4 9.9 13M18.5 5.8C14.3 8.8 9.8 10.1 4 9.9M20.7 13.2c-4.2-.9-8.6-.4-12.4 1.6" />
+    <symbol id="icon-dribbble" viewBox="0 0 512 512">
+      <path fill="currentColor" stroke="none" d="M256 8C119.252 8 8 119.252 8 256s111.252 248 248 248 248-111.252 248-248S392.748 8 256 8zm163.97 114.366c29.503 36.046 47.369 81.957 47.835 131.955-6.984-1.477-77.018-15.682-147.502-6.818-5.752-14.041-11.181-26.393-18.617-41.614 78.321-31.977 113.818-77.482 118.284-83.523zM396.421 97.87c-3.81 5.427-35.697 48.286-111.021 76.519-34.712-63.776-73.185-116.168-79.04-124.008 67.176-16.193 137.966 1.27 190.061 47.489zm-230.48-33.25c5.585 7.659 43.438 60.116 78.537 122.509-99.087 26.313-186.36 25.934-195.834 25.809C62.38 147.205 106.678 92.573 165.941 64.62zM44.17 256.323c0-2.166.043-4.322.108-6.473 9.268.19 111.92 1.513 217.706-30.146 6.064 11.868 11.857 23.915 17.174 35.949-76.599 21.575-146.194 83.527-180.531 142.306C64.794 360.405 44.17 310.73 44.17 256.323zm81.807 167.113c22.127-45.233 82.178-103.622 167.579-132.756 29.74 77.283 42.039 142.053 45.189 160.638-68.112 29.013-150.015 21.053-212.768-27.882zm248.38 8.489c-2.171-12.886-13.446-74.897-41.152-151.033 66.38-10.626 124.7 6.768 131.947 9.055-9.442 58.941-43.273 109.844-90.795 141.978z" />
     </symbol>
-    <symbol id="icon-youtube" viewBox="0 0 24 24">
-      <rect x="3" y="6.5" width="18" height="11" rx="3" />
-      <path fill="currentColor" stroke="none" d="m10 9 5 3-5 3V9Z" />
+    <symbol id="icon-youtube" viewBox="0 0 576 512">
+      <path fill="currentColor" stroke="none" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" />
     </symbol>
   </svg>
-  <div class="page-loader" role="status" aria-label="Loading portfolio">
-    <span class="page-loader-mark">S<span>u</span>jeet<span class="dot">.</span></span>
-    <span class="page-loader-line" aria-hidden="true"></span>
-  </div>
-  <noscript>
-    <style>
-      .page-loader {
-        display: none;
-      }
-    </style>
-  </noscript>
   <header class="site-header">
     <a class="wordmark" href="#top" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
     <nav class="nav" aria-label="Main navigation">
@@ -643,26 +657,7 @@
           height="52" loading="lazy" decoding="async" alt=""></span>
     </div>
   </section>
-  <script>
-    (() => {
-      const box = document.getElementById('introVideo');
-      const vid = document.getElementById('introVid');
-      const btn = document.getElementById('introPlay');
-      if (!box || !vid || !btn) return;
-
-      btn.addEventListener('click', () => {
-        vid.controls = true;
-        vid.play();
-        box.classList.add('playing');
-      });
-      vid.addEventListener('ended', () => {
-        box.classList.remove('playing');
-        vid.controls = false;
-        vid.currentTime = 0;
-      });
-      new IntersectionObserver(([e]) => { if (!e.isIntersecting) vid.pause(); }, { threshold: .2 }).observe(box);
-    })();
-  </script>
+  <script src="assets/js/intro-video.js" defer></script>
   <footer class="site-footer">
     <span>© <span id="year">2026</span> Sujeet Khadka</span>
     <span>Designed & built with intention</span>
@@ -676,6 +671,7 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js" defer></script>
   <script src="assets/js/main.js" defer></script>
+  <script src="loader/files/loader.js" defer></script>
   <script type="module" src="assets/js/firebase-presence.js"></script>
 </body>
 

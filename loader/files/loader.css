@@ -1,0 +1,137 @@
+/* Inherit the portfolio's light/dark palette; keep the welcome self-contained. */
+#loader {
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --track: var(--line);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  place-items: center;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: var(--body);
+  opacity: 1;
+  transition: opacity .18s ease;
+}
+html.loader-running, html.loader-running body { overflow: hidden; overscroll-behavior: none; }
+html.loader-running #loader { display: grid; }
+html.loader-running .marquee-track { animation-play-state: paused; }
+#loader.is-exiting { opacity: 0; }
+
+/* Crossfade a few low-opacity washes without shifting the text or the whole page. */
+.ld-wash {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  animation: loader-wash-drift 12s ease-in-out infinite alternate;
+}
+.ld-wash-one {
+  background: radial-gradient(ellipse at 12% 18%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+    radial-gradient(ellipse at 88% 85%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 55%);
+}
+.ld-wash-two {
+  background: radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 55%),
+    radial-gradient(ellipse at 18% 88%, color-mix(in srgb, var(--lime) 12%, transparent), transparent 55%);
+}
+.ld-wash-three {
+  background: radial-gradient(ellipse at 14% 75%, color-mix(in srgb, var(--pink) 14%, transparent), transparent 55%),
+    radial-gradient(ellipse at 85% 22%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 55%);
+}
+#loader[data-palette="0"] .ld-wash-one,
+#loader[data-palette="1"] .ld-wash-two,
+#loader[data-palette="2"] .ld-wash-three { opacity: 1; }
+@keyframes loader-wash-drift { to { transform: translate3d(2%, -1%, 0); } }
+
+/* Decorative linework stays outside the reading area and out of the accessibility tree. */
+.ld-graphic {
+  position: absolute;
+  width: min(92vw, 720px);
+  height: auto;
+  color: var(--accent);
+  opacity: .16;
+  pointer-events: none;
+  animation: loader-orbit 18s ease-in-out infinite alternate;
+}
+.ld-graphic path, .ld-graphic ellipse, .ld-graphic circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.ld-graphic .ld-dot { fill: currentColor; stroke: none; }
+@keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
+#loader[data-visit="returning"] .ld-graphic { animation: none; opacity: .1; }
+#loader[data-visit="returning"] .ld-wash { animation: none; }
+
+.ld-top {
+  position: absolute;
+  top: max(24px, env(safe-area-inset-top));
+  left: max(24px, env(safe-area-inset-left));
+  font: 700 25px/1.5 var(--display);
+  letter-spacing: -.06em;
+}
+.ld-top i { color: var(--accent); font-style: normal; }
+.ld-stage {
+  position: relative;
+  width: min(100%, 760px);
+  padding: 24px;
+  text-align: center;
+  transform: translateY(-16px);
+}
+.ld-kicker { margin: 0 0 12px; font-size: 13px; line-height: 1.6; }
+.ld-word {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: clamp(130px, 22vw, 185px);
+  font: 400 clamp(44px, 10vw, 96px)/1.6 "Noto Sans Devanagari", sans-serif;
+}
+.ld-word[data-f="headline"] { font-family: var(--display); font-weight: 500; letter-spacing: -.04em; }
+.ld-word[data-f="sc"] { font-family: "Noto Sans SC", sans-serif; }
+.ld-word[data-f="ar"] { font-family: "Noto Naskh Arabic", serif; }
+.ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
+.ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
+.ld-bar {
+  width: min(160px, 45vw);
+  height: 3px;
+  margin: 32px auto 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--track);
+}
+.ld-fill { width: 100%; height: 100%; background: var(--fg); transform: scaleX(0); transform-origin: left; }
+.ld-skip {
+  position: absolute;
+  top: max(24px, env(safe-area-inset-top));
+  right: max(24px, env(safe-area-inset-right));
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  border-radius: 24px;
+  color: var(--fg);
+  background: var(--bg);
+  font: 500 14px/1.5 var(--body);
+  cursor: pointer;
+}
+.ld-skip:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ld-skip:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
+@media (max-height: 420px) {
+  .ld-stage { padding-top: 72px; transform: none; }
+  .ld-word { height: 85px; font-size: 48px; }
+  .ld-kicker { margin-bottom: 0; }
+  .ld-bar { margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.loader-running #loader { display: none; }
+  #loader, .ld-wash, .ld-graphic { animation: none; transition: none; }
+}
+@media (forced-colors: active) {
+  .ld-wash, .ld-graphic { display: none; }
+  .ld-bar { border: 1px solid CanvasText; }
+  .ld-fill { background: CanvasText; }
+}

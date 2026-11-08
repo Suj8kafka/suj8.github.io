@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-security-headers",
+  "main": "security-headers.mjs",
+  "compatibility_date": "2026-11-08",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "www.sujeetkhadka.com.np/*", "zone_name": "sujeetkhadka.com.np" },
+    { "pattern": "sujeetkhadka.com.np/*", "zone_name": "sujeetkhadka.com.np" }
+  ]
+}
