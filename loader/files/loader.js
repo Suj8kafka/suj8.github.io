@@ -1,5 +1,6 @@
-/* Full welcome on visits one and two; brief greeting from visit three onward. */
+/* Welcome new visitors once; returning visitors go straight to the portfolio. */
 (() => {
+  const INTRO_SEEN_KEY = 'portfolio-intro-seen';
   const VISIT_COUNT_KEY = 'portfolio-visit-count';
   const loader = document.getElementById('loader');
   if (!loader) return;
@@ -9,21 +10,25 @@
   const fill = document.getElementById('ld-fill');
   const skip = loader.querySelector('.ld-skip');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  function registerVisit(storage) {
+  function rememberVisit(storage) {
     const savedCount = Number(storage.getItem(VISIT_COUNT_KEY));
-    const previousCount = Number.isSafeInteger(savedCount) && savedCount >= 0 ? savedCount : 0;
-    const nextCount = Math.min(previousCount + 1, Number.MAX_SAFE_INTEGER);
-    storage.setItem(VISIT_COUNT_KEY, String(nextCount));
-    return nextCount;
+    const seen = storage.getItem(INTRO_SEEN_KEY) === '1'
+      || (Number.isSafeInteger(savedCount) && savedCount > 0);
+    storage.setItem(INTRO_SEEN_KEY, '1');
+    return seen;
   }
-  let visitCount = 3;
+  let returningVisitor = false;
+  let storageAvailable = false;
   try {
-    visitCount = registerVisit(localStorage);
-  } catch {
-    // Fall back to counting within this tab, or use the brief intro if both are blocked.
-    try { visitCount = registerVisit(sessionStorage); } catch {}
-  }
-  const returningVisitor = visitCount >= 3;
+    returningVisitor = rememberVisit(sessionStorage);
+    storageAvailable = true;
+  } catch {}
+  try {
+    returningVisitor = rememberVisit(localStorage) || returningVisitor;
+    storageAvailable = true;
+  } catch {}
+  // Never impose repeat animation when the browser blocks both storage mechanisms.
+  if (!storageAvailable) returningVisitor = true;
   const fullGreetings = [
     { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: 700 },
     { text: '你好', label: 'Mandarin', lang: 'zh', font: 'sc' },
@@ -46,9 +51,7 @@
     { text: 'नमस्कार', label: 'Doteli', lang: 'dty' },
     { text: 'सेवारो', label: 'Limbu', lang: 'lif' }
   ];
-  const greetings = returningVisitor
-    ? [{ text: 'नमस्ते', label: 'Welcome back', lang: 'ne', duration: 700 }]
-    : fullGreetings.map(greeting => ({ duration: 450, ...greeting }));
+  const greetings = fullGreetings.map(greeting => ({ duration: 450, ...greeting }));
   loader.dataset.visit = returningVisitor ? 'returning' : 'first';
   const duration = greetings.reduce((sum, greeting) => sum + greeting.duration, 0);
   const navigationKeys = new Set(['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
@@ -164,6 +167,6 @@
   }
 
   skip.addEventListener('click', () => complete(true));
-  if (motion.matches || window.location.hash || document.hidden) complete();
+  if (returningVisitor || motion.matches || window.location.hash || document.hidden) complete();
   else run();
 })();

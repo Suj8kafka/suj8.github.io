@@ -172,10 +172,14 @@
     </nav>
     <div class="header-tools">
       <div class="live-presence-wrap">
-        <button class="live-presence" type="button" aria-expanded="false" aria-controls="live-presence-list"
+        <button class="live-presence" type="button" aria-expanded="false" aria-controls="presence-panel" aria-haspopup="dialog"
           title="Show anonymous visitors currently on this page">
           <span class="live-presence-dot" aria-hidden="true"></span>
           <span class="live-presence-label">Connecting live</span>
+          <span class="availability-badge" title="Open to freelance projects, full-time roles and contract work">
+            <span class="availability-label" data-availability-label>Open to work</span><span class="availability-detail" data-availability-details>Open to freelance work, project work, full-time roles and contract work.</span>
+            <span class="availability-tooltip" data-availability-details aria-hidden="true">Open to freelance work, project work, full-time roles and contract work.</span>
+          </span>
         </button>
         <div class="live-presence-list" id="live-presence-list" role="status"
           aria-label="Anonymous visitors currently on this page"></div>
@@ -183,13 +187,16 @@
       <a class="nav-contact" href="#contact" data-contact-scroll>Let's talk <svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></a>
     </div>
   </header>
-  <aside class="presence-panel" aria-hidden="true" aria-labelledby="presence-panel-title">
+  <aside class="presence-panel" id="presence-panel" aria-hidden="true">
     <div class="presence-panel-backdrop" data-presence-close></div>
-    <section class="presence-panel-content" role="dialog" aria-modal="true">
+    <section class="presence-panel-content" role="dialog" aria-modal="true" aria-labelledby="presence-panel-title">
       <button class="presence-panel-close" type="button" aria-label="Close visitor analytics"><svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg></button>
       <p class="eyebrow">Live studio</p>
       <h2 id="presence-panel-title">Who's exploring.</h2>
       <p class="presence-panel-summary">Anonymous, approximate visitor activity.</p>
+      <p class="presence-panel-summary" data-availability-details>Open to freelance work, project work, full-time roles and contract work.</p>
+      <label class="cursor-control"><input type="checkbox" data-live-cursors checked> Share and show live cursors</label>
+      <p class="presence-panel-summary">Cursors appear on the same section and fade when idle. Reduced motion hides them.</p>
       <button class="location-consent" type="button">Use my precise location</button>
       <p class="location-status" aria-live="polite"></p>
       <div class="presence-analytics">
@@ -198,13 +205,15 @@
       </div>
       <div class="cloudflare-analytics" aria-labelledby="cloudflare-analytics-title">
         <div class="cloudflare-analytics-heading">
-          <h3 id="cloudflare-analytics-title">Site activity</h3>
+          <h3 id="cloudflare-analytics-title">Cloudflare activity</h3>
           <span class="cloudflare-analytics-period">Last 24 hours</span>
         </div>
+        <button class="cloudflare-refresh" type="button" data-cloudflare-refresh>Refresh analytics</button>
+        <p class="presence-panel-summary">Traffic estimates for this site, separate from the live visitor count.</p>
         <div class="cloudflare-analytics-status" role="status" aria-live="polite">Loading Cloudflare data…</div>
         <div class="cloudflare-analytics-grid" hidden>
           <div class="cloudflare-stat"><strong data-cloudflare-stat="requests">—</strong><span>Requests</span></div>
-          <div class="cloudflare-stat"><strong data-cloudflare-stat="visits">—</strong><span>Visitors</span></div>
+          <div class="cloudflare-stat"><strong data-cloudflare-stat="visits">—</strong><span>Visits</span></div>
         </div>
         <div class="cloudflare-list" data-cloudflare-list="paths" hidden>
           <h4>Top paths</h4>
@@ -260,8 +269,8 @@
         </div>
       </div>
       <div class="hero-art" aria-label="Sujeet viewing artwork at an exhibition">
-        <div class="art-note note-one"><svg class="icon" aria-hidden="true"><use href="#icon-asterisk"></use></svg></div>
-        <div class="art-note note-two"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></div>
+        <div class="art-note note-one" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-asterisk"></use></svg></div>
+        <div class="art-note note-two" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></div>
         <div class="portrait-frame">
           <img src="assets/images/sujeet-at-exhibition.jpeg" width="960" height="1280" fetchpriority="high"
             decoding="async" alt="Sujeet Khadka viewing artwork at an exhibition">
@@ -607,6 +616,7 @@
       <div class="section-illustration illustration-contact" aria-hidden="true"><span>@</span><i></i></div>
       <h2 id="contact-title">Let’s make it<br><em>worth using.</em></h2>
       <a class="contact-link" href="mailto:email@sujeetkhadka.com.np">email@sujeetkhadka.com.np <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+      <p class="contact-availability" data-availability-details>Open to freelance work, project work, full-time roles and contract work.</p>
       <div class="social-links" aria-label="Social profiles">
         <a class="social-figma" href="https://figma.com/@sujeet8kafka" target="_blank" rel="noreferrer" aria-label="Sujeet on Figma"><span
             class="social-icon"><svg class="icon" aria-hidden="true"><use href="#icon-figma"></use></svg></span><span>Figma</span></a>
@@ -673,6 +683,7 @@
   <script src="assets/js/main.js" defer></script>
   <script src="loader/files/loader.js" defer></script>
   <script type="module" src="assets/js/firebase-presence.js"></script>
+  <script type="module" src="assets/js/availability-client.js"></script>
 </body>
 
 </html>

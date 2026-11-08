@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Owner login for Sujeet Khadka's portfolio.">
+  <title>Owner login — Sujeet Khadka</title>
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <script src="/assets/js/admin-bootstrap.js" defer></script>
+  <script src="/assets/js/admin.js" type="module"></script>
+</head>
+<body class="admin-page">
+  <a class="admin-skip" href="#admin-main">Skip to content</a>
+  <header class="admin-header">
+    <a class="wordmark" href="/" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
+    <a class="admin-back" href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="admin-main" id="admin-main">
+    <section class="login-card" id="login-panel" aria-labelledby="login-title">
+      <p class="eyebrow">Your portfolio, up to date.</p>
+      <h1 id="login-title">Welcome back<span>.</span></h1>
+      <p class="admin-intro">Sign in to update your availability and the work you’re open to.</p>
+      <form id="login-form" method="post" action="/login/">
+        <label for="login-email">Email address</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" required spellcheck="false">
+        <div class="password-heading"><label for="login-password">Password</label><button type="button" class="admin-text-button" id="password-toggle" aria-controls="login-password" aria-pressed="false">Show password</button></div>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="admin-primary" id="login-submit" type="submit" disabled>Sign in</button>
+      </form>
+      <button class="admin-text-button reset-password" id="reset-password" type="button" disabled>Forgot password?</button>
+      <p id="login-message" class="admin-message" role="status" aria-live="polite">Connecting…</p>
+      <div id="account-access" class="account-access" hidden>
+        <p id="access-help">Editor access needs to be checked for this account ID:</p>
+        <code id="account-id"></code>
+        <button class="admin-secondary" id="access-signout" type="button">Use another account</button>
+      </div>
+    </section>
+
+    <section class="editor" id="editor-panel" aria-labelledby="editor-title" hidden>
+      <div class="editor-heading">
+        <div><p class="eyebrow">Portfolio studio</p><h1 id="editor-title" tabindex="-1">Your availability<span>.</span></h1></div>
+        <button class="admin-secondary" id="sign-out" type="button">Sign out</button>
+      </div>
+      <p class="admin-intro">Keep your status clear. Changes appear on the portfolio after you save.</p>
+      <p class="signed-in">Signed in as <span id="signed-in-email"></span></p>
+      <div class="editor-grid">
+        <form id="availability-form" class="settings-card" method="post" action="/login/">
+          <fieldset id="editor-fields" disabled>
+            <legend class="admin-sr-only">Availability settings</legend>
+            <label for="availability-status">Availability</label>
+            <select id="availability-status" name="status">
+              <option value="open">Open to work</option>
+              <option value="limited">Limited availability</option>
+              <option value="closed">Not taking work</option>
+            </select>
+            <label for="availability-label">Badge text <span class="field-optional">optional</span></label>
+            <input id="availability-label" name="label" type="text" maxlength="24" aria-describedby="badge-help" placeholder="Open to work">
+            <p class="field-help" id="badge-help">Leave blank to use the availability label. Up to 24 characters.</p>
+            <fieldset class="work-type-options">
+              <legend>Types of work</legend>
+              <label><input type="checkbox" name="freelance"> Freelance work</label>
+              <label><input type="checkbox" name="projects"> Project work</label>
+              <label><input type="checkbox" name="fullTime"> Full-time roles</label>
+              <label><input type="checkbox" name="contract"> Contract work</label>
+            </fieldset>
+            <label for="availability-note">A short note <span class="field-optional">optional</span></label>
+            <textarea id="availability-note" name="note" rows="3" maxlength="160" aria-describedby="note-help" placeholder="For example: Available for new projects from January."></textarea>
+            <p class="field-help" id="note-help">Shown in the hover details and contact section. Up to 160 characters.</p>
+            <button class="admin-primary" id="save-settings" type="submit">Save changes</button>
+          </fieldset>
+          <p class="admin-message" id="save-message" role="status" aria-live="polite"></p>
+        </form>
+        <aside class="preview-card" aria-labelledby="preview-title">
+          <p class="eyebrow" id="preview-title">Live preview</p>
+          <span class="availability-badge" id="preview-badge" data-availability-status="open"><span data-availability-label>Open to work</span></span>
+          <p class="preview-caption">What visitors see on hover</p>
+          <p class="preview-details" data-availability-details>Open to freelance work, project work, full-time roles, contract work.</p>
+          <p class="field-help">This preview stays private until you save.</p>
+        </aside>
+      </div>
+    </section>
+    <noscript><p class="admin-message">JavaScript is needed to sign in and save changes. <a href="/">Return to the portfolio</a>.</p></noscript>
+  </main>
+</body>
+</html>

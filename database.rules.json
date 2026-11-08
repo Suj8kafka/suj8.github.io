@@ -1,0 +1,68 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "owners": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    },
+    "siteSettings": {
+      "availability": {
+        ".read": true,
+        ".write": "auth != null && auth.token.firebase.sign_in_provider !== 'anonymous' && root.child('owners').child(auth.uid).val() === true && newData.exists()",
+        ".validate": "newData.hasChildren(['status', 'label', 'note', 'workTypes', 'updatedAt']) && (newData.child('status').val() === 'closed' || newData.child('workTypes/freelance').val() === true || newData.child('workTypes/projects').val() === true || newData.child('workTypes/fullTime').val() === true || newData.child('workTypes/contract').val() === true)",
+        "status": { ".validate": "newData.val() === 'open' || newData.val() === 'limited' || newData.val() === 'closed'" },
+        "label": { ".validate": "newData.isString() && newData.val().length <= 24" },
+        "note": { ".validate": "newData.isString() && newData.val().length <= 160" },
+        "workTypes": {
+          ".validate": "newData.hasChildren(['freelance', 'projects', 'fullTime', 'contract'])",
+          "freelance": { ".validate": "newData.isBoolean()" },
+          "projects": { ".validate": "newData.isBoolean()" },
+          "fullTime": { ".validate": "newData.isBoolean()" },
+          "contract": { ".validate": "newData.isBoolean()" },
+          "$other": { ".validate": false }
+        },
+        "updatedAt": { ".validate": "newData.isNumber() && newData.val() >= now - 600000 && newData.val() <= now + 600000" },
+        "$other": { ".validate": false }
+      },
+      "$other": { ".write": false }
+    },
+    "presence": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['section', 'label', 'country', 'location', 'locationSource', 'lastSeen'])",
+        "x": { ".validate": "newData.isNumber() && newData.val() >= -100000 && newData.val() <= 100000" },
+        "y": { ".validate": "newData.isNumber() && newData.val() >= -100000 && newData.val() <= 100000" },
+        "section": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "color": { ".validate": "newData.isString() && newData.val().matches(/^#[0-9a-fA-F]{6}$/)" },
+        "label": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "country": { ".validate": "newData.isString() && newData.val().length <= 60" },
+        "location": { ".validate": "newData.isString() && newData.val().length <= 100" },
+        "locationSource": { ".validate": "newData.isString() && (newData.val() === 'ip' || newData.val() === 'precise')" },
+        "lastSeen": { ".validate": "newData.isNumber() && newData.val() <= now + 600000 && newData.val() >= now - 600000" },
+        "path": { ".validate": "newData.isString() && newData.val().length <= 2048 && newData.val().beginsWith('/')" },
+        "cursor": {
+          ".validate": "newData.hasChildren(['x', 'y', 'section', 'visible', 'updatedAt'])",
+          "x": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+          "y": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+          "section": { ".validate": "newData.isString() && newData.val().length <= 80" },
+          "visible": { ".validate": "newData.isBoolean()" },
+          "updatedAt": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= now + 600000" },
+          "$other": { ".validate": false }
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "analytics": {
+      "countries": {
+        ".read": "auth != null",
+        "$country": {
+          ".write": "auth != null && $country.length <= 60 && newData.isNumber() && ((!data.exists() && newData.val() === 1) || (data.exists() && newData.val() === data.val() + 1))"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "nameless-truth-99f0",
+  "main": "analytics-worker.js",
+  "compatibility_date": "2026-11-08",
+  "workers_dev": true,
+  "vars": {
+    "SITE_HOSTNAME": "www.sujeetkhadka.com.np"
+  }
+}
