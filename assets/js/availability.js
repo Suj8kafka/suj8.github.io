@@ -1,14 +1,15 @@
 export const WORK_TYPES = [
-  ['freelance', 'Freelance work'],
-  ['projects', 'Project work'],
-  ['fullTime', 'Full-time roles'],
-  ['contract', 'Contract work']
+  ['freelance', 'Freelance work', 'freelance'],
+  ['projects', 'Project work', 'project'],
+  ['fullTime', 'Full-time roles', 'full-time'],
+  ['contract', 'Contract work', 'contract']
 ];
 export const DEFAULT_AVAILABILITY = {
   status: 'open', label: '', note: '',
   workTypes: { freelance: true, projects: true, fullTime: true, contract: true }
 };
 const LABELS = { open: 'Open to work', limited: 'Limited availability', closed: 'Not taking work' };
+const joinTypes = values => values.length > 1 ? `${values.slice(0, -1).join(', ')} and ${values.at(-1)}` : values[0];
 
 export function validateAvailability(value) {
   if (!value || !Object.hasOwn(LABELS, value.status)) throw new Error('Choose an availability status.');
@@ -28,10 +29,14 @@ export function validateAvailability(value) {
 
 export function availabilityView(value = DEFAULT_AVAILABILITY) {
   const settings = validateAvailability(value);
-  const types = WORK_TYPES.filter(([key]) => settings.workTypes[key]).map(([, label]) => label);
+  const selectedTypes = WORK_TYPES.filter(([key]) => settings.workTypes[key]);
+  const workList = joinTypes(selectedTypes.map(([, label]) => label));
+  const shortList = joinTypes(selectedTypes.map(([, , label]) => label));
+  const prefix = settings.status === 'limited' ? 'Limited availability for' : 'Open to';
   const details = settings.status === 'closed' ? 'Not currently taking new work.'
-    : `${settings.status === 'limited' ? 'Limited availability for' : 'Open to'} ${types.join(', ').toLowerCase()}.`;
-  return { label: settings.label || LABELS[settings.status], details, note: settings.note, status: settings.status };
+    : `${prefix} ${workList.toLowerCase()}.`;
+  const engagement = settings.status === 'closed' ? details : `${prefix} ${shortList} work.`;
+  return { label: settings.label || LABELS[settings.status], details, engagement, note: settings.note, status: settings.status };
 }
 
 export function applyAvailability(document, settings) {
@@ -39,6 +44,10 @@ export function applyAvailability(document, settings) {
   const description = [view.details, view.note].filter(Boolean).join(' ');
   document.querySelectorAll('[data-availability-label]').forEach(element => { element.textContent = view.label; });
   document.querySelectorAll('[data-availability-details]').forEach(element => { element.textContent = description; });
+  document.querySelectorAll('[data-availability-engagement]').forEach(element => {
+    element.textContent = view.engagement;
+    element.dataset.availabilityStatus = view.status;
+  });
   document.querySelectorAll('.availability-badge').forEach(element => {
     element.title = description;
     element.dataset.availabilityStatus = view.status;

@@ -64,14 +64,12 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 .ld-graphic .ld-dot { fill: currentColor; stroke: none; }
 @keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
-#loader[data-visit="returning"] .ld-graphic { animation: none; opacity: .1; }
+#loader[data-visit="returning"] .ld-graphic { display: none; }
 #loader[data-visit="returning"] .ld-wash { animation: none; }
 
 .ld-top {
-  position: absolute;
-  top: max(24px, env(safe-area-inset-top));
-  left: max(24px, env(safe-area-inset-left));
-  font: 700 25px/1.5 var(--display);
+  margin-bottom: 24px;
+  font: 700 40px/1.2 var(--display);
   letter-spacing: -.06em;
 }
 .ld-top i { color: var(--accent); font-style: normal; }
@@ -94,6 +92,11 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-word[data-f="sc"] { font-family: "Noto Sans SC", sans-serif; }
 .ld-word[data-f="ar"] { font-family: "Noto Naskh Arabic", serif; }
 .ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
+.ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
+.ld-write-stroke { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) linear var(--pen-delay) forwards; }
+.ld-write-finish { opacity: 0; animation: ld-ink-finish .12s ease .76s forwards; }
+@keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
+@keyframes ld-ink-finish { to { opacity: 1; } }
 .ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
 .ld-bar {
   width: min(160px, 45vw);
@@ -121,14 +124,17 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-skip:hover { text-decoration: underline; text-underline-offset: 3px; }
 .ld-skip:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
 @media (max-height: 420px) {
-  .ld-stage { padding-top: 72px; transform: none; }
+  .ld-stage { padding: 16px; transform: none; }
+  .ld-top { margin-bottom: 8px; font-size: 28px; }
+  .ld-kicker { display: none; }
   .ld-word { height: 85px; font-size: 48px; }
-  .ld-kicker { margin-bottom: 0; }
+  .ld-language { margin-top: 4px; font-size: 12px; }
   .ld-bar { margin-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html.loader-running #loader { display: none; }
   #loader, .ld-wash, .ld-graphic { animation: none; transition: none; }
+  .ld-write-stroke, .ld-write-finish { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
 }
 @media (forced-colors: active) {
   .ld-wash, .ld-graphic { display: none; }

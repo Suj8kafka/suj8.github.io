@@ -1,0 +1,9 @@
+The hero uses the supplied `assets/images/sujeet-hero- vector2.svg` (1145 × 1527, 1,643 painted paths). The source SVG is unchanged. Its URL encodes the space as `%20`.
+
+The normal image is the immediate, no-JavaScript fallback. `portrait-network.js` loads that same local SVG, prefixes its clip-path IDs, and inserts a decorative inline copy so the existing shapes can transition independently. The fallback image retains the accessible description.
+
+Each path keeps its original color and gets a luminance-based monochrome resting fill. On hover, a spatial wave starts near the pointer and staggers the original path fills over approximately two seconds. Every path briefly outlines its own contour before its color fills, then the outlines fade as the pieces settle. The reverse transition also briefly outlines the pieces. Larger background shapes tint more slowly and have lighter outlines. There is no triangular mask, repeating loop, animation dependency, or per-shape JavaScript timer. Geometry is measured once; CSS handles interpolation and interrupted/reversed transitions.
+
+Keyboard focus reveals color, Enter toggles it, and Escape dismisses it. Touch/coarse-pointer and reduced-motion modes show the color illustration without animation. If the inline SVG cannot load, the regular SVG image remains visible and its inactive control stays hidden.
+
+The frame preserves the original 1145 × 1527 canvas proportions and scales responsively, with diagonal cuts at the top-right and bottom-left corners. The desktop portrait is capped at 440px wide, with smaller tablet and mobile widths. Both copies use a contain/meet fit without inner-image zoom. Parallax moves the whole hero artwork, and `.portrait-visual` keeps both copies aligned beneath the same corner crop. The original photograph and earlier generated SVG remain available as source assets, but are not used for the hero.

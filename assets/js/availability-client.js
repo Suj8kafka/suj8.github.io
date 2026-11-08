@@ -3,12 +3,6 @@ import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/13
 import { firebaseConfig } from './firebase-config.js';
 import { applyAvailability } from './availability.js';
 
-const badges = document.querySelectorAll('.availability-badge');
-badges.forEach(badge => badge.addEventListener('pointerenter', () => { delete badge.dataset.tooltipDismissed; }));
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') badges.forEach(badge => { badge.dataset.tooltipDismissed = 'true'; });
-});
-
 // Separate app instance: public settings never change anonymous visitor authentication.
 const app = initializeApp(firebaseConfig, 'portfolio-settings');
 onValue(ref(getDatabase(app), 'siteSettings/availability'), snapshot => {

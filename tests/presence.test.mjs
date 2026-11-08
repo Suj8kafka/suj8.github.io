@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createLiveCursors } from '../assets/js/live-cursors.js';
+import { createLiveCursors, cursorColor } from '../assets/js/live-cursors.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 
 const databaseRules = JSON.parse(readFileSync(new URL('../database.rules.json', import.meta.url), 'utf8'));
@@ -43,7 +43,7 @@ function browser({ resolveLocation = false, uid = 'window-id', denyWrites = fals
     addEventListener: (name, callback) => { events[name] = callback; }
   };
   const context = vm.createContext({
-    document, console: { error() {}, warn() {} }, AbortSignal, Date, createLiveCursors, firebaseConfig,
+    document, console: { error() {}, warn() {} }, AbortSignal, Date, createLiveCursors, cursorColor, firebaseConfig,
     window: {
       innerHeight: 800, innerWidth: 1280, location: { pathname: '/' },
       addEventListener: (name, callback) => { events[name] = callback; },

@@ -1,9 +1,11 @@
-const COLORS = ['#356dff', '#b045b8', '#237c64', '#bc4d30', '#7161c4'];
+export const CURSOR_COLORS = ['#5f7288', '#796783', '#56776c', '#916c59', '#79764f'];
+const LEGACY_COLORS = ['#356dff', '#b045b8', '#237c64', '#bc4d30', '#7161c4'];
 const IDLE_MS = 5000;
 const FADE_MS = 3000;
 
 export function cursorColor(value) {
-  return COLORS.includes(value) ? value : COLORS[0];
+  if (CURSOR_COLORS.includes(value)) return value;
+  return CURSOR_COLORS[Math.max(0, LEGACY_COLORS.indexOf(value))];
 }
 
 export function isRecentCursor(cursor, now) {
@@ -13,10 +15,10 @@ export function isRecentCursor(cursor, now) {
     && Number.isFinite(cursor.updatedAt) && Math.abs(now - cursor.updatedAt) < IDLE_MS;
 }
 
-// Positions are relative to a section, so different viewport sizes and scroll positions work.
+// Anchor vertical positions to content; use the viewport width so page gutters are included.
 export function createLiveCursors({ document, window, onChange, now, enabled = () => true }) {
   const motion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const color = CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)];
   let cursor = { x: 0, y: 0, section: 'hero', visible: false, updatedAt: 0 };
   let lastPointer = null;
   let layer = null;
@@ -24,6 +26,8 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
   const idleTimers = new Map();
   const allowed = () => enabled() && !motion?.matches;
   const sections = () => [...document.querySelectorAll('main > section[id], main > section.hero')];
+  const regions = () => [...document.querySelectorAll('main > section, .site-header, .footer-toolkit, .site-footer')]
+    .map((element, index) => ({ element, key: `@${element.id || `region-${index}`}` }));
 
   function hide() {
     lastPointer = null;
@@ -35,16 +39,16 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
   function capture() {
     if (!lastPointer || !allowed() || document.hidden) return hide();
     const { x, y } = lastPointer;
-    const section = sections().find(element => {
+    if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight) return hide();
+    const region = regions().find(({ element }) => {
       const rect = element.getBoundingClientRect();
-      return rect.width > 0 && rect.height > 0 && x >= rect.left && x <= rect.right
-        && y >= rect.top && y <= rect.bottom;
+      return rect.width > 0 && rect.height > 0 && y >= rect.top && y <= rect.bottom;
     });
-    if (!section) return hide();
-    const rect = section.getBoundingClientRect();
-    const normalizedX = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+    // Uncovered layout gaps still share a cursor instead of creating dead zones.
+    const rect = region?.element.getBoundingClientRect() || { top: 0, height: window.innerHeight };
+    const normalizedX = x / window.innerWidth;
     const normalizedY = Math.max(0, Math.min(1, (y - rect.top) / rect.height));
-    const sectionId = section.id || 'hero';
+    const sectionId = region?.key || '@viewport';
     if (cursor.visible && cursor.x === normalizedX && cursor.y === normalizedY && cursor.section === sectionId) return;
     cursor = {
       x: normalizedX, y: normalizedY, section: sectionId, visible: true, updatedAt: now()
@@ -71,10 +75,17 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
     const visible = new Set();
     for (const [key, visitor] of Object.entries(visitors)) {
       if (key === selfKey || visitor.path !== (window.location?.pathname || '/') || !isRecentCursor(visitor.cursor, now())) continue;
-      const section = sections().find(element => (element.id || 'hero') === visitor.cursor.section);
-      if (!section) continue;
-      const rect = section.getBoundingClientRect();
-      const x = rect.left + visitor.cursor.x * rect.width;
+      const regionKey = visitor.cursor.section;
+      const viewportWidth = regionKey.startsWith('@');
+      // Older tabs still send positions relative to the section's content width.
+      const anchor = viewportWidth
+        ? regions().find(region => region.key === regionKey)?.element
+        : sections().find(element => (element.id || 'hero') === regionKey);
+      const rect = regionKey === '@viewport'
+        ? { top: 0, height: window.innerHeight }
+        : anchor?.getBoundingClientRect();
+      if (!rect || rect.height <= 0) continue;
+      const x = viewportWidth ? visitor.cursor.x * window.innerWidth : rect.left + visitor.cursor.x * rect.width;
       const y = rect.top + visitor.cursor.y * rect.height;
       if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
       if (!layer) {
@@ -88,12 +99,14 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
         node = document.createElement('div');
         node.className = 'visitor-cursor';
         // Static decorative markup; visitor-provided text is assigned via textContent below.
-        node.innerHTML = '<svg viewBox="0 0 24 28" width="22" height="26" aria-hidden="true"><path d="M2 2 7 24 11.5 15 21 11.5Z" /></svg><span></span>';
+        node.innerHTML = '<svg viewBox="0 0 24 28" width="16" height="19" aria-hidden="true"><path d="M2 2 7 24 11.5 15 21 11.5Z" /></svg><span></span>';
         layer.append(node);
         nodes.set(key, node);
       }
       node.style.setProperty('--cursor-color', cursorColor(visitor.color));
       node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      node.dataset.edgeX = x > window.innerWidth - 140 ? 'right' : 'left';
+      node.dataset.edgeY = y > window.innerHeight - 44 ? 'bottom' : 'top';
       const age = Math.max(0, now() - visitor.cursor.updatedAt);
       node.dataset.idle = String(age >= FADE_MS);
       const updatedAt = String(visitor.cursor.updatedAt);
@@ -119,8 +132,7 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
 
   window.addEventListener('pointermove', event => {
     if (event.pointerType === 'touch' || !allowed()
-      || event.target?.closest?.('input, textarea, select, [contenteditable], .presence-panel, .skill-modal, #loader')
-      || !event.target?.closest?.('main')) return hide();
+      || event.target?.closest?.('input, textarea, select, [contenteditable], .presence-panel, .skill-modal, #loader')) return hide();
     lastPointer = { x: event.clientX, y: event.clientY };
     capture();
   }, { passive: true });

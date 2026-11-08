@@ -1,143 +1,111 @@
-/* Welcome new visitors once; returning visitors go straight to the portfolio. */
+/* A branded first-visit welcome and brief returning welcome, with immediate ways to skip. */
 (() => {
-  const INTRO_SEEN_KEY = 'portfolio-intro-seen';
-  const VISIT_COUNT_KEY = 'portfolio-visit-count';
   const loader = document.getElementById('loader');
   if (!loader) return;
   const root = document.documentElement;
   const word = document.getElementById('ld-word');
   const language = document.getElementById('ld-lang');
   const fill = document.getElementById('ld-fill');
+  const progress = loader.querySelector('.ld-bar');
   const skip = loader.querySelector('.ld-skip');
+  const handwriting = document.getElementById('ld-namaste-template');
+  if (!word || !language || !fill || !skip) return;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  function rememberVisit(storage) {
-    const savedCount = Number(storage.getItem(VISIT_COUNT_KEY));
-    const seen = storage.getItem(INTRO_SEEN_KEY) === '1'
-      || (Number.isSafeInteger(savedCount) && savedCount > 0);
-    storage.setItem(INTRO_SEEN_KEY, '1');
+  const seenKey = 'portfolio-intro-seen';
+  const exitDuration = 180;
+  const firstVisitDuration = 9000; // Includes the exit fade.
+  let returning = false, storageAvailable = false;
+  function remember(storage) {
+    const savedCount = Number(storage.getItem('portfolio-visit-count'));
+    const seen = storage.getItem(seenKey) === '1' || (Number.isSafeInteger(savedCount) && savedCount > 0);
+    storage.setItem(seenKey, '1');
     return seen;
   }
-  let returningVisitor = false;
-  let storageAvailable = false;
-  try {
-    returningVisitor = rememberVisit(sessionStorage);
-    storageAvailable = true;
-  } catch {}
-  try {
-    returningVisitor = rememberVisit(localStorage) || returningVisitor;
-    storageAvailable = true;
-  } catch {}
-  // Never impose repeat animation when the browser blocks both storage mechanisms.
-  if (!storageAvailable) returningVisitor = true;
-  const fullGreetings = [
-    { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: 700 },
-    { text: '你好', label: 'Mandarin', lang: 'zh', font: 'sc' },
-    { text: 'नमस्ते', label: 'Hindi', lang: 'hi' },
-    { text: 'Hola', label: 'Spanish', lang: 'es', font: 'headline' },
-    { text: 'مرحبا', label: 'Arabic', lang: 'ar', font: 'ar', dir: 'rtl' },
-    { text: 'নমস্কার', label: 'Bengali', lang: 'bn', font: 'bn' },
-    { text: 'Bonjour', label: 'French', lang: 'fr', font: 'headline' },
-    { text: 'Привет', label: 'Russian', lang: 'ru', font: 'headline' },
-    { text: 'Olá', label: 'Portuguese', lang: 'pt', font: 'headline' },
-    { text: 'السلام علیکم', label: 'Urdu', lang: 'ur', font: 'ar', dir: 'rtl' },
-    { text: 'नमस्कार', label: 'Nepali', lang: 'ne' },
-    { text: 'प्रणाम', label: 'Maithili', lang: 'mai' },
-    { text: 'राम राम', label: 'Bhojpuri', lang: 'bho' },
-    { text: 'नमस्ते', label: 'Tharu', lang: 'thl' },
-    { text: 'फ्याफुल्ला', label: 'Tamang', lang: 'taj' },
-    { text: 'ज्वजलपा', label: 'Nepal Bhasa', lang: 'new' },
-    { text: 'प्रणाम', label: 'Bajjika', lang: 'bjj' },
-    { text: 'राम राम', label: 'Awadhi', lang: 'awa' },
-    { text: 'नमस्कार', label: 'Doteli', lang: 'dty' },
-    { text: 'सेवारो', label: 'Limbu', lang: 'lif' }
+  try { returning = remember(sessionStorage); storageAvailable = true; } catch {}
+  try { returning = remember(localStorage) || returning; storageAvailable = true; } catch {}
+  if (!storageAvailable) returning = true;
+  const namaste = { text: 'नमस्ते', label: 'Namaste · Nepali', lang: 'ne', font: 'dev', duration: returning ? 1050 : 1100 };
+  const greetings = returning ? [namaste] : [
+    { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: firstVisitDuration - namaste.duration - exitDuration }, namaste
   ];
-  const greetings = fullGreetings.map(greeting => ({ duration: 450, ...greeting }));
-  loader.dataset.visit = returningVisitor ? 'returning' : 'first';
   const duration = greetings.reduce((sum, greeting) => sum + greeting.duration, 0);
+  const maximumDuration = returning ? 1800 : duration;
+  loader.dataset.visit = returning ? 'returning' : 'first';
   const navigationKeys = new Set(['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
-  let running = false;
-  let completed = false;
-  let failSafe;
-  let exitTimer;
-  let frame;
-  let animation;
-  let previousOverflow;
-  let previousBodyOverflow;
-  let startedAt;
-  let activeIndex = -1;
+  let running = false, completed = false, ready = false;
+  let failSafe, exitTimer, frame, animation, startedAt;
+  let previousOverflow, previousBodyOverflow;
+  let activeIndex = -1, displayedProgress = 0;
 
-  function onKey(event) {
-    if (navigationKeys.has(event.key)) complete();
-    // Preserve the key's normal action after restoring the page.
+  function setProgress(value) {
+    displayedProgress = Math.max(displayedProgress, Math.min(1, value));
+    fill.style.transform = `scaleX(${displayedProgress})`;
+    progress?.setAttribute('aria-valuenow', String(Math.round(displayedProgress * 100)));
   }
-  function onScrollIntent() { complete(); }
-  function onMotionChange(event) { if (event.matches) complete(); }
-  function onPageHide() { complete(); }
-
   function complete(moveFocus = false) {
     if (completed) return;
-    completed = true;
-    running = false;
-    clearTimeout(failSafe);
-    clearTimeout(exitTimer);
-    cancelAnimationFrame(frame);
+    completed = true; running = false;
+    clearTimeout(failSafe); clearTimeout(exitTimer); cancelAnimationFrame(frame);
     animation?.cancel();
+    setProgress(1);
     const focusWasInside = loader.contains(document.activeElement);
     loader.style.display = 'none';
     root.classList.remove('loader-running');
     if (previousOverflow !== undefined) root.style.overflow = previousOverflow;
     if (previousBodyOverflow !== undefined) document.body.style.overflow = previousBodyOverflow;
     document.removeEventListener('keydown', onKey, true);
+    document.removeEventListener('visibilitychange', onVisibility);
     window.removeEventListener('wheel', onScrollIntent);
     window.removeEventListener('touchmove', onScrollIntent);
     window.removeEventListener('pagehide', onPageHide);
     motion.removeEventListener('change', onMotionChange);
-    // Never steal focus on automatic dismissal; restore it when a control disappears.
     if (moveFocus || focusWasInside) {
       const heading = document.getElementById('hero-title');
-      if (heading) {
-        heading.setAttribute('tabindex', '-1');
-        heading.focus({ preventScroll: true });
-      }
+      if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
     }
     root.dataset.loaderDone = 'true';
     document.dispatchEvent(new CustomEvent('loader:done'));
   }
+  function onKey(event) { if (navigationKeys.has(event.key)) complete(); }
+  function onScrollIntent() { complete(); }
+  function onMotionChange(event) { if (event.matches) complete(); }
+  function onPageHide() { complete(); }
+  function onVisibility() { if (document.hidden) complete(); }
 
+  function showGreeting(index) {
+    if (index === activeIndex) return;
+    activeIndex = index;
+    const greeting = greetings[index];
+    animation?.cancel();
+    const writing = greeting.lang === 'ne' && handwriting?.content && typeof word.replaceChildren === 'function';
+    if (writing) word.replaceChildren(handwriting.content.cloneNode(true));
+    else word.textContent = greeting.text;
+    word.lang = greeting.lang; word.dataset.f = greeting.font;
+    word.dataset.writing = String(!!writing);
+    language.textContent = greeting.label;
+    loader.dataset.palette = String(index % 3);
+    if (!writing && index > 0 && typeof word.animate === 'function') {
+      animation = word.animate([
+        { opacity: 0, filter: 'blur(4px)', transform: 'translateY(5px)' },
+        { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' }
+      ], { duration: 140, easing: 'ease-out', fill: 'both' });
+    }
+  }
   function tick(now) {
     if (!running) return;
     try {
       const elapsed = now - startedAt;
-      fill.style.transform = 'scaleX(' + Math.min(1, elapsed / duration) + ')';
-      if (elapsed >= duration) {
-        loader.classList.add('is-exiting');
-        exitTimer = setTimeout(complete, 180);
-        return;
-      }
+      const timeProgress = Math.min(1, elapsed / duration);
+      setProgress(ready ? timeProgress : Math.min(.92, timeProgress * .92));
       let boundary = 0;
-      const index = greetings.findIndex(greeting => {
-        boundary += greeting.duration;
-        return elapsed < boundary;
-      });
-      if (index !== activeIndex) {
-        activeIndex = index;
-        const greeting = greetings[index];
-        animation?.cancel();
-        word.textContent = greeting.text;
-        word.lang = greeting.lang;
-        word.dataset.f = greeting.font || 'dev';
-        word.dir = greeting.dir || 'ltr';
-        language.textContent = greeting.label;
-        loader.dataset.palette = String(index % 3);
-        // Directional motion blur at the edges; most of each hold stays sharp and still.
-        animation = word.animate([
-          { opacity: 0, filter: 'blur(7px)', transform: 'translateX(12px) scaleX(1.03)' },
-          { opacity: 1, filter: 'blur(0px)', transform: 'translateX(0) scaleX(1)', offset: .16 },
-          { opacity: 1, filter: 'blur(0px)', transform: 'translateX(0) scaleX(1)', offset: .9 },
-          { opacity: index === greetings.length - 1 ? 1 : 0,
-            filter: index === greetings.length - 1 ? 'blur(0px)' : 'blur(5px)',
-            transform: index === greetings.length - 1 ? 'translateX(0)' : 'translateX(-8px) scaleX(1.02)' }
-        ], { duration: greeting.duration, easing: 'linear', fill: 'both' });
+      let index = greetings.findIndex(greeting => { boundary += greeting.duration; return elapsed < boundary; });
+      if (index < 0) index = greetings.length - 1;
+      showGreeting(index);
+      if (elapsed >= duration && (ready || elapsed >= maximumDuration)) {
+        setProgress(1);
+        loader.classList.add('is-exiting');
+        exitTimer = setTimeout(complete, exitDuration);
+        return;
       }
       frame = requestAnimationFrame(tick);
     } catch (error) {
@@ -145,28 +113,30 @@
       complete();
     }
   }
-
   function run() {
     if (running || completed) return;
     running = true;
     root.dataset.loaderDone = 'false';
-    failSafe = setTimeout(complete, duration + 700);
-    previousOverflow = root.style.overflow;
-    previousBodyOverflow = document.body.style.overflow;
-    root.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+    failSafe = setTimeout(complete, maximumDuration + 200);
+    previousOverflow = root.style.overflow; previousBodyOverflow = document.body.style.overflow;
+    root.style.overflow = 'hidden'; document.body.style.overflow = 'hidden';
     root.classList.add('loader-running');
-    // The decorative overlay never hides the portfolio from assistive technology.
     document.addEventListener('keydown', onKey, true);
+    document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('wheel', onScrollIntent, { passive: true });
     window.addEventListener('touchmove', onScrollIntent, { passive: true });
     window.addEventListener('pagehide', onPageHide);
     motion.addEventListener('change', onMotionChange);
     startedAt = performance.now();
-    frame = requestAnimationFrame(tick);
+    try { showGreeting(0); frame = requestAnimationFrame(tick); } catch { complete(); }
   }
 
   skip.addEventListener('click', () => complete(true));
-  if (returningVisitor || motion.matches || window.location.hash || document.hidden) complete();
-  else run();
+  if (motion.matches || window.location.hash || document.hidden) { complete(); return; }
+  const loaded = document.readyState === 'complete' ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+  const image = document.querySelector('.portrait-base');
+  const decoded = image && typeof image.decode === 'function' ? Promise.resolve().then(() => image.decode()) : Promise.resolve();
+  Promise.allSettled([loaded, decoded, document.fonts?.ready || Promise.resolve()]).then(() => { ready = true; });
+  run();
 })();

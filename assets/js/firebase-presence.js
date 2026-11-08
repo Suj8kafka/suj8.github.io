@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 import { initializeAuth, inMemoryPersistence, signInAnonymously } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import { createLiveCursors } from "./live-cursors.js";
+import { createLiveCursors, cursorColor } from "./live-cursors.js";
 import { firebaseConfig } from "./firebase-config.js";
 import {
   getDatabase,
@@ -148,7 +148,7 @@ function renderVisitorList(visitors) {
     item.className = "live-presence-item";
     const dot = document.createElement("span");
     dot.className = "live-presence-item-dot";
-    dot.style.backgroundColor = visitor.color || "#f36b3d";
+    dot.style.backgroundColor = cursorColor(visitor.color);
     const details = document.createElement("span");
     details.innerHTML = `<strong></strong><small></small>`;
     details.querySelector("strong").textContent = uid === presenceRef?.key ? "You" : (visitor.label || "Anonymous visitor");
@@ -405,6 +405,7 @@ window.addEventListener("scroll", () => {
   if (isConnected && !presenceError) liveCursors.render(rawVisitors, presenceRef?.key);
 }, { passive: true });
 window.addEventListener("resize", () => {
+  liveCursors.capture();
   if (isConnected && !presenceError) liveCursors.render(rawVisitors, presenceRef?.key);
 }, { passive: true });
 
