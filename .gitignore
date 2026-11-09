@@ -1,0 +1,35 @@
+# Local Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary audits, browser screenshots and local tool state
+.tmp/
+.wrangler/
+.firebase/
+node_modules/
+*.log
+
+# Local credentials; keep shareable configuration templates visible
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+!.dev.vars.sample
+!.dev.vars.template
+
+# Local copy of the loader source archive
+/loader/files.zip
+
+# Operating system and editor temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~

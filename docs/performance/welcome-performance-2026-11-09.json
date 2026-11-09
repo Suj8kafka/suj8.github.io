@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-09",
+  "scope": "Local source verification; not production or CrUX",
+  "conditions": {
+    "lighthouseVersion": "13.6.0",
+    "browser": "Chrome 157 on Windows",
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "throttlingMethod": "simulate",
+    "cpuSlowdownMultiplier": 4,
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "cache": "cold",
+    "httpCompression": "gzip",
+    "thirdPartyVisitorServices": "blocked",
+    "concurrentBrowserTests": false
+  },
+  "runs": [
+    {
+      "run": 1,
+      "performance": 99,
+      "firstContentfulPaintMs": 1082.1675,
+      "largestContentfulPaintMs": 1812.25125,
+      "speedIndexMs": 1279.1718389241516,
+      "totalBlockingTimeMs": 72,
+      "cumulativeLayoutShift": 0,
+      "nonCompositedAnimationWarnings": 0
+    },
+    {
+      "run": 2,
+      "performance": 98,
+      "firstContentfulPaintMs": 889.01435,
+      "largestContentfulPaintMs": 1815.0430500000002,
+      "speedIndexMs": 1368.9743654958136,
+      "totalBlockingTimeMs": 130,
+      "cumulativeLayoutShift": 0,
+      "nonCompositedAnimationWarnings": 0
+    },
+    {
+      "run": 3,
+      "performance": 99,
+      "firstContentfulPaintMs": 1088.2176,
+      "largestContentfulPaintMs": 1810.8264,
+      "speedIndexMs": 1308.5611985838495,
+      "totalBlockingTimeMs": 67,
+      "cumulativeLayoutShift": 0,
+      "nonCompositedAnimationWarnings": 0
+    }
+  ],
+  "median": {
+    "performance": 99,
+    "firstContentfulPaintMs": 1082.1675,
+    "largestContentfulPaintMs": 1812.25125,
+    "speedIndexMs": 1308.5611985838495,
+    "totalBlockingTimeMs": 72,
+    "cumulativeLayoutShift": 0
+  },
+  "validation": {
+    "nodeTestsPassed": 137,
+    "browserChecksPassed": true,
+    "completeSlowMobileSequence": true,
+    "completeSlowMobileLayoutShift": 0
+  },
+  "limitations": [
+    "The final local runs did not achieve a score of 100.",
+    "Local gzip serving, CPU and blocked live services differ from production.",
+    "Audit warnings do not imply later SVG handwriting is composited.",
+    "The standard Python development server does not enable gzip.",
+    "No site, Worker, Firebase or DNS changes were published."
+  ]
+}

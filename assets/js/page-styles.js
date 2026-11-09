@@ -15,6 +15,10 @@ export function activatePageStyles({ document, window }) {
   }
   function finish() {
     document.documentElement.dataset.pageStyles = 'ready';
+    // Apply the full sheet without tweening from the temporary critical styles.
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      document.documentElement.dataset.pageTransitions = 'ready';
+    }));
     document.dispatchEvent(new window.CustomEvent('page-styles:ready'));
     if (window.matchMedia('(max-width: 800px), (pointer: coarse)').matches && !window.location.hash) {
       if (scrolled) fonts();

@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../loader/files/loader.js', import.meta.url), 'utf8');
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-function preview({ intro = false, styles = 'ready', returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false } = {}) {
+function preview({ intro = false, styles = 'ready', returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false, nativeProgress = false } = {}) {
   const frames = new Map(), timers = new Map(), emitted = [];
   const stylesheets = [], work = { storage: 0, fonts: 0, portrait: 0 };
   let clock = 0, sequence = 0;
@@ -31,6 +31,9 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
   const template = handwriting ? { content: { cloneNode: () => ({ textContent: 'नमस्ते' }) } } : undefined;
   if (handwriting) word.replaceChildren = node => { word.textContent = node.textContent; word.written = true; };
   word.animate = () => { if (brokenAnimation) throw new Error('Animation unavailable'); return { cancel() {} }; };
+  const progressMotion = { cancelled: 0, keyframes: [],
+    cancel() { this.cancelled++; }, effect: { setKeyframes(value) { progressMotion.keyframes = value; } } };
+  if (nativeProgress) fill.animate = keyframes => { progressMotion.keyframes = keyframes; return progressMotion; };
   const pending = new Promise(() => {});
   const document = Object.assign(target(), {
     documentElement: root, body, readyState: assets ? 'complete' : 'interactive', hidden: false, activeElement: {},
@@ -61,7 +64,7 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
     if (paint) { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(clock)); }
     for (const [id, timer] of [...timers]) if (timer.at <= clock) { timers.delete(id); timer.callback(); }
   }
-  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, advance };
+  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, progressMotion, advance };
 }
 
 test('normal desktop visits show the first welcome or returning Namaste', async () => {
@@ -69,7 +72,7 @@ test('normal desktop visits show the first welcome or returning Namaste', async 
     const page = preview({ returning, handwriting: true }); await flush();
     assert.equal(page.loader.dataset.visit, returning ? 'returning' : 'first');
     assert.equal(page.word.lang, returning ? 'ne' : 'en');
-    assert.equal(page.stylesheets.length, 1);
+    assert.equal(page.stylesheets.length, 0);
     page.advance(returning ? 1050 : 5820);
     page.advance(180);
     assert.equal(page.root.dataset.loaderDone, 'true');
@@ -99,9 +102,9 @@ test('first explicit previews show Hello, then handwritten Namaste, and finish a
   const page = preview({ intro: true, handwriting: true }); await flush();
   assert.equal(page.loader.dataset.visit, 'first');
   assert.equal(page.word.textContent, 'Hello');
-  page.advance(4500);
+  page.advance(3760);
   assert.equal(page.root.classList.contains('loader-running'), true, 'The first welcome must remain visible before Namaste');
-  page.advance(219); assert.equal(page.word.textContent, 'Hello');
+  page.advance(959); assert.equal(page.word.textContent, 'Hallo');
   page.advance(1); assert.equal(page.word.textContent, 'नमस्ते');
   assert.equal(page.word.written, true);
   page.advance(1100); page.advance(179);
@@ -169,6 +172,52 @@ test('mobile cycles five languages and finishes with animated Namaste at exactly
   assert.equal(page.body.style.overflow, 'scroll');
 });
 
+test('mobile reveals the portfolio after half a second while greetings continue in a dismissible panel', async () => {
+  const page = preview({ compact: true, handwriting: true }); await flush();
+  page.advance(499, false);
+  assert.equal(page.root.classList.contains('loader-docked'), false);
+  assert.equal(page.root.style.overflow, 'hidden');
+  page.advance(1, false);
+  assert.equal(page.root.classList.contains('loader-docked'), true);
+  assert.equal(page.root.style.overflow, 'auto');
+  assert.equal(page.body.style.overflow, 'scroll');
+  assert.equal(page.skip.attributes['aria-label'], 'Skip intro');
+  assert.equal(page.word.lang, 'en');
+  assert.deepEqual(page.emitted, [], 'Background libraries still wait until the welcome finishes');
+  page.advance(200);
+  assert.equal(page.word.lang, 'es');
+  page.skip.dispatch('click');
+  assert.equal(page.root.classList.contains('loader-docked'), false);
+  assert.equal(page.loader.style.display, 'none');
+  assert.equal(page.heading.focused, true);
+  assert.equal(page.frames.size, 0);
+  assert.equal(page.timers.size, 0);
+  assert.deepEqual(page.emitted, ['loader:done']);
+});
+
+test('early skip cancels the panel reveal and desktop retains its full-screen sequence', () => {
+  const phone = preview({ compact: true });
+  phone.skip.dispatch('click'); phone.advance(500);
+  assert.equal(phone.root.classList.contains('loader-docked'), false);
+  assert.equal(phone.timers.size, 0);
+  const desktop = preview(); desktop.advance(1000);
+  assert.equal(desktop.root.classList.contains('loader-docked'), false);
+  assert.equal(desktop.root.style.overflow, 'hidden');
+});
+
+test('native progress needs no continuous JavaScript frames and is cancelled when the intro is skipped', async () => {
+  const page = preview({ compact: true, nativeProgress: true }); await flush();
+  assert.equal(page.progressMotion.keyframes.at(-1).transform, 'scaleX(1)');
+  page.advance(16);
+  assert.equal(page.frames.size, 0);
+  page.advance(684);
+  assert.equal(page.word.lang, 'es', 'Greeting timers continue without an animation-frame loop');
+  page.skip.dispatch('click');
+  assert.equal(page.progressMotion.cancelled, 1);
+  assert.equal(page.fill.style.transform, 'scaleX(1)');
+  assert.equal(page.timers.size, 0);
+});
+
 test('mobile full sequence remains five seconds for returning visitors and slow or blocked assets', async () => {
   for (const options of [{ returning: true }, { assets: false }, { blockedStorage: true }]) {
     const page = preview({ compact: true, ...options }); await flush();
@@ -182,13 +231,13 @@ test('mobile full sequence remains five seconds for returning visitors and slow 
   assert.equal(stalled.root.dataset.loaderDone, 'true');
 });
 
-test('phone welcome can be skipped immediately and stylesheet failure never locks scrolling', () => {
+test('phone welcome can be skipped immediately without waiting for external styles', () => {
   const phone = preview({ compact: true });
   phone.skip.dispatch('click');
   assert.equal(phone.root.dataset.loaderDone, 'true');
   assert.equal(phone.heading.focused, true);
   const failed = preview({ compact: true, styles: 'pending' });
-  failed.stylesheets[0].dispatch('error');
+  failed.skip.dispatch('click');
   assert.equal(failed.root.dataset.loaderDone, 'true');
   assert.equal(failed.body.style.overflow, 'scroll');
 });
@@ -234,22 +283,6 @@ test('Namaste uses the pen-stroke artwork and holds the completed word before di
   assert.equal(page.root.dataset.loaderDone, 'true');
 });
 
-test('eligible welcomes request intro CSS and stylesheet failure never locks the page', () => {
-  const page = preview({ intro: true, styles: 'pending' });
-  assert.equal(page.stylesheets.length, 1);
-  assert.match(page.stylesheets[0].href, /^loader\/files\/loader\.css\?/);
-  assert.equal(page.root.classList.contains('loader-running'), false);
-  assert.equal(page.root.style.overflow, 'auto');
-  page.stylesheets[0].dispatch('error');
-  assert.deepEqual(page.emitted, ['loader:done']);
-  page.stylesheets[0].dispatch('load');
-  assert.equal(page.root.classList.contains('loader-running'), false);
-  const stalled = preview({ intro: true, styles: 'pending' });
-  stalled.advance(2500);
-  assert.deepEqual(stalled.emitted, ['loader:done']);
-  assert.equal(stalled.body.style.overflow, 'scroll');
-});
-
 test('Namaste drawing is local vector geometry with a bounded, ordered stroke sequence', () => {
   const svg = readFileSync(new URL('../loader/files/namaste.svg', import.meta.url), 'utf8');
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -260,5 +293,48 @@ test('Namaste drawing is local vector geometry with a bounded, ordered stroke se
   for (let index = 0; index < timing.length; index++) {
     assert.ok(timing[index][1] > 0 && timing[index][0] + timing[index][1] <= 761);
     if (index > 0) assert.ok(timing[index][0] >= timing[index - 1][0] + timing[index - 1][1]);
+  }
+});
+
+test('desktop first visits cycle every language with compositor-friendly text motion', async () => {
+  const page = preview(); await flush();
+  for (const [delay, lang] of [[940, 'es'], [940, 'fr'], [940, 'it'], [940, 'de'], [960, 'ne']]) {
+    page.advance(delay);
+    assert.equal(page.word.lang, lang);
+  }
+  assert.doesNotMatch(source, /filter: 'blur/);
+  assert.equal(page.stylesheets.length, 0);
+});
+
+test('first-paint bootstrap precedes body and inline welcome CSS matches its source', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../loader/files/loader.css', import.meta.url), 'utf8');
+  assert.ok(html.includes(css));
+  assert.doesNotMatch(css, /\[data-mode="mobile"\]/, 'Mobile artwork dimensions must apply before the deferred script arrives');
+  assert.ok(html.indexOf('id="loader-bootstrap"') < html.indexOf('<body>'));
+  assert.match(html, /root.classList.add\('loader-running'\)/);
+  assert.match(html, /}, 9000\)/);
+});
+
+test('head bootstrap covers first paint and releases the page if the deferred script fails', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const boot = html.match(/<script id="loader-bootstrap">([\s\S]*?)<\/script>/)[1];
+  for (const reduced of [false, true]) {
+    const classes = new Set(), timers = [], events = [];
+    const root = { dataset: {}, classList: { add: name => classes.add(name), remove: name => classes.delete(name) } };
+    vm.runInNewContext(boot, {
+      document: { documentElement: root, dispatchEvent: event => events.push(event.type) },
+      window: {}, navigator: {}, location: { hash: '' },
+      matchMedia: () => ({ matches: reduced }),
+      setTimeout: callback => timers.push(callback),
+      CustomEvent: class { constructor(type) { this.type = type; } }
+    });
+    assert.equal(classes.has('loader-running'), !reduced);
+    if (!reduced) {
+      timers[0]();
+      assert.equal(classes.has('loader-running'), false);
+      assert.equal(root.dataset.loaderDone, 'true');
+      assert.deepEqual(events, ['loader:done']);
+    }
   }
 });

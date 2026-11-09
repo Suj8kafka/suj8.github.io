@@ -22,6 +22,9 @@ test('generated first-screen CSS is synchronized, bounded and loads only the hea
   assert.match(html, /<noscript><link rel="stylesheet" href="assets\/css\/site\.css/);
   assert.match(generated, /\.hero\s*\{/);
   assert.match(generated, /max-width: 800px/);
+  assert.match(generated, /html\[data-page-transitions="pending"\]/);
+  assert.match(generated, /html\.loader-running\[data-page-styles="pending"\] main > section:not\(\.hero\)/,
+    'Offscreen layout containment must be temporary and leave no-JavaScript pages alone');
 });
 
 function preview({ loaded = true, decode = 'ready', hash = '', compact = false, checkLayoutReads = false } = {}) {
@@ -65,6 +68,17 @@ test('full styling waits for a decoded portrait and two paint opportunities', as
   assert.equal(page.sheet.media, 'all');
   assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
   assert.deepEqual(page.emitted, ['page-styles:ready']);
+});
+
+test('initial stylesheet activation settles before enabling colour and layout transitions', async () => {
+  const page = preview();
+  page.document.documentElement.dataset.pageTransitions = 'pending';
+  await flush(); page.paint(); page.paint(); await page.ready;
+  assert.equal(page.document.documentElement.dataset.pageTransitions, 'pending');
+  page.paint();
+  assert.equal(page.document.documentElement.dataset.pageTransitions, 'pending');
+  page.paint();
+  assert.equal(page.document.documentElement.dataset.pageTransitions, 'ready');
 });
 
 test('stylesheet startup and activation never query scroll geometry', async () => {

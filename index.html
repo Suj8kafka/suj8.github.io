@@ -1,8 +1,20 @@
 <!doctype html>
-<html lang="en" data-page-styles="pending">
+<html lang="en" data-page-styles="pending" data-page-transitions="pending">
 
 <head>
   <meta charset="UTF-8">
+  <script id="loader-bootstrap">
+    (() => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData || location.hash || document.hidden) return;
+      const root = document.documentElement;
+      root.classList.add('loader-running');
+      window.loaderBootTimeout = setTimeout(() => {
+        root.classList.remove('loader-running');
+        root.dataset.loaderDone = 'true';
+        document.dispatchEvent(new CustomEvent('loader:done'));
+      }, 9000);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description"
     content="Sujeet Khadka is a UI/UX Designer in Nepal. Explore his portfolio, design work, writing, experience, and contact details.">
@@ -25,11 +37,178 @@
     content="The official portfolio of Sujeet Khadka, a UI/UX and visual designer based in Nepal.">
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/sujeet-at-exhibition.jpeg?v=8449d193e9e6">
   <title>Sujeet Khadka - UI/UX Designer</title>
-  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/space-grotesk-latin.woff2?v=0640890476fc" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/space-grotesk-latin.woff2?v=0640890476fc" fetchpriority="low" crossorigin>
   <link rel="preload" as="image" type="image/webp" href="assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b"
     imagesrcset="assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b 440w, assets/images/sujeet-hero-640.webp?v=f38fa7a0fc08 640w, assets/images/sujeet-hero-880.webp?v=d9f964f92b22 880w"
     imagesizes="(max-width: 462px) calc(90vw - 36px), (max-width: 800px) 380px, (max-width: 1100px) 400px, 440px" fetchpriority="high">
   <link rel="icon" type="image/png" href="assets/images/favicon.png?v=901f120fb48e">
+  <style id="welcome-styles">/* Inherit the portfolio's light/dark palette; keep the welcome self-contained. */
+#loader {
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --track: var(--line);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  place-items: center;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: var(--body);
+  opacity: 1;
+  transition: opacity .18s ease;
+}
+html.loader-running:not(.loader-docked), html.loader-running:not(.loader-docked) body { overflow: hidden; overscroll-behavior: none; }
+html.loader-running #loader { display: grid; }
+html.loader-running .marquee-track { animation-play-state: paused; }
+#loader.is-exiting { opacity: 0; }
+
+/* Crossfade a few low-opacity washes without shifting the text or the whole page. */
+.ld-wash {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  animation: loader-wash-drift 12s ease-in-out infinite alternate;
+}
+.ld-wash-one {
+  background: radial-gradient(ellipse at 12% 18%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+    radial-gradient(ellipse at 88% 85%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 55%);
+}
+.ld-wash-two {
+  background: radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 55%),
+    radial-gradient(ellipse at 18% 88%, color-mix(in srgb, var(--lime) 12%, transparent), transparent 55%);
+}
+.ld-wash-three {
+  background: radial-gradient(ellipse at 14% 75%, color-mix(in srgb, var(--pink) 14%, transparent), transparent 55%),
+    radial-gradient(ellipse at 85% 22%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 55%);
+}
+#loader[data-palette="0"] .ld-wash-one,
+#loader[data-palette="1"] .ld-wash-two,
+#loader[data-palette="2"] .ld-wash-three { opacity: 1; }
+@keyframes loader-wash-drift { to { transform: translate3d(2%, -1%, 0); } }
+
+/* Decorative linework stays outside the reading area and out of the accessibility tree. */
+.ld-graphic {
+  position: absolute;
+  width: min(92vw, 720px);
+  height: auto;
+  color: var(--accent);
+  opacity: .16;
+  pointer-events: none;
+  animation: loader-orbit 18s ease-in-out infinite alternate;
+}
+.ld-graphic path, .ld-graphic ellipse, .ld-graphic circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.ld-graphic .ld-dot { fill: currentColor; stroke: none; }
+@keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
+@media (max-width: 800px), (pointer: coarse) {
+  .ld-graphic { width: 140vw; max-width: 760px; opacity: .2; animation-duration: 5s; }
+  .ld-graphic path:first-child { stroke-dasharray: 22 10; }
+  .ld-wash { animation-duration: 5s; }
+}
+#loader[data-visit="returning"] .ld-graphic { display: none; }
+#loader[data-visit="returning"] .ld-wash { animation: none; }
+
+.ld-top {
+  margin-bottom: 24px;
+  font: 700 40px/1.2 var(--display);
+  letter-spacing: -.06em;
+}
+.ld-top i { color: var(--accent); font-style: normal; }
+.ld-stage {
+  position: relative;
+  width: min(100%, 760px);
+  padding: 24px;
+  text-align: center;
+  transform: translateY(-16px);
+}
+.ld-kicker { margin: 0 0 12px; font-size: 13px; line-height: 1.6; }
+.ld-word {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: clamp(130px, 22vw, 185px);
+  font: 400 clamp(44px, 10vw, 96px)/1.6 "Noto Sans Devanagari", sans-serif;
+}
+.ld-word[data-f="headline"] { font-family: var(--display); font-weight: 500; letter-spacing: -.04em; }
+.ld-word[data-f="sc"] { font-family: "Noto Sans SC", sans-serif; }
+.ld-word[data-f="ar"] { font-family: "Noto Naskh Arabic", serif; }
+.ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
+.ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
+.ld-write-stroke { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) linear var(--pen-delay) forwards; }
+.ld-write-finish { opacity: 0; animation: ld-ink-finish .12s ease .76s forwards; }
+@keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
+@keyframes ld-ink-finish { to { opacity: 1; } }
+.ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
+.ld-bar {
+  width: min(160px, 45vw);
+  height: 3px;
+  margin: 32px auto 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--track);
+}
+.ld-fill { width: 100%; height: 100%; background: var(--fg); transform: scaleX(0); transform-origin: left; }
+.ld-skip {
+  position: absolute;
+  top: max(24px, env(safe-area-inset-top));
+  right: max(24px, env(safe-area-inset-right));
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  border-radius: 24px;
+  color: var(--fg);
+  background: var(--bg);
+  font: 500 14px/1.5 var(--body);
+  cursor: pointer;
+}
+.ld-skip:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ld-skip:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
+/* Finish the same welcome above the phone navigation, leaving the page usable. */
+html.loader-docked #loader {
+  inset: auto max(16px, env(safe-area-inset-right)) calc(88px + env(safe-area-inset-bottom)) auto;
+  width: 184px;
+  border: 1px solid var(--track);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(24, 33, 30, .12);
+  contain: layout paint;
+  animation: loader-panel-in .18s ease-out;
+}
+html.loader-docked .ld-stage { width: 100%; padding: 28px 12px 12px; transform: none; }
+html.loader-docked .ld-top, html.loader-docked .ld-kicker { display: none; }
+html.loader-docked .ld-graphic { display: none; }
+html.loader-docked .ld-word { height: 42px; font-size: 30px; }
+html.loader-docked .ld-language { margin-top: 4px; font-size: 11px; }
+html.loader-docked .ld-bar { width: 100px; height: 2px; margin-top: 10px; }
+html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; font: 22px/1 sans-serif; }
+@keyframes loader-panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-height: 420px) {
+  .ld-stage { padding: 16px; transform: none; }
+  .ld-top { margin-bottom: 8px; font-size: 28px; }
+  .ld-kicker { display: none; }
+  .ld-word { height: 85px; font-size: 48px; }
+  .ld-language { margin-top: 4px; font-size: 12px; }
+  .ld-bar { margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.loader-running #loader { display: none; }
+  #loader, .ld-wash, .ld-graphic, .ld-graphic path { animation: none !important; transition: none; }
+  .ld-write-stroke, .ld-write-finish { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
+}
+@media (forced-colors: active) {
+  .ld-wash, .ld-graphic { display: none; }
+  .ld-bar { border: 1px solid CanvasText; }
+  .ld-fill { background: CanvasText; }
+}
+</style>
   <style id="critical-styles">
 @font-face{font-family: "Space Grotesk"; font-style: normal; font-weight: 500 700; font-display: swap; src: url("assets/fonts/space-grotesk-latin.woff2?v=0640890476fc") format("woff2");}
 :root{--ink: #18211e;
@@ -57,6 +236,8 @@
 html{scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: clip;}
 body{margin: 0; color: var(--ink); background: var(--paper); font-family: var(--body); transition: color .3s, background .3s; overflow-x: clip;}
 #loader{display: none;}
+html[data-page-transitions="pending"] *, html[data-page-transitions="pending"] *::before, html[data-page-transitions="pending"] *::after{transition: none !important;}
+html.loader-running[data-page-styles="pending"] main > section:not(.hero){content-visibility: auto; contain-intrinsic-size: auto 800px;}
 html.is-anchor-scrolling .scroll-motion{visibility: visible; will-change: opacity; transition: none;}
 html[data-scroll-effects="light"] .scroll-motion{-webkit-backdrop-filter: blur(1.2px); backdrop-filter: blur(1.2px);}
 html[data-scroll-effects="minimal"] .scroll-motion{display: none;}
@@ -202,9 +383,9 @@ html{scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));}
 .live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}
 img,video{max-width:100%}
 </style>
-  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261109-versioned-media" media="print">
-  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261109-versioned-media"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
-  <script type="module" src="assets/js/page-styles.js?v=20261109-layout-read"></script>
+  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261109-settle-transitions" media="print">
+  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261109-settle-transitions"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
+  <script type="module" src="assets/js/page-styles.js?v=20261109-settle-transitions"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -262,8 +443,8 @@ img,video{max-width:100%}
   <div class="ld-stage">
     <div class="ld-top" aria-hidden="true">Sujeet<i>.</i></div>
     <p class="ld-kicker" aria-hidden="true">A little hello from Nepal</p>
-    <div id="ld-word" class="ld-word" data-f="dev" lang="ne" aria-hidden="true">नमस्ते</div>
-    <span id="ld-lang" class="ld-language" aria-hidden="true">Namaste · Nepali</span>
+    <div id="ld-word" class="ld-word" data-f="headline" lang="en" aria-hidden="true">Hello</div>
+    <span id="ld-lang" class="ld-language" aria-hidden="true">English</span>
     <div class="ld-bar" role="progressbar" aria-label="Welcome intro progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="ld-fill" class="ld-fill"></div></div>
   </div>
   <button class="ld-skip" type="button">Skip intro</button>
@@ -889,7 +1070,7 @@ img,video{max-width:100%}
   <script src="assets/js/main.js?v=20261109-native-skill-buttons" defer></script>
   <script type="module" src="assets/js/scroll-navigation.js?v=20261109-layout-read"></script>
   <script type="module" src="assets/js/mobile-navigation.js?v=20261109-layout-read"></script>
-  <script src="loader/files/loader.js?v=20261109-six-second-welcome" defer></script>
+  <script src="loader/files/loader.js?v=20261109-early-reveal-welcome" defer></script>
   <script type="module" src="assets/js/enhancements.js?v=20261109-first-view"></script>
 </body>
 

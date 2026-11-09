@@ -49,7 +49,7 @@ test('hero uses one responsive image preload matching its eagerly discoverable W
   }
 });
 
-test('only the headline font is preloaded and normal visits never request welcome CSS', () => {
+test('only the headline font is preloaded and welcome CSS needs no extra request', () => {
   const fonts = [...html.matchAll(/<link\b[^>]*\bas="font"[^>]*>/g)];
   assert.equal(fonts.length, 1);
   assert.match(fonts[0][0], /space-grotesk-latin\.woff2/);
