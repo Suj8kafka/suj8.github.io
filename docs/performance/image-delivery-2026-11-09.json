@@ -1,0 +1,65 @@
+{
+    "date":  "2026-11-09",
+    "conditions":  "Local uncompressed Python HTTP, headless Brave/Chromium 156, Lighthouse simulated mobile defaults. Visitor services blocked to avoid live records. Not a production score comparison.",
+    "lighthouseVersion":  "13.6.0",
+    "performanceScore":  0.95,
+    "fcpMs":  1460.9121,
+    "lcpMs":  2708.8681500000002,
+    "tbtMs":  90,
+    "speedIndexMs":  2460.836195082749,
+    "cls":  0,
+    "imageDeliveryScore":  1,
+    "imageWastedBytes":  0,
+    "browserChecks":  {
+                          "value":  [
+                                        {
+                                            "width":  390,
+                                            "deviceScaleFactor":  2,
+                                            "items":  [
+                                                          {
+                                                              "src":  "http://127.0.0.1:8000/assets/images/selected-work/aama-cure-home-960.webp?v=f02b7c25ce90",
+                                                              "width":  348,
+                                                              "height":  220,
+                                                              "naturalWidth":  347,
+                                                              "naturalHeight":  173
+                                                          },
+                                                          {
+                                                              "src":  "http://127.0.0.1:8000/assets/images/selected-work/nakka-screen-0-compact.webp?v=73bc4c4f90ea",
+                                                              "width":  348,
+                                                              "height":  220,
+                                                              "naturalWidth":  369,
+                                                              "naturalHeight":  800
+                                                          }
+                                                      ],
+                                            "noMissingAssets":  true,
+                                            "noOverflow":  true
+                                        },
+                                        {
+                                            "width":  1440,
+                                            "deviceScaleFactor":  2,
+                                            "items":  [
+                                                          {
+                                                              "src":  "http://127.0.0.1:8000/assets/images/selected-work/aama-cure-home-640.webp?v=bd75a3c9f085",
+                                                              "width":  284,
+                                                              "height":  245,
+                                                              "naturalWidth":  308,
+                                                              "naturalHeight":  154
+                                                          },
+                                                          {
+                                                              "src":  "http://127.0.0.1:8000/assets/images/selected-work/nakka-screen-0-compact.webp?v=73bc4c4f90ea",
+                                                              "width":  284,
+                                                              "height":  245,
+                                                              "naturalWidth":  369,
+                                                              "naturalHeight":  800
+                                                          }
+                                                      ],
+                                            "noMissingAssets":  true,
+                                            "noOverflow":  true
+                                        }
+                                    ],
+                          "Count":  2
+                      },
+    "nodeTestsPassed":  131,
+    "workerBuild":  "Wrangler 4.158.0 deployment dry run passed; not deployed",
+    "cachePolicyActive":  false
+}

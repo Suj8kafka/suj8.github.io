@@ -1,4 +1,5 @@
 // Apply at the Cloudflare edge in front of the existing GitHub Pages origin.
+import { applyAssetCache } from './asset-cache.mjs';
 export const securityHeaders = {
   "Content-Security-Policy": [
     "default-src 'self'",
@@ -46,6 +47,7 @@ export default {
     for (const [name, value] of Object.entries(securityHeaders)) {
       response.headers.set(name, value);
     }
+    applyAssetCache(request, response);
     return response;
   }
 };

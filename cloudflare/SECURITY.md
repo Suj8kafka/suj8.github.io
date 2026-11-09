@@ -10,6 +10,13 @@ not deploy this Worker or activate response headers.** GitHub Pages publishes th
 static portfolio separately; there is no automatic Worker deployment workflow.
 Do not treat a successful Git push or local tests as evidence of live headers.
 
+The prepared Worker also applies [versioned static-asset caching](../docs/asset-delivery.md).
+Only explicitly versioned public asset URLs receive `public, max-age=31536000,
+immutable`. HTML, login pages, mutable module URLs, failures and private responses
+retain the origin cache policy. This caching change also requires a separate
+Worker deployment; it is not activated by a Git push. Preserve query parameters
+in the Cloudflare cache key so different asset versions remain distinct.
+
 Both portfolio DNS records must be proxied through Cloudflare (orange cloud).
 Keep the existing GitHub Pages origin and use Cloudflare Full (strict) TLS.
 
