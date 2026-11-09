@@ -81,15 +81,27 @@ try {
   const screenshot = await send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false });
   await writeFile(output.replace(/\.json$/, '.png'), Buffer.from(screenshot.data, 'base64'));
   console.log(JSON.stringify({output, lcp:result.lcp, paints:result.paints, loaderRunning:result.loaderRunning, heroSource:result.heroSource, inlinePortrait:result.inlinePortrait, motionEngine:result.motionEngine, trail:result.trail, overflow:result.overflow, fonts:result.fonts}));
+  if (args.includes('--check-scroll') && !noJs) {
+    await evaluate('window.scrollTo({top:500,behavior:"instant"})');
+    for (let attempt = 0; attempt < 40; attempt++) {
+      if (await evaluate('document.documentElement.dataset.motionEngine === "gsap"')) break;
+      await delay(100);
+    }
+    report.afterScroll = await evaluate('({motionEngine:document.documentElement.dataset.motionEngine,trail:!!document.querySelector(".scroll-trail"),secondaryFonts:!!document.getElementById("secondary-fonts"),pageStyles:document.documentElement.dataset.pageStyles})');
+    await writeFile(output, JSON.stringify(report, null, 2) + '\n');
+    console.log(JSON.stringify({afterScroll:report.afterScroll}));
+  }
   if (args.includes('--export-portrait')) {
+    const widths = option('--export-widths', '440,640,880').split(',').map(Number);
+    if (widths.some(width => !Number.isInteger(width) || width < 1 || width > 1145)) throw new Error('Portrait widths must be integers from 1 to 1145.');
     await send('Emulation.setCPUThrottlingRate', { rate:1 });
     const images = await evaluate(`(async () => {
       const image = new Image(); image.src = new URL('assets/images/sujeet-hero-%20vector2.svg', location.href).href;
       await image.decode();
-      return [440,880].map(width => {
+      return ${JSON.stringify(widths)}.map(width => {
         const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = Math.round(width * 1527 / 1145);
         canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-        return {width, height:canvas.height, data:canvas.toDataURL('image/webp', .82).split(',')[1]};
+        return {width, height:canvas.height, data:canvas.toDataURL('image/webp', width === 640 ? .76 : .82).split(',')[1]};
       });
     })()`);
     for (const image of images) {

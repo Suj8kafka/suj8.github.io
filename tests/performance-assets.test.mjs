@@ -18,11 +18,26 @@ test('hero uses one responsive image preload matching its eagerly discoverable W
   assert.equal(image.fetchpriority, 'high');
   assert.equal(image.width, '1145'); assert.equal(image.height, '1527');
   const vector = read('assets/images/sujeet-hero- vector2.svg');
-  for (const [width, budget] of [[440, 40000], [880, 80000]]) {
+  for (const [width, budget] of [[440, 40000], [640, 40000], [880, 80000]]) {
     const bytes = read(`assets/images/sujeet-hero-${width}.webp`);
     assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
     assert.ok(bytes.length < budget && bytes.length < vector.length * .15, 'A mobile fallback must remain substantially smaller than the vector');
   }
+});
+
+test('only the headline font is preloaded and normal visits never request welcome CSS', () => {
+  const fonts = [...html.matchAll(/<link\b[^>]*\bas="font"[^>]*>/g)];
+  assert.equal(fonts.length, 1);
+  assert.match(fonts[0][0], /space-grotesk-latin\.woff2/);
+  assert.doesNotMatch(html, /<link\b[^>]*href="loader\/files\/loader\.css/);
+  const css = read('assets/css/site.css').toString();
+  assert.match(css, /#loader\s*\{\s*display:\s*none/);
+  const secondary = read('assets/css/secondary-fonts.css').toString();
+  const faces = [...secondary.matchAll(/@font-face\s*\{([^}]+)\}/g)];
+  assert.equal(faces.length, 3);
+  faces.forEach(face => assert.match(face[1], /font-display:\s*optional/));
+  const video = attributes(html.match(/<video\b[^>]*id="introVid"[^>]*>/)[0]);
+  assert.equal(video.loading, 'lazy'); assert.equal(video.preload, 'none');
 });
 
 test('critical HTML leaves optional libraries to the scheduler and uses valid locally hosted fonts', () => {

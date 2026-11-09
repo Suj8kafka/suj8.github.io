@@ -33,8 +33,15 @@ export default {
       url.protocol = "https:";
       response = new Response(null, { status: 308, headers: { Location: url.href } });
     } else {
-      const origin = await fetch(request);
-      response = new Response(origin.body, origin);
+      try {
+        const origin = await fetch(request);
+        response = new Response(origin.body, origin);
+      } catch {
+        // Even an origin connection failure gets the same protection as a normal response.
+        response = new Response('The portfolio is temporarily unavailable.', {
+          status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+        });
+      }
     }
     for (const [name, value] of Object.entries(securityHeaders)) {
       response.headers.set(name, value);

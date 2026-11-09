@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-09",
+  "site": "https://sujeetkhadka.com.np/",
+  "testedUrl": "http://127.0.0.1:8000/",
+  "conditions": {
+    "method": "Lighthouse 13.6.0 default simulated mobile throttling",
+    "browser": "Brave / HeadlessChrome 156",
+    "server": "local Python HTTP",
+    "blockedRequests": [
+      "*firebase*",
+      "*cloudflare*",
+      "*identitytoolkit*"
+    ],
+    "productionVerified": false,
+    "fieldLcpUpdated": false
+  },
+  "results": [
+    {
+      "run": "render-delay-before",
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T04:32:46.713Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "lcpMs": 3613.6769999999997,
+      "fcpMs": 1509.118,
+      "tbtMs": 0,
+      "cls": 0.001294189726129707,
+      "performance": 90,
+      "accessibility": 100,
+      "initialResources": [
+        {
+          "url": "/assets/fonts/space-grotesk-latin.woff2",
+          "transferSize": 22491,
+          "startTime": 116.19999998807907,
+          "endTime": 123.9180000424385
+        },
+        {
+          "url": "/assets/images/sujeet-hero-880.webp",
+          "transferSize": 64259,
+          "startTime": 116.45200002193451,
+          "endTime": 124.05199998617172
+        },
+        {
+          "url": "/assets/css/site.css",
+          "transferSize": 69449,
+          "startTime": 117.7969999909401,
+          "endTime": 130.77899998426437
+        },
+        {
+          "url": "/assets/images/sujeet-intro-poster.jpeg",
+          "transferSize": 73647,
+          "startTime": 121.81000006198883,
+          "endTime": 130.98700004816055
+        },
+        {
+          "url": "/assets/fonts/dm-sans-latin.woff2",
+          "transferSize": 37135,
+          "startTime": 224.66300004720688,
+          "endTime": 232.07900005578995
+        },
+        {
+          "url": "/assets/fonts/dm-mono-500-latin.woff2",
+          "transferSize": 15191,
+          "startTime": 224.82300001382828,
+          "endTime": 232.3870000243187
+        },
+        {
+          "url": "/assets/fonts/dm-mono-400-latin.woff2",
+          "transferSize": 15023,
+          "startTime": 224.96000003814697,
+          "endTime": 236.2490000128746
+        }
+      ],
+      "lcpDiscovery": 1,
+      "renderBlocking": 0
+    },
+    {
+      "run": "render-delay-deferred-css",
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T05:47:21.802Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "lcpMs": 2259.511,
+      "fcpMs": 1220.7555,
+      "tbtMs": 110,
+      "cls": 0,
+      "performance": 98,
+      "accessibility": 100,
+      "initialResources": [
+        {
+          "url": "/assets/fonts/space-grotesk-latin.woff2",
+          "transferSize": 22491,
+          "startTime": 98.9200000166893,
+          "endTime": 106.18500000238419
+        },
+        {
+          "url": "/assets/images/sujeet-hero-640.webp",
+          "transferSize": 34233,
+          "startTime": 99.94999998807907,
+          "endTime": 111.62299996614456
+        },
+        {
+          "url": "/assets/css/site.css",
+          "transferSize": 69089,
+          "startTime": 225.3779999613762,
+          "endTime": 228.24599999189377
+        }
+      ],
+      "lcpDiscovery": 1,
+      "renderBlocking": 1
+    },
+    {
+      "run": "render-delay-repeat-2",
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T06:07:40.149Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "lcpMs": 2859.612,
+      "fcpMs": 1053.204,
+      "tbtMs": 107,
+      "cls": 0,
+      "performance": 95,
+      "accessibility": 100,
+      "initialResources": [
+        {
+          "url": "/assets/fonts/space-grotesk-latin.woff2",
+          "transferSize": 22491,
+          "startTime": 66.76800000667572,
+          "endTime": 72.87700003385544
+        },
+        {
+          "url": "/assets/images/sujeet-hero-640.webp",
+          "transferSize": 34233,
+          "startTime": 67.95500004291534,
+          "endTime": 77.15100002288818
+        },
+        {
+          "url": "/assets/css/site.css",
+          "transferSize": 69089,
+          "startTime": 148.5770000219345,
+          "endTime": 155.32499998807907
+        }
+      ],
+      "lcpDiscovery": 1,
+      "renderBlocking": 1
+    },
+    {
+      "run": "render-delay-repeat-3",
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T06:07:53.669Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "lcpMs": 2256.249,
+      "fcpMs": 1053.1245,
+      "tbtMs": 150,
+      "cls": 0,
+      "performance": 97,
+      "accessibility": 100,
+      "initialResources": [
+        {
+          "url": "/assets/fonts/space-grotesk-latin.woff2",
+          "transferSize": 22491,
+          "startTime": 80.79900002479553,
+          "endTime": 87.91300004720688
+        },
+        {
+          "url": "/assets/images/sujeet-hero-640.webp",
+          "transferSize": 34233,
+          "startTime": 81.02700006961823,
+          "endTime": 88.02600002288818
+        },
+        {
+          "url": "/assets/css/site.css",
+          "transferSize": 69089,
+          "startTime": 178.32500004768372,
+          "endTime": 235.53400003910065
+        }
+      ],
+      "lcpDiscovery": 1,
+      "renderBlocking": 1
+    }
+  ],
+  "finalSummary": {
+    "medianLcpMs": 2259.511,
+    "minLcpMs": 2256.249,
+    "maxLcpMs": 2859.612,
+    "allRunsWithin2500ms": false
+  },
+  "functionalChecks": {
+    "nodeTestsPassed": 94,
+    "criticalCssBytes": 13400,
+    "phoneMotionAndFontsWaitForScroll": true,
+    "scrollRibbonStarts": true,
+    "directContactLink": true,
+    "noJavaScriptFullStyling": true,
+    "viewportWidthsWithoutOverflow": [
+      320,
+      390,
+      800,
+      900,
+      1100,
+      1440
+    ]
+  },
+  "limits": [
+    "One final run exceeded 2.5 seconds.",
+    "Simulated lab LCP is separate from raw trace phase timings.",
+    "Local HTTP and blocked visitor services do not represent production geography/CDN and third-party costs.",
+    "Real-user 3.1-second LCP has not been remeasured."
+  ]
+}

@@ -1,3 +1,5 @@
+Follow-up: [mobile rendering improvements](mobile-rendering.md) records the subsequent actual Lighthouse baseline of 3.614s and three final runs with a 2.260s median. [Security and performance release notes](security-performance.md) describe the later removal of the automatic desktop intro; the animation now requires `/?intro=1`. The measurements and change inventory below describe the earlier PerformanceObserver experiment, which used a different method.
+
 ## Result
 
 Local cold-cache mobile measurement on 2026-11-09: **9.904s before → 2.368s median after**. Three optimized runs measured 2.368s, 2.316s and 2.408s. The LCP candidate remained the hero portrait: the original SVG before, the responsive 880px WebP afterward. The first optimized run requested GSAP at 3.054s, after the 2.368s contentful paint. Mobile made no request for the original vector and created no inline SVG portrait.

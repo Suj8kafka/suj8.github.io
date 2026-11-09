@@ -1,0 +1,580 @@
+{
+  "note": "Local Lighthouse CLI 13.6.0 using installed Chromium/Brave. Visitor/Firebase service requests blocked to avoid creating real visitor records. Not a deployed-site audit or a complete manual accessibility review.",
+  "before": {
+    "lighthouseVersion": "13.6.0",
+    "fetchTime": "2026-11-09T03:51:35.210Z",
+    "url": "http://127.0.0.1:8000/",
+    "accessibilityScore": 0.92,
+    "failedAuditIds": [
+      "aria-prohibited-attr",
+      "color-contrast",
+      "label-content-name-mismatch"
+    ],
+    "requestedRules": {
+      "aria-prohibited-attr": {
+        "score": 0,
+        "nodes": [
+          {
+            "selector": "div.experience-map > article.experience-node > div.experience-card > div.company-logo",
+            "snippet": "<div class=\"company-logo\" aria-label=\"Okay Journey logo\">",
+            "explanation": "Fix all of the following:\n  aria-label attribute cannot be used on \"div\" elements with no valid role attribute."
+          },
+          {
+            "selector": "div.experience-map > article.experience-node > div.experience-card > div.company-logo",
+            "snippet": "<div class=\"company-logo\" aria-label=\"KMAG logo\">",
+            "explanation": "Fix all of the following:\n  aria-label attribute cannot be used on \"div\" elements with no valid role attribute."
+          },
+          {
+            "selector": "div.experience-map > article.experience-node > div.experience-card > div.company-logo",
+            "snippet": "<div class=\"company-logo\" aria-label=\"Neptune TechZone and Aama Cure logo\">",
+            "explanation": "Fix all of the following:\n  aria-label attribute cannot be used on \"div\" elements with no valid role attribute."
+          },
+          {
+            "selector": "div.experience-map > article.experience-node > div.experience-card > div.company-logo",
+            "snippet": "<div class=\"company-logo\" aria-label=\"Upwork and Webapex logo\">",
+            "explanation": "Fix all of the following:\n  aria-label attribute cannot be used on \"div\" elements with no valid role attribute."
+          }
+        ]
+      },
+      "color-contrast": {
+        "score": 0,
+        "nodes": [
+          {
+            "selector": "main#top > section#about > div#introVideo > button#introPlay",
+            "snippet": "<button class=\"intro-play\" id=\"introPlay\" aria-label=\"Play intro with sound\">",
+            "explanation": "Fix any of the following:\n  Element has insufficient color contrast of 3.25 (foreground color: #ffffff, background color: #f0612a, font size: 10.0pt (13.3333px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      },
+      "label-content-name-mismatch": {
+        "score": 0,
+        "nodes": [
+          {
+            "selector": "main#top > section#about > div#introVideo > button#introPlay",
+            "snippet": "<button class=\"intro-play\" id=\"introPlay\" aria-label=\"Play intro with sound\">",
+            "explanation": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      },
+      "image-alt": {
+        "score": 1,
+        "nodes": []
+      }
+    }
+  },
+  "after": {
+    "lighthouseVersion": "13.6.0",
+    "fetchTime": "2026-11-09T03:59:59.055Z",
+    "url": "http://127.0.0.1:8000/",
+    "accessibilityScore": 1,
+    "failedAuditIds": [],
+    "requestedRules": {
+      "aria-prohibited-attr": {
+        "score": 1,
+        "nodes": []
+      },
+      "color-contrast": {
+        "score": 1,
+        "nodes": []
+      },
+      "label-content-name-mismatch": {
+        "score": 1,
+        "nodes": []
+      },
+      "image-alt": {
+        "score": 1,
+        "nodes": []
+      }
+    }
+  },
+  "browserChecks": {
+    "checks": [
+      {
+        "width": 390,
+        "theme": "light",
+        "colors": [
+          {
+            "selector": ".selected-work-link",
+            "foreground": "rgb(36, 87, 217)",
+            "background": "rgb(245, 243, 238)",
+            "fontSize": "11px",
+            "ratio": 5.504653257429839
+          },
+          {
+            "selector": "#introPlay",
+            "foreground": "rgb(255, 255, 255)",
+            "background": "rgb(189, 65, 23)",
+            "fontSize": "14px",
+            "ratio": 5.340447902188149
+          },
+          {
+            "selector": ".live-presence-wrap .nav-contact",
+            "foreground": "rgb(36, 87, 217)",
+            "background": "rgb(245, 243, 238)",
+            "fontSize": "11px",
+            "ratio": 5.504653257429839
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "theme": "dark",
+        "colors": [
+          {
+            "selector": ".selected-work-link",
+            "foreground": "rgb(120, 160, 255)",
+            "background": "rgb(21, 27, 25)",
+            "fontSize": "11px",
+            "ratio": 6.876993639554976
+          },
+          {
+            "selector": "#introPlay",
+            "foreground": "rgb(255, 255, 255)",
+            "background": "rgb(189, 65, 23)",
+            "fontSize": "14px",
+            "ratio": 5.340447902188149
+          },
+          {
+            "selector": ".live-presence-wrap .nav-contact",
+            "foreground": "rgb(120, 160, 255)",
+            "background": "rgb(21, 27, 25)",
+            "fontSize": "11px",
+            "ratio": 6.876993639554976
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "theme": "light",
+        "colors": [
+          {
+            "selector": ".selected-work-link",
+            "foreground": "rgb(36, 87, 217)",
+            "background": "rgb(245, 243, 238)",
+            "fontSize": "11px",
+            "ratio": 5.504653257429839
+          },
+          {
+            "selector": "#introPlay",
+            "foreground": "rgb(255, 255, 255)",
+            "background": "rgb(189, 65, 23)",
+            "fontSize": "14px",
+            "ratio": 5.340447902188149
+          },
+          {
+            "selector": ".live-presence-wrap .nav-contact",
+            "foreground": "rgb(36, 87, 217)",
+            "background": "rgb(245, 243, 238)",
+            "fontSize": "11px",
+            "ratio": 5.504653257429839
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "theme": "dark",
+        "colors": [
+          {
+            "selector": ".selected-work-link",
+            "foreground": "rgb(120, 160, 255)",
+            "background": "rgb(21, 27, 25)",
+            "fontSize": "11px",
+            "ratio": 6.876993639554976
+          },
+          {
+            "selector": "#introPlay",
+            "foreground": "rgb(255, 255, 255)",
+            "background": "rgb(189, 65, 23)",
+            "fontSize": "14px",
+            "ratio": 5.340447902188149
+          },
+          {
+            "selector": ".live-presence-wrap .nav-contact",
+            "foreground": "rgb(120, 160, 255)",
+            "background": "rgb(21, 27, 25)",
+            "fontSize": "11px",
+            "ratio": 6.876993639554976
+          }
+        ]
+      }
+    ],
+    "playButtonName": "Play with sound",
+    "keyboardFocus": true,
+    "logoNames": true
+  },
+  "latestVerification": {
+    "date": "2026-11-09",
+    "lighthouseVersion": "13.6.0",
+    "fetchTime": "2026-11-09T06:48:05.926Z",
+    "url": "http://127.0.0.1:8000/",
+    "accessibilityScore": 1,
+    "failedAuditIds": [],
+    "requestedRules": {
+      "aria-prohibited-attr": 1,
+      "color-contrast": 1,
+      "label-content-name-mismatch": 1,
+      "image-alt": 1
+    },
+    "imageInventory": {
+      "total": 22,
+      "meaningful": 9,
+      "decorativeWithEmptyAlt": 13,
+      "missingAlt": 0
+    },
+    "nodeTestsPassed": 104,
+    "renderedBrowser": {
+      "checks": [
+        {
+          "width": 320,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        },
+        {
+          "width": 390,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 390,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        },
+        {
+          "width": 800,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 800,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        },
+        {
+          "width": 900,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 900,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        },
+        {
+          "width": 1100,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 1100,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "theme": "light",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(36, 87, 217)",
+              "background": "rgb(245, 243, 238)",
+              "fontSize": "11px",
+              "ratio": 5.504653257429839
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "theme": "dark",
+          "colors": [
+            {
+              "selector": ".selected-work-link",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            },
+            {
+              "selector": "#introPlay",
+              "foreground": "rgb(255, 255, 255)",
+              "background": "rgb(189, 65, 23)",
+              "fontSize": "14px",
+              "ratio": 5.340447902188149
+            },
+            {
+              "selector": ".live-presence-wrap .nav-contact",
+              "foreground": "rgb(120, 160, 255)",
+              "background": "rgb(21, 27, 25)",
+              "fontSize": "11px",
+              "ratio": 6.876993639554976
+            }
+          ]
+        }
+      ],
+      "playButtonName": "Play with sound",
+      "keyboardFocus": true,
+      "logoNames": true,
+      "keyboardChecks": {
+        "skillTabAndShiftTabContained": true,
+        "skillEscapeRestoresOpener": true,
+        "videoKeyboardFocus": true,
+        "playbackFailureRetry": true
+      },
+      "actionChecks": {
+        "coreLinks": 6,
+        "heroInquiryFocus": "contact-title",
+        "selectedWorkDestination": "#work",
+        "emailDraftInspectedWithoutSending": true
+      },
+      "fallbackChecks": {
+        "phoneScrollRibbon": true,
+        "directContactFragment": true,
+        "noJavascriptFullStyling": true
+      },
+      "note": "Playback promises were stubbed to verify keyboard success/failure without downloading the video. This is not a manual screen-reader or complete media-content audit."
+    },
+    "nodeBehaviorChecks": {
+      "closeBeforePaintDoesNotStealFocus": true,
+      "closeBetweenFramesDoesNotStealFocus": true,
+      "rapidReopenCancelsStaleFocus": true
+    }
+  }
+}

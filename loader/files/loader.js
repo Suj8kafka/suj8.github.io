@@ -1,8 +1,16 @@
-/* A branded first-visit welcome and brief returning welcome, with immediate ways to skip. */
+/* Optional welcome preview; ordinary visits always paint the portfolio immediately. */
 (() => {
   const loader = document.getElementById('loader');
   if (!loader) return;
   const root = document.documentElement;
+  if (new URLSearchParams(window.location.search).get('intro') !== '1') {
+    // Do not read storage, await assets, request intro CSS or lock scrolling on normal visits.
+    loader.style.display = 'none';
+    root.classList.remove('loader-running');
+    root.dataset.loaderDone = 'true';
+    document.dispatchEvent(new CustomEvent('loader:done'));
+    return;
+  }
   const word = document.getElementById('ld-word');
   const language = document.getElementById('ld-lang');
   const fill = document.getElementById('ld-fill');
@@ -133,12 +141,20 @@
 
   skip.addEventListener('click', () => complete(true));
   const compact = matchMedia('(max-width: 800px), (pointer: coarse)').matches;
-  // Phones must paint the portfolio immediately, without waiting behind the welcome.
+  // Even an explicit preview must respect constrained devices and direct section links.
   if (compact || window.navigator?.connection?.saveData || motion.matches || window.location.hash || document.hidden) { complete(); return; }
   const loaded = document.readyState === 'complete' ? Promise.resolve()
     : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
   const image = document.querySelector('.portrait-base');
   const decoded = image && typeof image.decode === 'function' ? Promise.resolve().then(() => image.decode()) : Promise.resolve();
   Promise.allSettled([loaded, decoded, document.fonts?.ready || Promise.resolve()]).then(() => { ready = true; });
-  run();
+  // Only the explicit preview requests its artwork stylesheet. A failed or stalled
+  // request leaves the page readable, without ever starting a scroll lock.
+  const stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = 'loader/files/loader.css?v=20261109-preview';
+  stylesheet.addEventListener('load', () => { clearTimeout(failSafe); run(); }, { once: true });
+  stylesheet.addEventListener('error', () => complete(), { once: true });
+  failSafe = setTimeout(complete, 2500);
+  document.head.append(stylesheet);
 })();

@@ -3,6 +3,13 @@ GitHub Pages origin, including errors and redirects. It also redirects HTTP to
 HTTPS. Deploy it separately from the analytics Worker; the analytics Worker does
 not handle requests to the portfolio itself.
 
+Current deployment status (2026-11-09): live checks found all six headers missing
+on the apex redirect and the www homepage. The Worker and its tests are prepared
+locally, but the user has deferred Cloudflare work. **Pushing this repository does
+not deploy this Worker or activate response headers.** GitHub Pages publishes the
+static portfolio separately; there is no automatic Worker deployment workflow.
+Do not treat a successful Git push or local tests as evidence of live headers.
+
 Both portfolio DNS records must be proxied through Cloudflare (orange cloud).
 Keep the existing GitHub Pages origin and use Cloudflare Full (strict) TLS.
 
@@ -30,6 +37,21 @@ HSTS or request preload. Geolocation remains restricted to this origin so the
 existing opt-in visitor feature works; camera and microphone are disabled.
 
 After deployment, inspect the actual edge responses:
+
+```powershell
+node scripts/check-security-headers.mjs
+```
+
+This dependency-free check compares all six headers with `security-headers.mjs`
+on HTTPS apex/www homepages, `/login/`, a missing-page response, and every manual
+redirect hop. It separately checks HTTP upgrades without requiring HSTS on an
+HTTP response. Missing or unexpected policy values, HTTPS downgrades, redirect
+loops and request failures produce a nonzero exit code. It prints statuses and
+header names, never response bodies or credentials. Optional URL arguments limit
+the targets. Run `node --test tests/security-header-check.test.mjs` for its mocked
+tests; those tests do not establish deployed protection.
+
+Individual response inspection remains available:
 
 ```powershell
 curl.exe -I https://www.sujeetkhadka.com.np/

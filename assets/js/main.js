@@ -13,6 +13,7 @@ const themeChoices = document.querySelectorAll("[data-theme-choice]");
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 let themePreference = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "auto";
 let activeSkillCard = null;
+let skillFocusFrame = 0;
 
 // Keep the two header popovers independent, including when using the keyboard.
 const headerPopoverTriggers = document.querySelectorAll('.live-counter, .availability-badge');
@@ -82,6 +83,8 @@ const skillModalIcons = {
 };
 
 function closeSkillModal() {
+  window.cancelAnimationFrame(skillFocusFrame);
+  skillFocusFrame = 0;
   if (!skillModal.classList.contains("is-open")) return;
   skillModal.classList.remove("is-open");
   skillModal.setAttribute("aria-hidden", "true");
@@ -103,7 +106,15 @@ function openSkillModal(card) {
   skillModal.classList.add("is-open");
   skillModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
-  window.setTimeout(() => skillDialogClose.focus({ preventScroll: true }), 50);
+  window.cancelAnimationFrame(skillFocusFrame);
+  skillFocusFrame = window.requestAnimationFrame(() => {
+    skillFocusFrame = window.requestAnimationFrame(() => {
+      skillFocusFrame = 0;
+      if (skillModal.classList.contains("is-open") && activeSkillCard === card) {
+        skillDialogClose.focus({ preventScroll: true });
+      }
+    });
+  });
 }
 
 function applyTheme(preference) {
@@ -154,5 +165,23 @@ skillModal.addEventListener("click", (event) => {
   if (event.target.hasAttribute("data-modal-close")) closeSkillModal();
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeSkillModal();
+  if (!skillModal.classList.contains("is-open")) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeSkillModal();
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const focusable = [...skillDialog.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter(element => element.getClientRects().length > 0);
+  const first = focusable[0], last = focusable.at(-1);
+  if (!first) {
+    event.preventDefault();
+    skillDialog.focus({ preventScroll: true });
+  } else if (!skillDialog.contains(document.activeElement)
+    || (event.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus({ preventScroll: true });
+  }
 });

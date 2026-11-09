@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-09",
+  "conditions": {
+    "method": "Lighthouse 13.6.0 default simulated mobile",
+    "browser": "HeadlessChrome/Brave156",
+    "server": "Local Python HTTP, uncompressed",
+    "blockedRequests": [
+      "*firebase*",
+      "*cloudflare*",
+      "*identitytoolkit*"
+    ],
+    "noInteraction": true,
+    "productionScoreVerified": false,
+    "fieldDataUpdated": false
+  },
+  "before": {
+    "lighthouseVersion": "13.6.0",
+    "fetchTime": "2026-11-09T04:32:46.713Z",
+    "testedUrl": "http://127.0.0.1:8000/",
+    "lcpMs": 3613.6769999999997,
+    "speedIndexMs": 1750.7770209354383,
+    "tbtMs": 0,
+    "cls": 0.001294189726129707,
+    "performance": 90,
+    "accessibility": 100
+  },
+  "finalRuns": [
+    {
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T07:00:44.843Z",
+      "testedUrl": "http://127.0.0.1:8000/",
+      "lcpMs": 2781.223,
+      "speedIndexMs": 1121.2075369319414,
+      "tbtMs": 110,
+      "cls": 0,
+      "performance": 95,
+      "accessibility": 100
+    },
+    {
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T07:00:58.507Z",
+      "testedUrl": "http://127.0.0.1:8000/",
+      "lcpMs": 2103.624,
+      "speedIndexMs": 1051.812,
+      "tbtMs": 118,
+      "cls": 0,
+      "performance": 98,
+      "accessibility": 100
+    },
+    {
+      "lighthouseVersion": "13.6.0",
+      "fetchTime": "2026-11-09T07:01:11.938Z",
+      "testedUrl": "http://127.0.0.1:8000/",
+      "lcpMs": 2785.2479999999996,
+      "speedIndexMs": 1121.5554432934903,
+      "tbtMs": 208,
+      "cls": 0,
+      "performance": 92,
+      "accessibility": 100
+    }
+  ],
+  "finalMedian": {
+    "lcpMs": 2781.223,
+    "speedIndexMs": 1121.2075369319414,
+    "tbtMs": 118
+  },
+  "allFinalLcpRunsWithin2500ms": false,
+  "browserChecks": {
+    "normalDesktopNoOverlay": true,
+    "normalDesktopNoLoaderStylesheet": true,
+    "explicitIntroPreview": true,
+    "previewSkip": true,
+    "phoneScrollRibbon": true,
+    "noJavaScriptFullStyling": true,
+    "keyboardDialogsAndVideo": true,
+    "lightDarkContrast": true
+  },
+  "security": {
+    "liveCheckedAtUtc": "2026-11-09T06:55:54Z",
+    "apexHttpsStatus": 301,
+    "wwwHttpsStatus": 200,
+    "liveMissingHeaders": [
+      "Content-Security-Policy",
+      "X-Frame-Options",
+      "Strict-Transport-Security",
+      "X-Content-Type-Options",
+      "Referrer-Policy",
+      "Permissions-Policy"
+    ],
+    "workerBuild": "Wrangler4.158.0 dry run passed",
+    "deployment": "Deferred at user request; no Cloudflare or DNS changes"
+  },
+  "limits": [
+    "Two final lab LCP runs remain above 2.5 seconds.",
+    "Final TBT was 110?208ms; the local baseline had 0ms.",
+    "Mobile already bypassed the intro before this release; combined image/CSS/font changes and lab variation explain the mobile result, not removal of a mobile overlay.",
+    "Local uncompressed HTTP with blocked visitor services does not reproduce production."
+  ],
+  "nodeTestsPassed": 113
+}

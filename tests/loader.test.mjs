@@ -6,8 +6,9 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../loader/files/loader.js', import.meta.url), 'utf8');
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-function preview({ returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false } = {}) {
+function preview({ intro = false, styles = 'ready', returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false } = {}) {
   const frames = new Map(), timers = new Map(), emitted = [];
+  const stylesheets = [], work = { storage: 0, fonts: 0, portrait: 0 };
   let clock = 0, sequence = 0;
   function target() {
     const listeners = new Map();
@@ -33,19 +34,21 @@ function preview({ returning = false, reduced = false, compact = false, saveData
   const pending = new Promise(() => {});
   const document = Object.assign(target(), {
     documentElement: root, body, readyState: assets ? 'complete' : 'interactive', hidden: false, activeElement: {},
-    fonts: { ready: assets ? Promise.resolve() : pending },
     getElementById: id => ({ loader, 'ld-word': word, 'ld-lang': language, 'ld-fill': fill, 'hero-title': heading, 'ld-namaste-template': template })[id],
-    querySelector: () => ({ decode: () => assets ? Promise.resolve() : pending }),
+    querySelector: () => { work.portrait++; return { decode: () => assets ? Promise.resolve() : pending }; },
+    createElement: target,
+    head: { append(stylesheet) { stylesheets.push(stylesheet); if (styles === 'ready') stylesheet.dispatch('load'); } },
     dispatchEvent(event) { emitted.push(event.type); this.dispatch(event.type, event); }
   });
+  Object.defineProperty(document, 'fonts', { get() { work.fonts++; return { ready: assets ? Promise.resolve() : pending }; } });
   loader.contains = element => element === skip;
   const storage = { values: new Map(returning ? [['portfolio-intro-seen', '1']] : []),
-    getItem(key) { if (blockedStorage) throw new Error('Storage blocked'); return this.values.get(key) || null; },
-    setItem(key, value) { if (blockedStorage) throw new Error('Storage blocked'); this.values.set(key, value); } };
-  const window = Object.assign(target(), { location: { hash }, navigator: { connection: { saveData } } });
+    getItem(key) { work.storage++; if (blockedStorage) throw new Error('Storage blocked'); return this.values.get(key) || null; },
+    setItem(key, value) { work.storage++; if (blockedStorage) throw new Error('Storage blocked'); this.values.set(key, value); } };
+  const window = Object.assign(target(), { location: { hash, search: intro ? '?intro=1' : '' }, navigator: { connection: { saveData } } });
   const local = { ...storage, values: new Map(storage.values) };
   vm.runInNewContext(source, {
-    document, window, localStorage: local, sessionStorage: storage,
+    document, window, URLSearchParams, localStorage: local, sessionStorage: storage,
     matchMedia: query => query.includes('max-width') ? { matches: compact } : motion,
     performance: { now: () => clock }, console: { warn() {} }, CustomEvent: class { constructor(type) { this.type = type; } },
     requestAnimationFrame(callback) { const id = ++sequence; frames.set(id, callback); return id; },
@@ -58,11 +61,28 @@ function preview({ returning = false, reduced = false, compact = false, saveData
     if (paint) { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(clock)); }
     for (const [id, timer] of [...timers]) if (timer.at <= clock) { timers.delete(id); timer.callback(); }
   }
-  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, advance };
+  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, advance };
 }
 
-test('returning visits show Namaste with a monotonic progress bar and finish exactly once', async () => {
-  const page = preview({ returning: true }); await flush();
+test('normal desktop visits bypass intro work before storage, CSS, portrait decoding or font readiness', () => {
+  for (const options of [{}, { returning: true }, { assets: false }, { blockedStorage: true, assets: false }]) {
+    const page = preview(options);
+    assert.equal(page.loader.style.display, 'none');
+    assert.equal(page.root.classList.contains('loader-running'), false);
+    assert.equal(page.root.style.overflow, 'auto');
+    assert.equal(page.body.style.overflow, 'scroll');
+    assert.equal(page.root.dataset.loaderDone, 'true');
+    assert.deepEqual(page.work, { storage: 0, fonts: 0, portrait: 0 });
+    assert.equal(page.stylesheets.length, 0);
+    assert.equal(page.frames.size, 0);
+    assert.equal(page.timers.size, 0);
+    page.advance(10000);
+    assert.deepEqual(page.emitted, ['loader:done']);
+  }
+});
+
+test('returning explicit previews show Namaste with a monotonic progress bar and finish exactly once', async () => {
+  const page = preview({ intro: true, returning: true }); await flush();
   assert.equal(page.loader.dataset.visit, 'returning');
   assert.equal(page.word.textContent, 'नमस्ते');
   assert.equal(page.word.lang, 'ne');
@@ -79,8 +99,8 @@ test('returning visits show Namaste with a monotonic progress bar and finish exa
   assert.deepEqual(page.emitted, ['loader:done']);
 });
 
-test('first visits show Hello, then handwritten Namaste, and finish at nine seconds', async () => {
-  const page = preview({ handwriting: true }); await flush();
+test('first explicit previews show Hello, then handwritten Namaste, and finish at nine seconds', async () => {
+  const page = preview({ intro: true, handwriting: true }); await flush();
   assert.equal(page.loader.dataset.visit, 'first');
   assert.equal(page.word.textContent, 'Hello');
   page.advance(4500);
@@ -95,12 +115,12 @@ test('first visits show Hello, then handwritten Namaste, and finish at nine seco
   assert.deepEqual(page.emitted, ['loader:done']);
 });
 
-test('first visits remain bounded at nine seconds when assets are slow and recover from stalled frames', async () => {
-  const slow = preview({ assets: false }); await flush();
+test('first explicit previews remain bounded at nine seconds when assets are slow and recover from stalled frames', async () => {
+  const slow = preview({ intro: true, assets: false }); await flush();
   slow.advance(7720); slow.advance(1100); slow.advance(180);
   assert.equal(slow.root.dataset.loaderDone, 'true');
   assert.equal(slow.root.style.overflow, 'auto');
-  const stalled = preview();
+  const stalled = preview({ intro: true });
   stalled.advance(8999, false);
   assert.equal(stalled.root.dataset.loaderDone, 'false');
   stalled.advance(21, false);
@@ -110,7 +130,7 @@ test('first visits remain bounded at nine seconds when assets are slow and recov
 
 test('deep links and reduced motion bypass the overlay without locking scrolling', () => {
   for (const options of [{ hash: '#featured-project' }, { reduced: true }]) {
-    const page = preview(options);
+    const page = preview({ ...options, intro: true });
     assert.equal(page.root.classList.contains('loader-running'), false);
     assert.equal(page.root.style.overflow, 'auto'); assert.equal(page.body.style.overflow, 'scroll');
     assert.deepEqual(page.emitted, ['loader:done']);
@@ -119,7 +139,7 @@ test('deep links and reduced motion bypass the overlay without locking scrolling
 
 test('first-time mobile and save-data visits show content immediately, even when assets are slow', () => {
   for (const options of [{ compact: true }, { saveData: true }]) {
-    const page = preview({ ...options, assets: false });
+    const page = preview({ ...options, intro: true, assets: false });
     assert.equal(page.loader.style.display, 'none');
     assert.equal(page.root.classList.contains('loader-running'), false);
     assert.equal(page.root.style.overflow, 'auto');
@@ -139,37 +159,53 @@ test('scroll intent, keyboard, visibility changes and the skip button restore th
     page => page.motion.dispatch('change', { matches: true }),
     page => page.skip.dispatch('click')
   ]) {
-    const page = preview({ returning: true }); dismiss(page);
+    const page = preview({ intro: true, returning: true }); dismiss(page);
     assert.equal(page.root.classList.contains('loader-running'), false);
     assert.equal(page.body.style.overflow, 'scroll');
     assert.deepEqual(page.emitted, ['loader:done']);
   }
-  const skipped = preview(); skipped.skip.dispatch('click'); assert.equal(skipped.heading.focused, true);
+  const skipped = preview({ intro: true }); skipped.skip.dispatch('click'); assert.equal(skipped.heading.focused, true);
 });
 
 test('slow assets, stalled frames, blocked storage and animation failures cannot leave the loader stuck', async () => {
-  const slow = preview({ returning: true, assets: false }); await flush();
+  const slow = preview({ intro: true, returning: true, assets: false }); await flush();
   slow.advance(1050); assert.equal(slow.bar.attributes['aria-valuenow'], '92');
   assert.equal(slow.root.classList.contains('loader-running'), true);
   slow.advance(750); slow.advance(180);
   assert.equal(slow.root.dataset.loaderDone, 'true');
-  const stalled = preview({ returning: true }); stalled.advance(2100, false);
+  const stalled = preview({ intro: true, returning: true }); stalled.advance(2100, false);
   assert.equal(stalled.root.style.overflow, 'auto'); assert.equal(stalled.body.style.overflow, 'scroll');
-  const blocked = preview({ blockedStorage: true }); await flush();
+  const blocked = preview({ intro: true, blockedStorage: true }); await flush();
   assert.equal(blocked.loader.dataset.visit, 'returning'); blocked.advance(1050); blocked.advance(180);
   assert.equal(blocked.root.dataset.loaderDone, 'true');
-  const broken = preview({ brokenAnimation: true }); broken.advance(7720);
+  const broken = preview({ intro: true, brokenAnimation: true }); broken.advance(7720);
   assert.equal(broken.root.dataset.loaderDone, 'true'); assert.equal(broken.root.style.overflow, 'auto');
 });
 
 test('Namaste uses the pen-stroke artwork and holds the completed word before dismissing', async () => {
-  const page = preview({ returning: true, handwriting: true }); await flush();
+  const page = preview({ intro: true, returning: true, handwriting: true }); await flush();
   assert.equal(page.word.written, true);
   assert.equal(page.word.dataset.writing, 'true');
   page.advance(880);
   assert.equal(page.root.classList.contains('loader-running'), true, 'Finished ink has a readable hold');
   page.advance(170); page.advance(180);
   assert.equal(page.root.dataset.loaderDone, 'true');
+});
+
+test('only an explicit preview requests intro CSS and stylesheet failure never locks the page', () => {
+  const page = preview({ intro: true, styles: 'pending' });
+  assert.equal(page.stylesheets.length, 1);
+  assert.match(page.stylesheets[0].href, /^loader\/files\/loader\.css\?/);
+  assert.equal(page.root.classList.contains('loader-running'), false);
+  assert.equal(page.root.style.overflow, 'auto');
+  page.stylesheets[0].dispatch('error');
+  assert.deepEqual(page.emitted, ['loader:done']);
+  page.stylesheets[0].dispatch('load');
+  assert.equal(page.root.classList.contains('loader-running'), false);
+  const stalled = preview({ intro: true, styles: 'pending' });
+  stalled.advance(2500);
+  assert.deepEqual(stalled.emitted, ['loader:done']);
+  assert.equal(stalled.body.style.overflow, 'scroll');
 });
 
 test('Namaste drawing is local vector geometry with a bounded, ordered stroke sequence', () => {

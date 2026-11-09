@@ -18,6 +18,7 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
   portrait = () => import('./portrait-network.js?v=20261109-mobile-lcp'),
   services = () => Promise.allSettled([import('./firebase-presence.js'), import('./availability-client.js')]) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
+  let imageReady = false, decoding = false, motionStarted = false;
   const listeners = [];
   const listen = (target, name, callback) => {
     target.addEventListener(name, callback);
@@ -35,13 +36,34 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
       || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
     const launch = task => Promise.resolve().then(task).catch(error => console.warn('Optional portfolio enhancement unavailable.', error));
     launch(services);
-    if (!reduced) launch(motion);
+    const startMotion = () => {
+      if (destroyed || motionStarted || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      motionStarted = true;
+      launch(motion);
+    };
+    if (!reduced) {
+      if (compact) {
+        // The ribbon/parallax is useful once the reader scrolls, not while the hero paints.
+        listen(window, 'scroll', startMotion);
+        if (window.scrollY > 0) startMotion();
+      } else startMotion();
+    }
     // Mobile/reduced-motion visitors keep the lightweight colour image, without 1,643 inline paths.
     if (!reduced && !compact && fine && !constrained) launch(portrait);
   }
   function queue() {
     if (destroyed || started || queued || document.readyState !== 'complete' || document.hidden
+      || document.documentElement.dataset?.pageStyles === 'pending'
       || document.documentElement.classList.contains('loader-running')) return;
+    if (!imageReady) {
+      if (decoding) return;
+      decoding = true;
+      const image = document.querySelector?.('.portrait-base');
+      const decoded = image?.decode ? Promise.resolve().then(() => image.decode()) : Promise.resolve();
+      const done = () => { if (!destroyed) { imageReady = true; queue(); } };
+      decoded.then(done, done); // A broken image must not block the remaining enhancements.
+      return;
+    }
     queued = true;
     // Give loaded content two paint opportunities before requesting background work.
     frame = window.requestAnimationFrame(() => {
@@ -53,6 +75,7 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
   }
   listen(window, 'load', queue);
   listen(document, 'loader:done', queue);
+  listen(document, 'page-styles:ready', queue);
   listen(document, 'visibilitychange', queue);
   queue();
   return { destroy() {

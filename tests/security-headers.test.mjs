@@ -36,6 +36,20 @@ test('HTTP redirects directly to HTTPS preserving path and query without calling
   }
 });
 
+test('an origin connection failure still returns all six headers without exposing error details', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error('private origin connection details'); };
+  try {
+    const response = await worker.fetch(new Request('https://www.sujeetkhadka.com.np/'));
+    assert.equal(response.status, 502);
+    for (const [name, value] of Object.entries(securityHeaders)) assert.equal(response.headers.get(name), value);
+    assert.equal(response.headers.get('Cache-Control'), 'no-store');
+    assert.doesNotMatch(await response.text(), /private origin/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('CSP blocks embedding and inline executable scripts while allowing site dependencies', () => {
   const csp = securityHeaders['Content-Security-Policy'];
   assert.ok(csp.includes("frame-ancestors 'none'"));
@@ -45,7 +59,7 @@ test('CSP blocks embedding and inline executable scripts while allowing site dep
   assert.ok(!scripts.includes("'unsafe-eval'"));
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.equal(/<script\s*>/i.test(html), false);
-  assert.ok(html.includes('src="assets/js/intro-video.js"'));
+  assert.match(html, /src="assets\/js\/intro-video\.js(?:\?[^"\s]+)?"/);
   assert.ok(csp.includes('wss://*.asia-southeast1.firebasedatabase.app'));
   assert.ok(securityHeaders['Permissions-Policy'].includes('geolocation=(self)'));
 });
