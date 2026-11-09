@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
 import { initializeAuth, browserSessionPersistence, inMemoryPersistence, signInWithEmailAndPassword,
   onAuthStateChanged, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
-import { getDatabase, ref, get, set, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js';
+import { getDatabase, ref, get, set, serverTimestamp } from './firebase-database.js';
 import { firebaseConfig } from './firebase-config.js';
 import { DEFAULT_AVAILABILITY, WORK_TYPES, validateAvailability, applyAvailability } from './availability.js';
 

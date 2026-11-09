@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
-import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js';
+import { getDatabase, ref, onValue } from './firebase-database.js';
 import { firebaseConfig } from './firebase-config.js';
 import { applyAvailability } from './availability.js';
 

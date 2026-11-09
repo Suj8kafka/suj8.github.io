@@ -11,7 +11,7 @@ import {
   serverTimestamp,
   set,
   runTransaction
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
+} from "./firebase-database.js";
 
 const presenceLabel = document.querySelector(".live-presence-label");
 const presenceDot = document.querySelector(".live-presence-dot");
