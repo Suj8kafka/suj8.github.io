@@ -1,0 +1,145 @@
+{
+    "date":  "2026-11-09",
+    "conditions":  "Local uncompressed Python HTTP, headless Brave/Chromium 156, Lighthouse simulated mobile defaults. Visitor service URLs blocked to avoid live records. One committed-code baseline and one completed-code run; not production measurements or a statistically established score improvement.",
+    "baselineCommit":  "0696ac8",
+    "browserChecks":  "Phone welcome ends in Namaste; mobile bottom navigation and contact scrolling work; direct contact link, no horizontal overflow, no-JavaScript styling, no page errors.",
+    "runs":  [
+                 {
+                     "label":  "committed baseline",
+                     "lighthouseVersion":  "13.6.0",
+                     "fetchTime":  "2026-11-09T08:27:53.828Z",
+                     "score":  0.96,
+                     "fcpMs":  1064.3126937768461,
+                     "lcpMs":  2439.9380813305384,
+                     "tbtMs":  132,
+                     "speedIndexMs":  2595.679442983718,
+                     "cls":  0,
+                     "forcedReflow":  {
+                                          "type":  "list",
+                                          "items":  [
+                                                        {
+                                                            "type":  "table",
+                                                            "headings":  [
+                                                                             {
+                                                                                 "key":  "source",
+                                                                                 "valueType":  "source-location",
+                                                                                 "label":  "Top function call"
+                                                                             },
+                                                                             {
+                                                                                 "key":  "reflowTime",
+                                                                                 "valueType":  "ms",
+                                                                                 "granularity":  1,
+                                                                                 "label":  "Total reflow time"
+                                                                             }
+                                                                         ],
+                                                            "items":  [
+                                                                          {
+                                                                              "source":  {
+                                                                                             "type":  "source-location",
+                                                                                             "url":  "http://127.0.0.1:8001/assets/js/page-styles.js?v=20261109-first-view",
+                                                                                             "urlProvider":  "network",
+                                                                                             "line":  52,
+                                                                                             "column":  69
+                                                                                         },
+                                                                              "reflowTime":  41.075
+                                                                          }
+                                                                      ]
+                                                        },
+                                                        {
+                                                            "type":  "table",
+                                                            "headings":  [
+                                                                             {
+                                                                                 "key":  "source",
+                                                                                 "valueType":  "source-location",
+                                                                                 "label":  "Source"
+                                                                             },
+                                                                             {
+                                                                                 "key":  "reflowTime",
+                                                                                 "valueType":  "ms",
+                                                                                 "granularity":  1,
+                                                                                 "label":  "Total reflow time"
+                                                                             }
+                                                                         ],
+                                                            "items":  [
+                                                                          {
+                                                                              "source":  {
+                                                                                             "type":  "source-location",
+                                                                                             "url":  "http://127.0.0.1:8001/assets/js/page-styles.js?v=20261109-first-view",
+                                                                                             "urlProvider":  "network",
+                                                                                             "line":  38,
+                                                                                             "column":  37
+                                                                                         },
+                                                                              "reflowTime":  67.715
+                                                                          },
+                                                                          {
+                                                                              "source":  {
+                                                                                             "type":  "source-location",
+                                                                                             "url":  "http://127.0.0.1:8001/assets/js/scroll-navigation.js?v=20261109-mobile-navigation",
+                                                                                             "urlProvider":  "network",
+                                                                                             "line":  141,
+                                                                                             "column":  39
+                                                                                         },
+                                                                              "reflowTime":  4.22
+                                                                          },
+                                                                          {
+                                                                              "source":  {
+                                                                                             "type":  "source-location",
+                                                                                             "url":  "http://127.0.0.1:8001/assets/js/page-styles.js?v=20261109-first-view",
+                                                                                             "urlProvider":  "network",
+                                                                                             "line":  16,
+                                                                                             "column":  17
+                                                                                         },
+                                                                              "reflowTime":  41.075
+                                                                          },
+                                                                          {
+                                                                              "source":  {
+                                                                                             "type":  "source-location",
+                                                                                             "url":  "http://127.0.0.1:8001/assets/js/mobile-navigation.js?v=20261109-mobile-navigation",
+                                                                                             "urlProvider":  "network",
+                                                                                             "line":  10,
+                                                                                             "column":  33
+                                                                                         },
+                                                                              "reflowTime":  0.082
+                                                                          }
+                                                                      ]
+                                                        }
+                                                    ]
+                                      }
+                 },
+                 {
+                     "label":  "completed changes",
+                     "lighthouseVersion":  "13.6.0",
+                     "fetchTime":  "2026-11-09T08:33:34.435Z",
+                     "score":  0.95,
+                     "fcpMs":  1449.124838955003,
+                     "lcpMs":  2862.468468171255,
+                     "tbtMs":  42,
+                     "speedIndexMs":  2379.79530712383,
+                     "cls":  0,
+                     "forcedReflow":  {
+                                          "type":  "list",
+                                          "items":  [
+                                                        {
+                                                            "type":  "table",
+                                                            "headings":  [
+                                                                             {
+                                                                                 "key":  "source",
+                                                                                 "valueType":  "source-location",
+                                                                                 "label":  "Source"
+                                                                             },
+                                                                             {
+                                                                                 "key":  "reflowTime",
+                                                                                 "valueType":  "ms",
+                                                                                 "granularity":  1,
+                                                                                 "label":  "Total reflow time"
+                                                                             }
+                                                                         ],
+                                                            "items":  [
+
+                                                                      ]
+                                                        }
+                                                    ]
+                                      }
+                 }
+             ]
+}

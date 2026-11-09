@@ -24,7 +24,7 @@ test('generated first-screen CSS is synchronized, bounded and loads only the hea
   assert.match(generated, /max-width: 800px/);
 });
 
-function preview({ loaded = true, decode = 'ready', hash = '', compact = false } = {}) {
+function preview({ loaded = true, decode = 'ready', hash = '', compact = false, checkLayoutReads = false } = {}) {
   const events = new Map(), frames = new Map(), emitted = [];
   let nextId = 0, finishDecode;
   const pending = new Promise(resolve => { finishDecode = resolve; });
@@ -41,13 +41,17 @@ function preview({ loaded = true, decode = 'ready', hash = '', compact = false }
     dispatchEvent: event => emitted.push(event.type)
   };
   const window = { location: { hash }, CustomEvent: class { constructor(type) { this.type = type; } },
-    matchMedia: () => ({ matches: compact }), scrollY: 0,
+    matchMedia: () => ({ matches: compact }),
+    get scrollY() {
+      assert.equal(checkLayoutReads, false, 'Stylesheet startup and activation must not query scroll geometry');
+      return 0;
+    },
     addEventListener: (name, callback) => scrolling.set(name, callback),
     removeEventListener: name => scrolling.delete(name),
     requestAnimationFrame(callback) { frames.set(++nextId, callback); }
   };
   const ready = activatePageStyles({ document, window });
-  return { document, sheet, frames, emitted, ready, finishDecode, links, scroll: () => scrolling.get('scroll')?.(),
+  return { document, sheet, frames, emitted, ready, finishDecode, links, scroll: () => scrolling.get('scroll')?.({ type: 'scroll' }),
     loaded() { events.get('load')?.(); },
     paint() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback()); }
   };
@@ -61,6 +65,23 @@ test('full styling waits for a decoded portrait and two paint opportunities', as
   assert.equal(page.sheet.media, 'all');
   assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
   assert.deepEqual(page.emitted, ['page-styles:ready']);
+});
+
+test('stylesheet startup and activation never query scroll geometry', async () => {
+  const page = preview({ compact: true, checkLayoutReads: true });
+  await flush(); page.paint(); page.paint(); await page.ready;
+  assert.equal(page.sheet.media, 'all');
+  const direct = preview({ compact: true, hash: '#contact', loaded: false, checkLayoutReads: true });
+  direct.loaded(); await direct.ready;
+  assert.equal(direct.sheet.media, 'all');
+});
+
+test('restored-position scroll events activate layout before the portrait decodes', async () => {
+  const page = preview({ compact: true, loaded: false, decode: 'pending', checkLayoutReads: true });
+  page.scroll();
+  assert.equal(page.sheet.media, 'all');
+  page.loaded(); await page.ready;
+  assert.equal(page.links[0].href, 'assets/css/secondary-fonts.css');
 });
 
 test('phone secondary fonts wait for scroll; desktop and direct links keep their full font families', async () => {

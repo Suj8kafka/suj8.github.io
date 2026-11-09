@@ -2,6 +2,9 @@ export function activatePageStyles({ document, window }) {
   const sheet = document.getElementById('page-styles');
   if (!sheet) return;
   const image = document.querySelector('.portrait-base');
+  // Scroll events (including restored positions) signal intent without a geometry
+  // read that can synchronously lay out the entire page during module startup.
+  let scrolled = false;
   let activated = false, resolveReady;
   const ready = new Promise(resolve => { resolveReady = resolve; });
   function fonts() {
@@ -14,7 +17,7 @@ export function activatePageStyles({ document, window }) {
     document.documentElement.dataset.pageStyles = 'ready';
     document.dispatchEvent(new window.CustomEvent('page-styles:ready'));
     if (window.matchMedia('(max-width: 800px), (pointer: coarse)').matches && !window.location.hash) {
-      if (window.scrollY > 0) fonts();
+      if (scrolled) fonts();
       else window.addEventListener('scroll', fonts, { once: true, passive: true });
     } else fonts();
   }
@@ -32,11 +35,12 @@ export function activatePageStyles({ document, window }) {
     window.removeEventListener('scroll', onIntent);
     finish(); resolveReady();
   }
-  function onIntent() {
+  function onIntent(event) {
+    if (event?.type === 'scroll') scrolled = true;
     load(); sheet.media = 'all';
     styles.then(activate);
   }
-  if (window.location.hash || window.scrollY > 0) {
+  if (window.location.hash) {
     // A direct section link needs the full layout immediately, not just the hero styles.
     onIntent();
     return ready;

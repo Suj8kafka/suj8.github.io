@@ -42,7 +42,10 @@ function preview({ reduced = false, fine = true, width = 1440, memory = 8, cores
   const window = Object.assign(element(), {
     scrollY: 0, innerWidth: width, navigator: { deviceMemory: memory, hardwareConcurrency: cores, connection },
     performance: { now: () => time }, CustomEvent: class { constructor(type) { this.type = type; } },
-    matchMedia: query => query.includes('reduced-motion') ? motion : pointer,
+    matchMedia: query => query.includes('reduced-motion') ? motion
+      : query.includes('min-width') ? { get matches() { return window.innerWidth > 800; } }
+      : query.includes('max-width') ? { get matches() { return window.innerWidth <= 800 || (!fine && window.innerWidth <= 1100); } }
+      : pointer,
     requestAnimationFrame(callback) { const id = ++sequence; frames.set(id, callback); return id; },
     cancelAnimationFrame: id => frames.delete(id),
     setTimeout(callback, delay) { const id = ++sequence; timers.set(id, { callback, at: time + delay }); return id; },

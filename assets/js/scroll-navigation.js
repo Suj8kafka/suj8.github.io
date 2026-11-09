@@ -1,6 +1,10 @@
 // Let the browser own scroll positions; a viewport-sized blur fades with scroll speed.
 export function createScrollNavigation({ document, window }) {
   const root = document.documentElement;
+  const compactHeader = window.matchMedia('(max-width: 800px), (max-width: 1100px) and (pointer: coarse)');
+  const wideScreen = window.matchMedia('(min-width: 801px)');
+  // The phone header never detaches, so startup needs no scroll geometry there.
+  const initialY = compactHeader.matches ? 0 : window.scrollY;
   const header = document.querySelector('.site-header');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -21,13 +25,13 @@ export function createScrollNavigation({ document, window }) {
   }
   function updateEffects() {
     fullEffects = !constrained && !connection?.saveData && !reducedMotion.matches
-      && finePointer.matches && window.innerWidth > 800;
+      && finePointer.matches && wideScreen.matches;
     root.dataset.scrollEffects = reducedMotion.matches ? 'minimal' : fullEffects ? 'full' : 'light';
     if (reducedMotion.matches) streak.style.opacity = '0';
   }
   function updateHeader(y) {
     if (!header) return;
-    if (window.innerWidth <= 800 || (!finePointer.matches && window.innerWidth <= 1100)) {
+    if (compactHeader.matches) {
       header.classList.remove('is-detached'); return;
     }
     const detached = header.classList.contains('is-detached');
@@ -70,6 +74,7 @@ export function createScrollNavigation({ document, window }) {
   function onFrame(time) {
     frame = 0;
     if (destroyed) return;
+    if (!active && compactHeader.matches) return;
     const y = window.scrollY;
     updateHeader(y);
     if (!active) return;
@@ -139,7 +144,7 @@ export function createScrollNavigation({ document, window }) {
   listen(reducedMotion, 'change', onMotionChange);
   listen(finePointer, 'change', updateEffects);
   listen(connection, 'change', updateEffects);
-  updateEffects(); updateHeader(window.scrollY);
+  updateEffects(); updateHeader(initialY);
 
   return { destroy() {
     cancel(); destroyed = true;
