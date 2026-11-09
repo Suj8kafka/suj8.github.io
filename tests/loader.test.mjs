@@ -64,19 +64,15 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
   return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, advance };
 }
 
-test('normal desktop visits bypass intro work before storage, CSS, portrait decoding or font readiness', () => {
-  for (const options of [{}, { returning: true }, { assets: false }, { blockedStorage: true, assets: false }]) {
-    const page = preview(options);
-    assert.equal(page.loader.style.display, 'none');
-    assert.equal(page.root.classList.contains('loader-running'), false);
-    assert.equal(page.root.style.overflow, 'auto');
-    assert.equal(page.body.style.overflow, 'scroll');
+test('normal desktop visits show the first welcome or returning Namaste', async () => {
+  for (const returning of [false, true]) {
+    const page = preview({ returning, handwriting: true }); await flush();
+    assert.equal(page.loader.dataset.visit, returning ? 'returning' : 'first');
+    assert.equal(page.word.lang, returning ? 'ne' : 'en');
+    assert.equal(page.stylesheets.length, 1);
+    page.advance(returning ? 1050 : 5820);
+    page.advance(180);
     assert.equal(page.root.dataset.loaderDone, 'true');
-    assert.deepEqual(page.work, { storage: 0, fonts: 0, portrait: 0 });
-    assert.equal(page.stylesheets.length, 0);
-    assert.equal(page.frames.size, 0);
-    assert.equal(page.timers.size, 0);
-    page.advance(10000);
     assert.deepEqual(page.emitted, ['loader:done']);
   }
 });
@@ -99,37 +95,37 @@ test('returning explicit previews show Namaste with a monotonic progress bar and
   assert.deepEqual(page.emitted, ['loader:done']);
 });
 
-test('first explicit previews show Hello, then handwritten Namaste, and finish at nine seconds', async () => {
+test('first explicit previews show Hello, then handwritten Namaste, and finish at six seconds', async () => {
   const page = preview({ intro: true, handwriting: true }); await flush();
   assert.equal(page.loader.dataset.visit, 'first');
   assert.equal(page.word.textContent, 'Hello');
   page.advance(4500);
-  assert.equal(page.root.classList.contains('loader-running'), true, 'The old first-visit timeout must not cut the longer intro short');
-  page.advance(3219); assert.equal(page.word.textContent, 'Hello');
+  assert.equal(page.root.classList.contains('loader-running'), true, 'The first welcome must remain visible before Namaste');
+  page.advance(219); assert.equal(page.word.textContent, 'Hello');
   page.advance(1); assert.equal(page.word.textContent, 'नमस्ते');
   assert.equal(page.word.written, true);
   page.advance(1100); page.advance(179);
-  assert.equal(page.root.dataset.loaderDone, 'false', 'Keep the intro visible until nine seconds');
+  assert.equal(page.root.dataset.loaderDone, 'false', 'Keep the intro visible until six seconds');
   page.advance(1);
   assert.equal(page.root.dataset.loaderDone, 'true');
   assert.deepEqual(page.emitted, ['loader:done']);
 });
 
-test('first explicit previews remain bounded at nine seconds when assets are slow and recover from stalled frames', async () => {
+test('first explicit previews remain bounded at six seconds when assets are slow and recover from stalled frames', async () => {
   const slow = preview({ intro: true, assets: false }); await flush();
-  slow.advance(7720); slow.advance(1100); slow.advance(180);
+  slow.advance(4720); slow.advance(1100); slow.advance(180);
   assert.equal(slow.root.dataset.loaderDone, 'true');
   assert.equal(slow.root.style.overflow, 'auto');
   const stalled = preview({ intro: true });
-  stalled.advance(8999, false);
+  stalled.advance(5999, false);
   assert.equal(stalled.root.dataset.loaderDone, 'false');
-  stalled.advance(21, false);
+  stalled.advance(1, false);
   assert.equal(stalled.root.dataset.loaderDone, 'true');
   assert.equal(stalled.body.style.overflow, 'scroll');
 });
 
 test('deep links and reduced motion bypass the overlay without locking scrolling', () => {
-  for (const options of [{ hash: '#featured-project' }, { reduced: true }]) {
+  for (const options of [{ hash: '#featured-project' }, { reduced: true }, { compact: true, hash: '#contact' }, { compact: true, reduced: true }]) {
     const page = preview({ ...options, intro: true });
     assert.equal(page.root.classList.contains('loader-running'), false);
     assert.equal(page.root.style.overflow, 'auto'); assert.equal(page.body.style.overflow, 'scroll');
@@ -137,8 +133,8 @@ test('deep links and reduced motion bypass the overlay without locking scrolling
   }
 });
 
-test('first-time mobile and save-data visits show content immediately, even when assets are slow', () => {
-  for (const options of [{ compact: true }, { saveData: true }]) {
+test('save-data visits bypass the intro on phones and desktop, even when assets are slow', () => {
+  for (const options of [{ saveData: true, compact: true }, { saveData: true }]) {
     const page = preview({ ...options, intro: true, assets: false });
     assert.equal(page.loader.style.display, 'none');
     assert.equal(page.root.classList.contains('loader-running'), false);
@@ -149,6 +145,52 @@ test('first-time mobile and save-data visits show content immediately, even when
     page.advance(10000);
     assert.deepEqual(page.emitted, ['loader:done']);
   }
+});
+
+test('mobile cycles five languages and finishes with animated Namaste at exactly five seconds', async () => {
+  const page = preview({ compact: true, handwriting: true }); await flush();
+  assert.equal(page.loader.dataset.mode, 'mobile');
+  assert.equal(page.word.textContent, 'Hello');
+  for (const [delay, text, lang] of [[700, 'Hola', 'es'], [700, 'Bonjour', 'fr'], [700, 'Ciao', 'it'], [700, 'Hallo', 'de']]) {
+    page.advance(delay);
+    assert.equal(page.word.textContent, text);
+    assert.equal(page.word.lang, lang);
+  }
+  page.advance(770);
+  assert.equal(page.word.lang, 'ne');
+  assert.equal(page.word.written, true);
+  page.advance(880);
+  assert.equal(page.root.dataset.loaderDone, 'false', 'Completed ink remains readable');
+  page.advance(370); page.advance(179);
+  assert.equal(page.root.dataset.loaderDone, 'false');
+  page.advance(1);
+  assert.equal(page.root.dataset.loaderDone, 'true');
+  assert.deepEqual(page.emitted, ['loader:done']);
+  assert.equal(page.body.style.overflow, 'scroll');
+});
+
+test('mobile full sequence remains five seconds for returning visitors and slow or blocked assets', async () => {
+  for (const options of [{ returning: true }, { assets: false }, { blockedStorage: true }]) {
+    const page = preview({ compact: true, ...options }); await flush();
+    assert.equal(page.word.textContent, 'Hello');
+    page.advance(3570); assert.equal(page.word.lang, 'ne');
+    page.advance(1250); page.advance(180);
+    assert.equal(page.root.dataset.loaderDone, 'true');
+  }
+  const stalled = preview({ compact: true });
+  stalled.advance(5000, false);
+  assert.equal(stalled.root.dataset.loaderDone, 'true');
+});
+
+test('phone welcome can be skipped immediately and stylesheet failure never locks scrolling', () => {
+  const phone = preview({ compact: true });
+  phone.skip.dispatch('click');
+  assert.equal(phone.root.dataset.loaderDone, 'true');
+  assert.equal(phone.heading.focused, true);
+  const failed = preview({ compact: true, styles: 'pending' });
+  failed.stylesheets[0].dispatch('error');
+  assert.equal(failed.root.dataset.loaderDone, 'true');
+  assert.equal(failed.body.style.overflow, 'scroll');
 });
 
 test('scroll intent, keyboard, visibility changes and the skip button restore the usable page', () => {
@@ -192,7 +234,7 @@ test('Namaste uses the pen-stroke artwork and holds the completed word before di
   assert.equal(page.root.dataset.loaderDone, 'true');
 });
 
-test('only an explicit preview requests intro CSS and stylesheet failure never locks the page', () => {
+test('eligible welcomes request intro CSS and stylesheet failure never locks the page', () => {
   const page = preview({ intro: true, styles: 'pending' });
   assert.equal(page.stylesheets.length, 1);
   assert.match(page.stylesheets[0].href, /^loader\/files\/loader\.css\?/);

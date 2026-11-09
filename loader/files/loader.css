@@ -64,6 +64,10 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 .ld-graphic .ld-dot { fill: currentColor; stroke: none; }
 @keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
+#loader[data-mode="mobile"] .ld-graphic { width: 140vw; max-width: 760px; opacity: .2; animation-duration: 5s; }
+#loader[data-mode="mobile"] .ld-graphic path:first-child { stroke-dasharray: 22 10; animation: loader-trace 5s linear infinite; }
+#loader[data-mode="mobile"] .ld-wash { animation-duration: 5s; }
+@keyframes loader-trace { to { stroke-dashoffset: -96; } }
 #loader[data-visit="returning"] .ld-graphic { display: none; }
 #loader[data-visit="returning"] .ld-wash { animation: none; }
 
@@ -133,7 +137,7 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 @media (prefers-reduced-motion: reduce) {
   html.loader-running #loader { display: none; }
-  #loader, .ld-wash, .ld-graphic { animation: none; transition: none; }
+  #loader, .ld-wash, .ld-graphic, .ld-graphic path { animation: none !important; transition: none; }
   .ld-write-stroke, .ld-write-finish { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
 }
 @media (forced-colors: active) {

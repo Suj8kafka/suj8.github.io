@@ -27,6 +27,9 @@ export function createScrollNavigation({ document, window }) {
   }
   function updateHeader(y) {
     if (!header) return;
+    if (window.innerWidth <= 800 || (!finePointer.matches && window.innerWidth <= 1100)) {
+      header.classList.remove('is-detached'); return;
+    }
     const detached = header.classList.contains('is-detached');
     const next = detached ? y > 8 : y > 28;
     if (next !== detached) header.classList.toggle('is-detached', next);

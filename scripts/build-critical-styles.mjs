@@ -22,7 +22,7 @@ function rules(source) {
   return result;
 }
 
-const criticalClass = /\.(?:hero[\w-]*|portrait[\w-]*|art-note|note-one|note-two|site-header|wordmark|nav(?:-contact)?|header-tools|live-presence[\w-]*|live-counter|availability[\w-]*|button[\w-]*|text-link|eyebrow|status-dot|icon(?:-sprite)?|image-caption|landscape[\w-]*)(?![\w-])/;
+const criticalClass = /\.(?:hero[\w-]*|portrait[\w-]*|art-note|note-one|note-two|site-header|mobile-nav|wordmark|nav(?:-contact)?|header-tools|live-presence[\w-]*|live-counter|availability[\w-]*|button[\w-]*|text-link|eyebrow|status-dot|icon(?:-sprite)?|image-caption|landscape[\w-]*)(?![\w-])/;
 const globalSelector = /(?:^|,)\s*(?::root|\[data-theme|html\b|body\b|\*(?![\w-])|a(?=[\s.:{,]|$)|h[123](?=[\s.:{,]|$)|p(?=[\s.:{,]|$))/;
 
 export function criticalStyles(source) {

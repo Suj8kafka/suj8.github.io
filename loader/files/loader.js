@@ -1,16 +1,9 @@
-/* Optional welcome preview; ordinary visits always paint the portfolio immediately. */
+/* Six-second first desktop welcome; returning Namaste and phone timing stay brief. */
 (() => {
   const loader = document.getElementById('loader');
   if (!loader) return;
   const root = document.documentElement;
-  if (new URLSearchParams(window.location.search).get('intro') !== '1') {
-    // Do not read storage, await assets, request intro CSS or lock scrolling on normal visits.
-    loader.style.display = 'none';
-    root.classList.remove('loader-running');
-    root.dataset.loaderDone = 'true';
-    document.dispatchEvent(new CustomEvent('loader:done'));
-    return;
-  }
+  const compact = matchMedia('(max-width: 800px), (pointer: coarse)').matches;
   const word = document.getElementById('ld-word');
   const language = document.getElementById('ld-lang');
   const fill = document.getElementById('ld-fill');
@@ -21,7 +14,7 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const seenKey = 'portfolio-intro-seen';
   const exitDuration = 180;
-  const firstVisitDuration = 9000; // Includes the exit fade.
+  const firstVisitDuration = compact ? 5000 : 6000; // Includes Namaste and the exit fade.
   let returning = false, storageAvailable = false;
   function remember(storage) {
     const savedCount = Number(storage.getItem('portfolio-visit-count'));
@@ -32,13 +25,21 @@
   try { returning = remember(sessionStorage); storageAvailable = true; } catch {}
   try { returning = remember(localStorage) || returning; storageAvailable = true; } catch {}
   if (!storageAvailable) returning = true;
-  const namaste = { text: 'नमस्ते', label: 'Namaste · Nepali', lang: 'ne', font: 'dev', duration: returning ? 1050 : 1100 };
-  const greetings = returning ? [namaste] : [
+  const namaste = { text: 'नमस्ते', label: 'Namaste · Nepali', lang: 'ne', font: 'dev', duration: compact ? 1250 : returning ? 1050 : 1100 };
+  const greetings = compact ? [
+    { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: 700 },
+    { text: 'Hola', label: 'Spanish', lang: 'es', font: 'headline', duration: 700 },
+    { text: 'Bonjour', label: 'French', lang: 'fr', font: 'headline', duration: 700 },
+    { text: 'Ciao', label: 'Italian', lang: 'it', font: 'headline', duration: 700 },
+    { text: 'Hallo', label: 'German', lang: 'de', font: 'headline', duration: 770 },
+    namaste
+  ] : returning ? [namaste] : [
     { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: firstVisitDuration - namaste.duration - exitDuration }, namaste
   ];
   const duration = greetings.reduce((sum, greeting) => sum + greeting.duration, 0);
-  const maximumDuration = returning ? 1800 : duration;
-  loader.dataset.visit = returning ? 'returning' : 'first';
+  const maximumDuration = compact ? duration : returning ? 1800 : duration;
+  loader.dataset.visit = compact ? 'mobile' : returning ? 'returning' : 'first';
+  loader.dataset.mode = compact ? 'mobile' : 'desktop';
   const navigationKeys = new Set(['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
   let running = false, completed = false, ready = false;
   let failSafe, exitTimer, frame, animation, startedAt;
@@ -94,9 +95,9 @@
     loader.dataset.palette = String(index % 3);
     if (!writing && index > 0 && typeof word.animate === 'function') {
       animation = word.animate([
-        { opacity: 0, filter: 'blur(4px)', transform: 'translateY(5px)' },
-        { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' }
-      ], { duration: 140, easing: 'ease-out', fill: 'both' });
+        { opacity: .35, transform: 'translateY(6px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], { duration: 180, easing: 'ease-out', fill: 'both' });
     }
   }
   function tick(now) {
@@ -125,7 +126,7 @@
     if (running || completed) return;
     running = true;
     root.dataset.loaderDone = 'false';
-    failSafe = setTimeout(complete, maximumDuration + 200);
+    failSafe = setTimeout(complete, compact ? firstVisitDuration : returning ? maximumDuration + 200 : firstVisitDuration);
     previousOverflow = root.style.overflow; previousBodyOverflow = document.body.style.overflow;
     root.style.overflow = 'hidden'; document.body.style.overflow = 'hidden';
     root.classList.add('loader-running');
@@ -140,19 +141,18 @@
   }
 
   skip.addEventListener('click', () => complete(true));
-  const compact = matchMedia('(max-width: 800px), (pointer: coarse)').matches;
-  // Even an explicit preview must respect constrained devices and direct section links.
-  if (compact || window.navigator?.connection?.saveData || motion.matches || window.location.hash || document.hidden) { complete(); return; }
+  // Keep accessibility, data-saving and direct section navigation immediate.
+  if (window.navigator?.connection?.saveData || motion.matches || window.location.hash || document.hidden) { complete(); return; }
   const loaded = document.readyState === 'complete' ? Promise.resolve()
     : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
   const image = document.querySelector('.portrait-base');
   const decoded = image && typeof image.decode === 'function' ? Promise.resolve().then(() => image.decode()) : Promise.resolve();
   Promise.allSettled([loaded, decoded, document.fonts?.ready || Promise.resolve()]).then(() => { ready = true; });
-  // Only the explicit preview requests its artwork stylesheet. A failed or stalled
+  // Eligible welcomes request their stylesheet. A failed or stalled
   // request leaves the page readable, without ever starting a scroll lock.
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet';
-  stylesheet.href = 'loader/files/loader.css?v=20261109-preview';
+  stylesheet.href = 'loader/files/loader.css?v=20261109-mobile-welcome';
   stylesheet.addEventListener('load', () => { clearTimeout(failSafe); run(); }, { once: true });
   stylesheet.addEventListener('error', () => complete(), { once: true });
   failSafe = setTimeout(complete, 2500);

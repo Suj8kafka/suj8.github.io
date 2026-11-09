@@ -1,6 +1,8 @@
+Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](loading-screen.md).
+
 # Mobile rendering follow-up — 2026-11-09
 
-The existing hero remains visible without entrance fades. The main change removes the full stylesheet, secondary fonts and phone animation downloads from the portrait's initial loading path. The subsequent release also disables the automatic intro on every normal visit; the original artwork is available only at `/?intro=1`. See [the security and performance release notes](security-performance.md) for the final pre-push checks.
+The existing hero remains visible without entrance fades. The main change removes the full stylesheet, secondary fonts and phone GSAP downloads from the portrait's initial loading path. These measurements were recorded with the automatic intro disabled. The later requested [five-second mobile welcome](loading-screen.md) now covers the page on phones; these historical timings do not describe that new first-view experience. Desktop preview remains at `/?intro=1`. See [the security and performance release notes](security-performance.md) for the prior release's checks.
 
 ## Measured result
 

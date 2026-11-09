@@ -1,4 +1,8 @@
+Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](loading-screen.md).
+
 # Security and first-screen performance release — 2026-11-09
+
+Historical release record: the later requested [mobile welcome](loading-screen.md) restores a five-second phone intro. The lab timings below were measured without that overlay and are not measurements of the current mobile welcome.
 
 ## Intro and initial rendering
 

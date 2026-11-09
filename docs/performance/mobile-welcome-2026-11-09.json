@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-09",
+  "kind": "Local mobile welcome and navigation UI verification; not an LCP measurement",
+  "browser": "Brave/Chromium156, local Python HTTP",
+  "blockedVisitorServices": true,
+  "nodeTestsPassed": 119,
+  "accessibility": {
+    "lighthouseVersion": "13.6.0",
+    "score": 100,
+    "failedAudits": []
+  },
+  "timing": {
+    "duration": 5001.100000023842,
+    "greetings": [
+      "en",
+      "es",
+      "fr",
+      "it",
+      "de",
+      "ne"
+    ]
+  },
+  "widths": [
+    {
+      "width": 320,
+      "bottom": 844,
+      "height": 72,
+      "fixed": "fixed",
+      "overflow": false,
+      "tapHeights": [
+        57,
+        57,
+        57,
+        57,
+        57
+      ],
+      "topNav": "none"
+    },
+    {
+      "width": 390,
+      "bottom": 844,
+      "height": 72,
+      "fixed": "fixed",
+      "overflow": false,
+      "tapHeights": [
+        57,
+        57,
+        57,
+        57,
+        57
+      ],
+      "topNav": "none"
+    },
+    {
+      "width": 430,
+      "bottom": 844,
+      "height": 72,
+      "fixed": "fixed",
+      "overflow": false,
+      "tapHeights": [
+        57,
+        57,
+        57,
+        57,
+        57
+      ],
+      "topNav": "none"
+    },
+    {
+      "width": 800,
+      "bottom": 844,
+      "height": 72,
+      "fixed": "fixed",
+      "overflow": false,
+      "tapHeights": [
+        57,
+        57,
+        57,
+        57,
+        57
+      ],
+      "topNav": "none"
+    }
+  ],
+  "landscapeBottomBar": true,
+  "contactNavigation": true,
+  "lightAndDarkThemes": true,
+  "reducedMotionBypass": true,
+  "desktopUnchanged": true,
+  "noJavaScriptFallback": true
+}

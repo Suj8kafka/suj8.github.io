@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description"
     content="Sujeet Khadka is a UI/UX Designer in Nepal. Explore his portfolio, design work, writing, experience, and contact details.">
   <meta name="author" content="Sujeet Khadka">
@@ -184,12 +184,26 @@ h2{margin-bottom: 18px; font: 600 clamp(40px, 5vw, 69px)/1 var(--display); lette
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;}}
+.mobile-nav{display: none;}
+@media (max-width: 800px), (max-width: 1100px) and (pointer: coarse){body{padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));}
+html{scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));}
+.site-header{position: absolute; top: 0; left: 0; width: 100%; height: 72px; padding: 0 20px; transform: none; transition: none;}
+.site-header .nav, .site-header .header-tools{display: none;}
+.mobile-nav{position: fixed; z-index: 40; inset: auto 0 0; display: grid; grid-template-columns: repeat(5, 1fr);
+    min-height: 72px; padding: 7px max(8px, env(safe-area-inset-right, 0px)) calc(7px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+    border-top: 1px solid var(--line); background: var(--paper); color: var(--ink);
+    box-shadow: 0 -4px 18px rgba(24,33,30,.06);}
+.mobile-nav a{display: flex; min-width: 0; min-height: 54px; padding: 6px 2px; gap: 4px; align-items: center; justify-content: center; flex-direction: column; border-radius: 10px; font: 500 10px/1.3 var(--body);}
+.mobile-nav .icon{width: 23px; height: 23px; stroke-width: 1.7;}
+.mobile-nav a[aria-current="location"]{color: var(--accent-text); background: color-mix(in srgb, var(--accent) 8%, var(--paper));}
+.mobile-nav a[aria-current="location"] .icon{stroke-width: 2.2;}
+.mobile-nav a:focus-visible{outline: 2px solid var(--accent-text); outline-offset: -2px;}}
 .presence-panel,.skill-modal{visibility:hidden;pointer-events:none;position:fixed;inset:0}
 .live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}
 img,video{max-width:100%}
 </style>
-  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261109-a11y-actions" media="print">
-  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261109-a11y-actions"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
+  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261109-mobile-navigation" media="print">
+  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261109-mobile-navigation"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
   <script type="module" src="assets/js/page-styles.js?v=20261109-first-view"></script>
   <script type="application/ld+json">
   {
@@ -233,7 +247,7 @@ img,video{max-width:100%}
 </head>
 
 <body>
-<div id="loader" role="region" aria-label="Optional welcome intro" data-palette="0">
+<div id="loader" role="region" aria-label="Welcome intro" data-palette="0">
   <div class="ld-wash ld-wash-one" aria-hidden="true"></div>
   <div class="ld-wash ld-wash-two" aria-hidden="true"></div>
   <div class="ld-wash ld-wash-three" aria-hidden="true"></div>
@@ -288,6 +302,15 @@ img,video{max-width:100%}
     <symbol id="icon-layout" viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="16" rx="2" />
       <path d="M3 9h18M8 9v11" />
+    </symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24">
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" />
+    </symbol>
+    <symbol id="icon-person" viewBox="0 0 24 24">
+      <circle cx="12" cy="7" r="4" /><path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" />
     </symbol>
     <symbol id="icon-code" viewBox="0 0 24 24">
       <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
@@ -346,6 +369,13 @@ img,video{max-width:100%}
       </div>
     </div>
   </header>
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <a href="#top" aria-current="location"><svg class="icon" aria-hidden="true"><use href="#icon-home"></use></svg><span>Home</span></a>
+    <a href="#work"><svg class="icon" aria-hidden="true"><use href="#icon-layout"></use></svg><span>Work</span></a>
+    <a href="#skills"><svg class="icon" aria-hidden="true"><use href="#icon-asterisk"></use></svg><span>Skills</span></a>
+    <a href="#about"><svg class="icon" aria-hidden="true"><use href="#icon-person"></use></svg><span>About</span></a>
+    <a href="#contact" data-contact-scroll><svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg><span>Contact</span></a>
+  </nav>
   <aside class="presence-panel" id="presence-panel" aria-hidden="true">
     <div class="presence-panel-backdrop" data-presence-close></div>
     <section class="presence-panel-content" role="dialog" aria-modal="true" aria-labelledby="presence-panel-title">
@@ -850,8 +880,9 @@ img,video{max-width:100%}
         href="#contact" data-contact-scroll>Project inquiries <svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></a><a href="#top" data-back-to-top>Back to top <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></a></div>
   </footer>
   <script src="assets/js/main.js?v=20261109-keyboard" defer></script>
-  <script type="module" src="assets/js/scroll-navigation.js?v=20261108-scroll-blur"></script>
-  <script src="loader/files/loader.js?v=20261109-optional-intro" defer></script>
+  <script type="module" src="assets/js/scroll-navigation.js?v=20261109-mobile-navigation"></script>
+  <script type="module" src="assets/js/mobile-navigation.js?v=20261109-mobile-navigation"></script>
+  <script src="loader/files/loader.js?v=20261109-six-second-welcome" defer></script>
   <script type="module" src="assets/js/enhancements.js?v=20261109-first-view"></script>
 </body>
 
