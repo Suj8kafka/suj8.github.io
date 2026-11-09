@@ -24,6 +24,14 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: clip; }
 body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--body); transition: color .3s, background .3s; overflow-x: clip; }
+main { position: relative; }
+main > section { position: relative; z-index: 1; }
+.scroll-trail { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; visibility: hidden; }
+.scroll-trail.is-ready { visibility: visible; }
+.scroll-trail-line { stroke: var(--accent); stroke-width: clamp(32px, 4.5vw, 64px); stroke-linecap: round; stroke-linejoin: round; opacity: .035; vector-effect: non-scaling-stroke; }
+[data-theme="dark"] .scroll-trail-line { opacity: .025; }
+@media (max-width: 800px) { .scroll-trail-line { stroke-width: 24px; opacity: .025; } }
+@media (prefers-reduced-motion: reduce) { .scroll-trail { display: none; } }
 /* Blur only the visible viewport, not a filter surface as tall as the whole document. */
 .scroll-motion { position: fixed; z-index: 19; inset: 0; pointer-events: none; contain: strict; opacity: 0; visibility: hidden; background: color-mix(in srgb, var(--paper) 1%, transparent); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); transition: opacity .16s linear, visibility 0s linear .16s; }
 html.is-anchor-scrolling .scroll-motion { visibility: visible; will-change: opacity; transition: none; }
@@ -341,17 +349,15 @@ h2 { margin-bottom: 18px; font: 600 clamp(40px, 5vw, 69px)/1 var(--display); let
 .skills-heading .section-description { max-width: 500px; margin: auto; }
 .skills-grid { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; max-width: 1120px; margin: auto; }
 .skill-card { --skill-fill: var(--orange); --skill-text: var(--ink); position: relative; min-height: 410px; padding: 0 25px 25px; overflow: hidden; border: 1px solid rgba(24,33,30,.38); border-radius: 18px; color: var(--skill-text); background: var(--paper); transition: color .42s cubic-bezier(.22, 1, .36, 1), transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .42s cubic-bezier(.22, 1, .36, 1); }
-.skill-card::after { position: absolute; z-index: 0; inset: 0; content: ""; background: var(--skill-fill); transform: scaleY(0); transform-origin: bottom; transition: transform .72s cubic-bezier(.22, 1, .36, 1); }
+.skill-card::after { position: absolute; z-index: 0; inset: 0; content: ""; background: var(--skill-fill); }
 .skill-card > * { position: relative; z-index: 1; }
 .skill-card.skill-blue { --skill-fill: var(--blue); }
 .skill-card.skill-lime { --skill-fill: var(--lime); }
 .skill-card.skill-pink { --skill-fill: var(--pink); }
 .skill-card.skill-dark { --skill-fill: var(--ink); }
-.skill-card.is-filled::after { transform: scaleY(1); }
-.skills:not(.is-active) .skill-card { color: var(--ink); background: var(--paper); }
-.skill-card.is-filled.skill-dark { color: var(--paper); border-color: var(--ink); }
-.skills.is-active .skill-card:focus-visible { position: relative; z-index: 2; transform: translateY(-4px); box-shadow: 4px 5px 0 var(--shadow); }
-@media (hover: hover) { .skills.is-active .skill-card:hover { z-index: 2; transform: translateY(-4px); box-shadow: 4px 5px 0 var(--shadow); } }
+.skill-card.skill-dark { color: var(--paper); border-color: var(--ink); }
+.skills .skill-card:focus-visible { position: relative; z-index: 2; transform: translateY(-4px); box-shadow: 4px 5px 0 var(--shadow); }
+@media (hover: hover) { .skills .skill-card:hover { z-index: 2; transform: translateY(-4px); box-shadow: 4px 5px 0 var(--shadow); } }
 .skill-visual { position: relative; height: 176px; margin: 0 -25px 23px; overflow: hidden; border-bottom: 1px solid currentColor; background: transparent; }
 .skill-visual::before, .skill-visual::after, .skill-visual i, .skill-visual b { position: absolute; content: ""; display: block; }
 .skill-visual::before { top: 26px; left: 28px; width: 110px; height: 78px; border: 2px solid currentColor; border-radius: 7px; opacity: .72; }
@@ -407,9 +413,7 @@ h2 { margin-bottom: 18px; font: 600 clamp(40px, 5vw, 69px)/1 var(--display); let
 .article-excerpt { display: block; max-width: 610px; color: var(--muted); font-size: 14px; line-height: 1.55; }
 .article-arrow { color: var(--orange); font-size: 21px; }
 .medium-link { display: inline-block; margin-top: 30px; border-bottom: 1px solid var(--ink); padding-bottom: 5px; font-size: 12px; }.medium-link span { color: var(--orange); margin-left: 10px; }
-.reveal { opacity: 0; transform: translate3d(0, 22px, 0); transition: opacity .7s ease, transform .7s ease; }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
-.skill-card.reveal.is-visible { transition: opacity .7s ease, transform .3s, box-shadow .3s, color .3s, background .3s, border-color .3s; }
+/* Content stays readable if GSAP or JavaScript fails. GSAP controls only active entrances. */
 .contact { padding-top: 110px; padding-bottom: 120px; text-align: center; }.contact h2 { margin-bottom: 35px; }.contact-link { display: inline-block; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font: 500 clamp(17px, 2vw, 24px) var(--display); }.contact-link span { margin-left: 15px; color: var(--orange); }
 .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 62px auto 0; max-width: 760px; }.social-links a { display: inline-flex; align-items: center; gap: 9px; padding: 10px 13px 10px 9px; border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 7px; color: var(--muted); background: linear-gradient(145deg, color-mix(in srgb, var(--paper) 95%, white 5%), color-mix(in srgb, var(--paper) 88%, var(--line) 12%)); box-shadow: inset 1px 1px 0 rgba(255,255,255,.65), inset -1px -1px 0 rgba(24,33,30,.12), 0 2px 0 rgba(24,33,30,.14); font: 12px "DM Mono", monospace; transition: color .2s, border-color .2s, transform .2s, background .2s, box-shadow .2s; }.social-links a:hover, .social-links a:focus-visible { color: var(--brand-text, var(--brand-color)); border-color: var(--brand-color); background: color-mix(in srgb, var(--brand-color) 12%, var(--paper)); transform: translateY(-3px); box-shadow: inset 1px 1px 0 rgba(255,255,255,.55), inset -1px -1px 0 rgba(24,33,30,.15), 0 4px 0 rgba(24,33,30,.18); }.social-links a:hover .social-icon, .social-links a:focus-visible .social-icon { color: var(--brand-color); }.social-icon { display: inline-grid; min-width: 25px; height: 25px; padding: 0 3px; border: 1px solid currentColor; border-radius: 4px; place-items: center; color: var(--muted); background: var(--paper); box-shadow: inset 1px 1px 0 rgba(255,255,255,.7), inset -1px -1px 0 rgba(24,33,30,.18); font: 600 11px var(--display); }.social-icon .icon { width: 16px; height: 16px; }
 .social-figma { --brand-color: #f24e1e; }

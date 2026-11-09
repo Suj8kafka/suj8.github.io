@@ -131,25 +131,6 @@ applyTheme(themePreference);
 updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
 
-let heroEntranceStarted = false;
-function startHeroEntrance() {
-  if (heroEntranceStarted) return;
-  heroEntranceStarted = true;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  document.querySelectorAll(".hero-copy, .hero-art").forEach((element, index) => {
-    element.animate([
-      { opacity: 0, transform: "translateY(18px)" },
-      { opacity: 1, transform: "translateY(0)" }
-    ], { duration: 600, delay: index * 90, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" });
-  });
-}
-document.addEventListener("loader:done", startHeroEntrance, { once: true });
-if (root.dataset.loaderDone === "true") startHeroEntrance();
-// The hero also works if the loader script is missing or blocked.
-window.addEventListener("load", () => {
-  if (!root.classList.contains("loader-running")) startHeroEntrance();
-}, { once: true });
-
 document.querySelectorAll(".company-logo").forEach((logo) => {
   const image = logo.querySelector("img");
   image.addEventListener("error", () => {
@@ -175,36 +156,3 @@ skillModal.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeSkillModal();
 });
-
-const revealItems = document.querySelectorAll(".experience-node, .skill-card, .article-card, .about-copy");
-const revealObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("is-visible");
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-revealItems.forEach((item) => {
-  item.classList.add("reveal");
-  revealObserver.observe(item);
-});
-
-const skillsSection = document.querySelector(".skills");
-const skillCards = [...skillsSection.querySelectorAll(".skill-card")];
-let skillFillTimers = [];
-const skillsSectionObserver = new IntersectionObserver(([entry]) => {
-  skillFillTimers.forEach((timer) => window.clearTimeout(timer));
-  skillFillTimers = [];
-  skillsSection.classList.toggle("is-active", entry.isIntersecting);
-  if (!entry.isIntersecting) {
-    skillCards.forEach((card) => card.classList.remove("is-filled"));
-    return;
-  }
-  skillCards.forEach((card, index) => {
-    skillFillTimers.push(window.setTimeout(() => card.classList.add("is-filled"), index * 90));
-  });
-}, { threshold: 0.12 });
-
-skillsSectionObserver.observe(skillsSection);
