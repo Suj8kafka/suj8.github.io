@@ -50,10 +50,10 @@ test('large backgrounds tint slowly and out-of-frame hover positions are clamped
   assert.deepEqual(portraitWave([], { x: 0, y: 0 }, viewBox), []);
 });
 
-function pendingPortrait(fetch) {
+function pendingPortrait(fetch, vectorSrc) {
   const control = { hidden: true }, mount = { append() { throw new Error('Fallback must not insert an SVG'); } };
-  const image = { src: 'https://portfolio.test/assets/images/sujeet-hero-%20vector2.svg' };
-  const frame = { dataset: {}, querySelector: selector => ({ '.portrait-vector-mount': mount,
+  const image = { src: 'https://portfolio.test/assets/images/sujeet-hero-440.webp' };
+  const frame = { dataset: vectorSrc ? { vectorSrc } : {}, querySelector: selector => ({ '.portrait-vector-mount': mount,
     '.portrait-base': image, '.portrait-reveal-control': control })[selector] };
   const controller = createPortraitNetwork({ document: { querySelector: () => frame },
     window: { AbortController, fetch, matchMedia: () => ({ matches: false }) } });
@@ -66,6 +66,16 @@ test('a failed inline request retains the regular SVG image and hides the inacti
   await page.controller.ready;
   assert.equal(page.control.hidden, true);
   assert.equal(page.frame.dataset.vectorReady, undefined);
+});
+
+test('desktop enhancement fetches the explicit vector source rather than parsing the raster fallback', async context => {
+  context.mock.method(console, 'warn', () => {});
+  let requested;
+  const source = 'assets/images/sujeet-hero-%20vector2.svg';
+  const page = pendingPortrait(async url => { requested = url; return { ok: false, status: 404 }; }, source);
+  await page.controller.ready;
+  assert.equal(requested, source);
+  assert.equal(page.control.hidden, true);
 });
 
 test('destroying a pending portrait aborts loading and cannot insert late artwork', async () => {

@@ -25,14 +25,12 @@
     content="The official portfolio of Sujeet Khadka, a UI/UX and visual designer based in Nepal.">
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/sujeet-at-exhibition.jpeg">
   <title>Sujeet Khadka - UI/UX Designer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+Devanagari:wght@300;400&family=Noto+Sans+SC:wght@400&family=Noto+Naskh+Arabic:wght@400&family=Noto+Sans+Bengali:wght@400&display=swap"
-    rel="stylesheet">
-  <link rel="preload" as="image" type="image/svg+xml" href="assets/images/sujeet-hero-%20vector2.svg" fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/space-grotesk-latin.woff2" crossorigin>
+  <link rel="preload" as="image" type="image/webp" href="assets/images/sujeet-hero-440.webp"
+    imagesrcset="assets/images/sujeet-hero-440.webp 440w, assets/images/sujeet-hero-880.webp 880w"
+    imagesizes="(max-width: 462px) calc(90vw - 36px), (max-width: 800px) 380px, (max-width: 1100px) 400px, 440px" fetchpriority="high">
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
-  <link rel="stylesheet" href="assets/css/site.css?v=20261109-ribbon-softer">
+  <link rel="stylesheet" href="assets/css/site.css?v=20261109-mobile-lcp">
   <link rel="stylesheet" href="loader/files/loader.css">
   <script type="application/ld+json">
   {
@@ -274,9 +272,12 @@
       <div class="hero-art" aria-label="Sujeet viewing artwork at an exhibition">
         <div class="art-note note-one" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-asterisk"></use></svg></div>
         <div class="art-note note-two" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></div>
-        <div class="portrait-frame">
+        <div class="portrait-frame" data-vector-src="assets/images/sujeet-hero-%20vector2.svg">
           <span class="portrait-visual">
-            <img class="portrait-base" src="assets/images/sujeet-hero-%20vector2.svg" width="1145" height="1527" fetchpriority="high"
+            <img class="portrait-base" src="assets/images/sujeet-hero-440.webp"
+              srcset="assets/images/sujeet-hero-440.webp 440w, assets/images/sujeet-hero-880.webp 880w"
+              sizes="(max-width: 462px) calc(90vw - 36px), (max-width: 800px) 380px, (max-width: 1100px) 400px, 440px"
+              width="1145" height="1527" fetchpriority="high" loading="eager"
               decoding="async" alt="Vector illustration of Sujeet Khadka viewing artwork at an exhibition">
             <span class="portrait-vector-mount" aria-hidden="true"></span>
           </span>
@@ -687,15 +688,10 @@
     <div class="footer-links"><a href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">Blog <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a><a
         href="#contact">Contact <svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></a><a href="#top" data-back-to-top>Back to top <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></a></div>
   </footer>
-  <script src="assets/vendor/gsap/gsap.min.js" defer></script>
-  <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
   <script src="assets/js/main.js?v=20261108-stable-motion" defer></script>
   <script type="module" src="assets/js/scroll-navigation.js?v=20261108-scroll-blur"></script>
-  <script type="module" src="assets/js/motion.js?v=20261109-ribbon"></script>
-  <script type="module" src="assets/js/portrait-network.js"></script>
-  <script src="loader/files/loader.js" defer></script>
-  <script type="module" src="assets/js/firebase-presence.js"></script>
-  <script type="module" src="assets/js/availability-client.js"></script>
+  <script src="loader/files/loader.js?v=20261109-mobile-lcp" defer></script>
+  <script type="module" src="assets/js/enhancements.js?v=20261109-mobile-lcp"></script>
 </body>
 
 </html>

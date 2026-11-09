@@ -132,7 +132,9 @@
   }
 
   skip.addEventListener('click', () => complete(true));
-  if (motion.matches || window.location.hash || document.hidden) { complete(); return; }
+  const compact = matchMedia('(max-width: 800px), (pointer: coarse)').matches;
+  // Phones must paint the portfolio immediately, without waiting behind the welcome.
+  if (compact || window.navigator?.connection?.saveData || motion.matches || window.location.hash || document.hidden) { complete(); return; }
   const loaded = document.readyState === 'complete' ? Promise.resolve()
     : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
   const image = document.querySelector('.portrait-base');

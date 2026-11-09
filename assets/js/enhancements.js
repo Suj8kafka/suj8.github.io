@@ -1,0 +1,67 @@
+function script(document, src) {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement('script');
+    element.src = src; element.async = true;
+    element.onload = resolve;
+    element.onerror = () => reject(new Error(`Could not load ${src}`));
+    document.head.append(element);
+  });
+}
+
+async function loadMotion(document, window) {
+  if (!window.gsap) await script(document, 'assets/vendor/gsap/gsap.min.js');
+  if (!window.ScrollTrigger) await script(document, 'assets/vendor/gsap/ScrollTrigger.min.js');
+  return import('./motion.js?v=20261109-mobile-lcp');
+}
+
+export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
+  portrait = () => import('./portrait-network.js?v=20261109-mobile-lcp'),
+  services = () => Promise.allSettled([import('./firebase-presence.js'), import('./availability-client.js')]) }) {
+  let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
+  const listeners = [];
+  const listen = (target, name, callback) => {
+    target.addEventListener(name, callback);
+    listeners.push(() => target.removeEventListener(name, callback));
+  };
+  function run() {
+    queued = false;
+    if (destroyed || started || document.hidden || document.documentElement.classList.contains('loader-running')) return;
+    started = true;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const compact = window.matchMedia('(max-width: 800px)').matches;
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const constrained = window.navigator.connection?.saveData
+      || (window.navigator.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
+      || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
+    const launch = task => Promise.resolve().then(task).catch(error => console.warn('Optional portfolio enhancement unavailable.', error));
+    launch(services);
+    if (!reduced) launch(motion);
+    // Mobile/reduced-motion visitors keep the lightweight colour image, without 1,643 inline paths.
+    if (!reduced && !compact && fine && !constrained) launch(portrait);
+  }
+  function queue() {
+    if (destroyed || started || queued || document.readyState !== 'complete' || document.hidden
+      || document.documentElement.classList.contains('loader-running')) return;
+    queued = true;
+    // Give loaded content two paint opportunities before requesting background work.
+    frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(() => {
+        if (window.requestIdleCallback) idle = window.requestIdleCallback(run, { timeout: 1500 });
+        else timer = window.setTimeout(run, 250);
+      });
+    });
+  }
+  listen(window, 'load', queue);
+  listen(document, 'loader:done', queue);
+  listen(document, 'visibilitychange', queue);
+  queue();
+  return { destroy() {
+    destroyed = true;
+    window.cancelAnimationFrame(frame);
+    window.cancelIdleCallback?.(idle);
+    window.clearTimeout(timer);
+    listeners.forEach(remove => remove());
+  } };
+}
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined') scheduleEnhancements({ document, window });

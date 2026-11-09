@@ -1,0 +1,219 @@
+{
+  "note": "Local Chromium PerformanceObserver measurements; not Lighthouse, PageSpeed Insights or CrUX scores. Firebase/analytics requests blocked in all measured runs to avoid real visitor records. Local server has no production CDN behavior.",
+  "conditions": {
+    "width": 390,
+    "height": 844,
+    "dpr": 2,
+    "cpuSlowdown": 4,
+    "latencyMs": 150,
+    "downloadMbps": 1.6,
+    "cache": "cold",
+    "thirdPartyVisitorServices": "blocked",
+    "waitMs": 16000
+  },
+  "before": {
+    "measuredAt": "2026-11-09T03:20:38.893Z",
+    "lcp": {
+      "time": 9904,
+      "size": 85185,
+      "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-%20vector2.svg",
+      "element": "IMG",
+      "id": "",
+      "className": "portrait-base"
+    },
+    "paints": [
+      {
+        "name": "first-paint",
+        "time": 2908
+      },
+      {
+        "name": "first-contentful-paint",
+        "time": 2908
+      }
+    ],
+    "loaderRunning": false,
+    "heroSource": "http://127.0.0.1:8000/assets/images/sujeet-hero-%20vector2.svg",
+    "inlinePortrait": true,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-%20vector2.svg",
+        "start": 320.39999997615814,
+        "duration": 9408.800000011921,
+        "bytes": 711449,
+        "kind": "link"
+      },
+      {
+        "url": "http://127.0.0.1:8000/assets/vendor/gsap/gsap.min.js",
+        "start": 859.1999999880791,
+        "duration": 2248.199999988079,
+        "bytes": 73357,
+        "kind": "script"
+      },
+      {
+        "url": "http://127.0.0.1:8000/assets/vendor/gsap/ScrollTrigger.min.js",
+        "start": 860.1999999880791,
+        "duration": 1437.3999999761581,
+        "bytes": 44683,
+        "kind": "script"
+      },
+      {
+        "url": "http://127.0.0.1:8000/assets/js/portrait-network.js",
+        "start": 864.2999999523163,
+        "duration": 1260.7000000476837,
+        "bytes": 8706,
+        "kind": "script"
+      },
+      {
+        "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-%20vector2.svg",
+        "start": 3519.199999988079,
+        "duration": 6994.399999976158,
+        "bytes": 711449,
+        "kind": "fetch"
+      }
+    ]
+  },
+  "after": [
+    {
+      "measuredAt": "2026-11-09T03:25:15.837Z",
+      "lcp": {
+        "time": 2368,
+        "size": 85049,
+        "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+        "element": "IMG",
+        "id": "",
+        "className": "portrait-base"
+      },
+      "paints": [
+        {
+          "name": "first-paint",
+          "time": 2368
+        },
+        {
+          "name": "first-contentful-paint",
+          "time": 2368
+        }
+      ],
+      "loaderRunning": false,
+      "heroSource": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+      "inlinePortrait": false,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+          "start": 328.9000000357628,
+          "duration": 1383.8999999761581,
+          "bytes": 64070,
+          "kind": "link"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/gsap.min.js",
+          "start": 3053.699999988079,
+          "duration": 562.3000000119209,
+          "bytes": 73357,
+          "kind": "script"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/ScrollTrigger.min.js",
+          "start": 3640.900000035763,
+          "duration": 382.89999997615814,
+          "bytes": 44683,
+          "kind": "script"
+        }
+      ]
+    },
+    {
+      "measuredAt": "2026-11-09T03:27:09.200Z",
+      "lcp": {
+        "time": 2316,
+        "size": 85049,
+        "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+        "element": "IMG",
+        "id": "",
+        "className": "portrait-base"
+      },
+      "paints": [
+        {
+          "name": "first-paint",
+          "time": 2316
+        },
+        {
+          "name": "first-contentful-paint",
+          "time": 2316
+        }
+      ],
+      "loaderRunning": false,
+      "heroSource": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+      "inlinePortrait": false,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+          "start": 329,
+          "duration": 1376.4000000357628,
+          "bytes": 64070,
+          "kind": "link"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/gsap.min.js",
+          "start": 3005.600000023842,
+          "duration": 567.3000000119209,
+          "bytes": 73357,
+          "kind": "script"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/ScrollTrigger.min.js",
+          "start": 3597.2000000476837,
+          "duration": 384.2999999523163,
+          "bytes": 44683,
+          "kind": "script"
+        }
+      ]
+    },
+    {
+      "measuredAt": "2026-11-09T03:28:45.388Z",
+      "lcp": {
+        "time": 2408,
+        "size": 85049,
+        "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+        "element": "IMG",
+        "id": "",
+        "className": "portrait-base"
+      },
+      "paints": [
+        {
+          "name": "first-paint",
+          "time": 2408
+        },
+        {
+          "name": "first-contentful-paint",
+          "time": 2408
+        }
+      ],
+      "loaderRunning": false,
+      "heroSource": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+      "inlinePortrait": false,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8000/assets/images/sujeet-hero-880.webp",
+          "start": 255.19999998807907,
+          "duration": 1388.5999999642372,
+          "bytes": 64070,
+          "kind": "link"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/gsap.min.js",
+          "start": 3113.599999964237,
+          "duration": 573.8000000119209,
+          "bytes": 73357,
+          "kind": "script"
+        },
+        {
+          "url": "http://127.0.0.1:8000/assets/vendor/gsap/ScrollTrigger.min.js",
+          "start": 3709.699999988079,
+          "duration": 398.0999999642372,
+          "bytes": 44683,
+          "kind": "script"
+        }
+      ]
+    }
+  ],
+  "medianAfterLcpMs": 2368
+}

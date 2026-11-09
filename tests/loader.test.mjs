@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../loader/files/loader.js', import.meta.url), 'utf8');
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-function preview({ returning = false, reduced = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false } = {}) {
+function preview({ returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false } = {}) {
   const frames = new Map(), timers = new Map(), emitted = [];
   let clock = 0, sequence = 0;
   function target() {
@@ -42,10 +42,11 @@ function preview({ returning = false, reduced = false, hash = '', assets = true,
   const storage = { values: new Map(returning ? [['portfolio-intro-seen', '1']] : []),
     getItem(key) { if (blockedStorage) throw new Error('Storage blocked'); return this.values.get(key) || null; },
     setItem(key, value) { if (blockedStorage) throw new Error('Storage blocked'); this.values.set(key, value); } };
-  const window = Object.assign(target(), { location: { hash } });
+  const window = Object.assign(target(), { location: { hash }, navigator: { connection: { saveData } } });
   const local = { ...storage, values: new Map(storage.values) };
   vm.runInNewContext(source, {
-    document, window, localStorage: local, sessionStorage: storage, matchMedia: () => motion,
+    document, window, localStorage: local, sessionStorage: storage,
+    matchMedia: query => query.includes('max-width') ? { matches: compact } : motion,
     performance: { now: () => clock }, console: { warn() {} }, CustomEvent: class { constructor(type) { this.type = type; } },
     requestAnimationFrame(callback) { const id = ++sequence; frames.set(id, callback); return id; },
     cancelAnimationFrame: id => frames.delete(id),
@@ -112,6 +113,20 @@ test('deep links and reduced motion bypass the overlay without locking scrolling
     const page = preview(options);
     assert.equal(page.root.classList.contains('loader-running'), false);
     assert.equal(page.root.style.overflow, 'auto'); assert.equal(page.body.style.overflow, 'scroll');
+    assert.deepEqual(page.emitted, ['loader:done']);
+  }
+});
+
+test('first-time mobile and save-data visits show content immediately, even when assets are slow', () => {
+  for (const options of [{ compact: true }, { saveData: true }]) {
+    const page = preview({ ...options, assets: false });
+    assert.equal(page.loader.style.display, 'none');
+    assert.equal(page.root.classList.contains('loader-running'), false);
+    assert.equal(page.root.style.overflow, 'auto');
+    assert.equal(page.body.style.overflow, 'scroll');
+    assert.equal(page.frames.size, 0);
+    assert.deepEqual(page.emitted, ['loader:done']);
+    page.advance(10000);
     assert.deepEqual(page.emitted, ['loader:done']);
   }
 });

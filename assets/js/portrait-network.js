@@ -112,7 +112,7 @@ export function createPortraitNetwork({ document, window }) {
   }
 
   const ready = (async () => {
-    const response = await window.fetch(image.currentSrc || image.src, { signal: abort.signal, cache: 'force-cache' });
+    const response = await window.fetch(frame.dataset.vectorSrc || image.currentSrc || image.src, { signal: abort.signal, cache: 'force-cache' });
     if (!response.ok) throw new Error(`Portrait request returned ${response.status}.`);
     const source = await response.text();
     if (destroyed) return;
