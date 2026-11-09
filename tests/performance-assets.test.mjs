@@ -1,10 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url));
 const html = read('index.html').toString();
 const attributes = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map(match => [match[1], match[2]]));
+
+test('selected-work imagery offers smaller responsive WebP sources without changing aspect ratios', () => {
+  const source = html.match(/<source srcset="assets\/images\/selected-work\/aama-cure-home-640[\s\S]*?>/)[0];
+  for (const width of [640, 960, 1280]) {
+    assert.match(source, new RegExp(`aama-cure-home-${width}\\.webp\\?v=[a-f0-9]+ ${width}w`));
+    const bytes = read(`assets/images/selected-work/aama-cure-home-${width}.webp`);
+    assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
+    assert.ok(bytes.length < read('assets/images/selected-work/aama-cure-home.webp').length);
+  }
+  assert.match(source, /sizes="\(max-width: 800px\)/);
+  assert.match(html, /<source srcset="assets\/images\/selected-work\/nakka-screen-0-compact\.webp\?v=/);
+  assert.ok(read('assets/images/selected-work/nakka-screen-0-compact.webp').length
+    < read('assets/images/selected-work/nakka-screen-0.webp').length * .7);
+});
+
+test('public image and font cache versions match their file contents', () => {
+  for (const source of [html, read('assets/css/site.css').toString(), read('assets/css/secondary-fonts.css').toString()]) {
+    for (const [url, path, version] of source.matchAll(/((?:assets\/(?:images|fonts)\/|\.\.\/fonts\/)[\w./% -]+?\.(?:webp|png|jpe?g|svg|woff2))\?v=([a-f0-9]{12})/g)) {
+      const local = decodeURIComponent(path.replace(/^\.\.\/fonts\//, 'assets/fonts/'));
+      assert.equal(version, createHash('sha256').update(read(local)).digest('hex').slice(0, 12), url);
+    }
+  }
+});
 
 test('hero uses one responsive image preload matching its eagerly discoverable WebP image', () => {
   const preloads = [...html.matchAll(/<link\b[^>]*\bas="image"[^>]*>/g)];

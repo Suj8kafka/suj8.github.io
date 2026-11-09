@@ -39,7 +39,7 @@ function page() {
   document = {
     documentElement: element(), body: element(), activeElement: card,
     querySelector: selector => selectors.get(selector),
-    querySelectorAll: selector => selector === '.skill-card' ? [card, secondCard] : [],
+    querySelectorAll: selector => selector === '.skill-card-trigger' ? [card, secondCard] : [],
     getElementById: id => ids.get(id),
     addEventListener(name, callback) {
       const callbacks = documentListeners.get(name) || [];

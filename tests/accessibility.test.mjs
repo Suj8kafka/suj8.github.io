@@ -6,6 +6,20 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../assets/css/site.css', import.meta.url), 'utf8');
 const attrs = text => Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(match => [match[1], match[2]]));
 
+test('skill articles preserve headings and use named native buttons to open their dialog', () => {
+  const cards = [...html.matchAll(/(<article class="skill-card\b[^>]*>)([\s\S]*?)<\/article>/g)];
+  assert.equal(cards.length, 6);
+  for (const [, opening, contents] of cards) {
+    assert.equal(attrs(opening).role, undefined);
+    assert.equal(attrs(opening).tabindex, undefined);
+    const button = attrs(contents.match(/<button\b[^>]*>/)[0]);
+    assert.equal(button.type, 'button');
+    assert.equal(button['aria-haspopup'], 'dialog');
+    assert.match(contents, new RegExp(`<h3 id="${button['aria-labelledby']}">[^<]+</h3>`));
+    assert.match(html, new RegExp(`<section[^>]*id="${button['aria-controls']}"[^>]*role="dialog"`));
+  }
+});
+
 test('company logos use native image alternatives and decorative fallback initials are hidden', () => {
   const logos = [...html.matchAll(/<div class="company-logo"[^>]*>([\s\S]*?)<\/div>/g)];
   assert.equal(logos.length, 4);

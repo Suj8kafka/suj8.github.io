@@ -1,4 +1,4 @@
 /* Nonessential font families: after initial paint on desktop, after scrolling on phones. */
-@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 400 700; font-display: optional; src: url("../fonts/dm-sans-latin.woff2") format("woff2"); }
-@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 400; font-display: optional; src: url("../fonts/dm-mono-400-latin.woff2") format("woff2"); }
-@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 500; font-display: optional; src: url("../fonts/dm-mono-500-latin.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 400 700; font-display: optional; src: url("../fonts/dm-sans-latin.woff2?v=9fea608a947e") format("woff2"); }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 400; font-display: optional; src: url("../fonts/dm-mono-400-latin.woff2?v=e1896b13b2b1") format("woff2"); }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 500; font-display: optional; src: url("../fonts/dm-mono-500-latin.woff2?v=9964608a8493") format("woff2"); }

@@ -150,15 +150,8 @@ document.querySelectorAll(".company-logo").forEach((logo) => {
   });
 });
 
-document.querySelectorAll(".skill-card").forEach((card) => {
-  card.addEventListener("pointerdown", (event) => event.preventDefault());
-  card.addEventListener("click", () => openSkillModal(card));
-  card.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openSkillModal(card);
-    }
-  });
+document.querySelectorAll(".skill-card-trigger").forEach((button) => {
+  button.addEventListener("click", () => openSkillModal(button));
 });
 skillDialogClose.addEventListener("click", closeSkillModal);
 skillModal.addEventListener("click", (event) => {
