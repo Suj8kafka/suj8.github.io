@@ -225,7 +225,8 @@ The engagement extension passed 173 tests on 10 November 2026. A further local
 Chrome check verified duration formatting, section rankings, 1440/390/320-pixel
 layouts, period changes, themes, failed reports clearing time values, and the
 timing controller against real DOM geometry with a controlled clock. Live data
-collection and the remote D1 database remain unverified and unconfigured locally.
+collection and the remote D1 database were still unverified and unconfigured at
+that stage.
 
 After activation was authorized, the final isolated release passed 171 tests.
 The working checkout passed 179 tests, including its pre-existing local fixes.
@@ -235,6 +236,13 @@ service failure, and links to the full report. The live Worker returned real
 Cloudflare traffic and an initially empty D1 report. The site publishes through
 the existing GitHub Pages `master` branch; unrelated local edits are excluded
 from the release.
+
+Live verification after publication confirmed the sidebar and `/privacy/` both
+load real Worker reports, and D1 contains the page-load and elapsed-time counters
+from the actual browser verification visit. No sample or fabricated activity
+was inserted into production. The first public report can remain empty until
+its five-minute cache expires. New usage history begins at activation; earlier
+Cloudflare traffic is available separately as network estimates.
 
 Implementation references:
 

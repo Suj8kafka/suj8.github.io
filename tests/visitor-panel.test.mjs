@@ -75,7 +75,7 @@ test('one service failing does not hide the other report and a failed refresh hi
   await h.controller.load();
   assert.equal(h.get('.cloudflare-analytics-grid').hidden, true);
   assert.equal(h.get('[data-sidebar-usage-grid]').hidden, false);
-  assert.match(h.get('.cloudflare-analytics-status').textContent, /not configured/);
+  assert.match(h.get('.cloudflare-analytics .cloudflare-analytics-status').textContent, /not configured/);
   failTraffic = false; await h.controller.load();
   assert.equal(h.get('.cloudflare-analytics-grid').hidden, false);
   failTraffic = true; failUsage = true; await h.controller.load();
@@ -92,7 +92,7 @@ test('timeouts show errors and page departure aborts requests and removes listen
   }));
   const loading = h.controller.load();
   [...h.timers.values()][0](); await loading;
-  assert.match(h.get('.cloudflare-analytics-status').textContent, /timed out/);
+  assert.match(h.get('.cloudflare-analytics .cloudflare-analytics-status').textContent, /timed out/);
   assert.match(h.get('[data-sidebar-usage-status]').textContent, /timed out/);
   assert.equal(h.get('[data-cloudflare-refresh]').disabled, false);
   h.window.dispatch('pagehide', { persisted: false });

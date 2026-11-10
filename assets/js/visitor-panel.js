@@ -7,7 +7,7 @@ export function createVisitorPanel({ document, window, fetch = window.fetch.bind
   if (!panel || !trigger) return { destroy() {} };
   const closeButton = panel.querySelector('.presence-panel-close');
   const refreshButton = panel.querySelector('[data-cloudflare-refresh]');
-  const trafficStatus = panel.querySelector('.cloudflare-analytics-status');
+  const trafficStatus = panel.querySelector('.cloudflare-analytics .cloudflare-analytics-status');
   const usageStatus = panel.querySelector('[data-sidebar-usage-status]');
   const trafficGrid = panel.querySelector('.cloudflare-analytics-grid');
   const usageGrid = panel.querySelector('[data-sidebar-usage-grid]');
