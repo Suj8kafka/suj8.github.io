@@ -3,7 +3,30 @@
   "main": "analytics-worker.js",
   "compatibility_date": "2026-11-08",
   "workers_dev": true,
+  "triggers": {
+    "crons": [
+      "15 0 * * *"
+    ]
+  },
   "vars": {
-    "SITE_HOSTNAME": "www.sujeetkhadka.com.np"
+    "SITE_HOSTNAME": "www.sujeetkhadka.com.np",
+    "CLOUDFLARE_ZONE_TAG": "1c3ca2632d6de3ef6fa3c78205e185d0"
+  },
+  "d1_databases": [
+    {
+      "binding": "ANALYTICS_DB",
+      "database_name": "portfolio-usage",
+      "database_id": "78e7a931-5b1b-471a-8a0c-05f1d000ac12",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "account_id": "5fddc9310f61d78dd833ea9ee0768875",
+  "keep_vars": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
   }
 }

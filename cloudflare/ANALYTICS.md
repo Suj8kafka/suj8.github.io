@@ -1,7 +1,20 @@
+Current activation (10 November 2026): the analytics Worker is deployed with
+the `portfolio-usage` D1 binding and its counter-table migration applied. The
+traffic endpoint and `/usage?days=7` both returned HTTP 200. The zone is on the
+Free Website plan; no account-plan upgrade was performed. The owner configured
+`CLOUDFLARE_API_TOKEN` as a Worker Secret, and the zone ID is in Wrangler variables.
+No secret value is stored in the repository.
+
 The right-hand visitor panel fetches aggregate metrics from:
 https://nameless-truth-99f0.sujeetkhadka00001.workers.dev
 
-The endpoint returned HTTP 503 during verification. The Worker source returns
+The public `/privacy/` page also reads these traffic estimates. Detailed usage
+counts use the same Worker's separate `/collect` and `/usage` routes with an
+optional `ANALYTICS_DB` D1 binding. See [public analytics setup](../docs/public-analytics.md)
+for the migration, retention schedule and activation steps. The service failures
+reported below are historical observations, not a fresh production verification.
+
+Historical setup notes: the endpoint previously returned HTTP 503. The Worker source returns
 this status when its API token or zone ID is missing. Set both in the Cloudflare
 dashboard under Workers & Pages > nameless-truth-99f0 > Settings > Variables and
 Secrets:

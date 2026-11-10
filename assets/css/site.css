@@ -583,3 +583,13 @@ h2 em,
   .mobile-nav a:focus-visible { outline: 2px solid var(--accent-text); outline-offset: -2px; }
   #featured-project, #contact { scroll-margin-top: 24px; }
 }
+
+/* Public analytics navigation and compact sidebar report. */
+.site-footer, .footer-links { flex-wrap: wrap; }
+.sidebar-usage { margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--line); }
+.sidebar-usage h3 { margin-bottom: 12px; font: 600 19px var(--display); }
+.sidebar-usage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 15px; }
+.sidebar-usage-grid[hidden] { display: none; }
+.sidebar-usage-grid .cloudflare-stat strong { overflow-wrap: anywhere; }
+.sidebar-time-title { margin: 22px 0 12px; color: var(--muted); font: 10px "DM Mono", monospace; text-transform: uppercase; }
+.sidebar-full-report { display: inline-block; padding: 8px 0; color: var(--accent-text); font-size: 12px; }

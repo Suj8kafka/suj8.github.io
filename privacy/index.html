@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore public website analytics and learn how Sujeet Khadka's portfolio handles usage data, live presence and your privacy.">
+  <meta name="theme-color" content="#f5f3ee">
+  <title>Analytics & Privacy — Sujeet Khadka</title>
+  <link rel="canonical" href="https://www.sujeetkhadka.com.np/privacy/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Analytics & Privacy — Sujeet Khadka">
+  <meta property="og:description" content="A public look at how this portfolio is used, followed by its privacy policy.">
+  <meta property="og:url" content="https://www.sujeetkhadka.com.np/privacy/">
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
+  <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261110-sidebar">
+  <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
+  <link rel="stylesheet" href="/assets/css/privacy.css?v=20261110-engagement">
+  <script type="module" src="/assets/js/privacy.js?v=20261110-sidebar"></script>
+  <script type="module" src="/assets/js/usage-tracker.js?v=20261110-engagement"></script>
+</head>
+<body class="privacy-page">
+  <a class="privacy-skip" href="#privacy-main">Skip to content</a>
+  <header class="privacy-header">
+    <a class="wordmark" href="/" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
+    <a class="privacy-back" href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="privacy-main" id="privacy-main">
+    <div class="privacy-intro">
+      <p class="eyebrow">An open look behind the site</p>
+      <h1>A little data.<br>A clearer <em>picture.</em></h1>
+      <p>How people find this portfolio, what they explore, and what gets a click. The same aggregate numbers I use to improve the site are here for everyone to see.</p>
+      <a class="privacy-jump" href="#privacy-policy">Read the privacy policy <span aria-hidden="true">↓</span></a>
+    </div>
+
+    <section class="public-analytics" aria-labelledby="analytics-title">
+      <div class="analytics-heading">
+        <div><p class="eyebrow">01 / Open analytics</p><h2 id="analytics-title">The site, in numbers<span>.</span></h2></div>
+        <div class="analytics-controls">
+          <label for="analytics-period">Usage period
+            <select id="analytics-period" data-analytics-period>
+              <option value="1">Today (UTC)</option>
+              <option value="7" selected>Last 7 days</option>
+              <option value="30">Last 30 days</option>
+            </select>
+          </label>
+          <button type="button" data-analytics-refresh>Refresh data <span aria-hidden="true">↻</span></button>
+        </div>
+      </div>
+      <p class="analytics-note">Daily totals, including today. Repeat visits count again. These are activity counts, not unique people, and may include automated traffic. Reports may be cached for up to five minutes.</p>
+      <p class="analytics-status" data-usage-status role="status" aria-live="polite">Usage data needs JavaScript and a connection to the analytics service.</p>
+      <noscript><p class="analytics-notice">Enable JavaScript to load the public dashboard. The full privacy policy is readable below.</p></noscript>
+      <div class="usage-stats">
+        <div class="usage-stat"><span>Page views</span><strong data-usage-stat="pageViews">—</strong><small>Recorded page loads</small></div>
+        <div class="usage-stat"><span>Interactions</span><strong data-usage-stat="interactions">—</strong><small>Project, CV, contact & other clicks</small></div>
+        <div class="usage-stat"><span>Active time</span><strong data-usage-stat="activeTimeMs">—</strong><small>Estimated foreground activity</small></div>
+        <div class="usage-stat"><span>Time per page load</span><strong data-usage-stat="averageActiveTimeMs">—</strong><small>Active time ÷ measured page loads</small></div>
+      </div>
+      <p class="analytics-note">Time is estimated while a page is visible and focused, pausing after 60 seconds without activity. It cannot confirm that someone is reading. Time per page load uses the active time and measured page loads received within this period; it is not a unique-visitor or session-duration metric.</p>
+      <div class="analytics-card daily-card">
+        <div class="analytics-card-heading"><h3>Page views over time</h3><span>Daily · UTC</span></div>
+        <ol class="daily-chart" data-daily-chart aria-label="Daily page views"><li class="analytics-empty">Waiting for usage data.</li></ol>
+      </div>
+      <div class="analytics-breakdowns">
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Where people spend time</h3><span>Active time</span></div><ol class="analytics-list" data-usage-list="sectionTime"><li class="analytics-empty">Waiting for usage data.</li></ol><p class="analytics-card-note">Time is assigned to the section near the upper-middle of the screen. Time in layout gaps or open dialogs stays in the page totals.</p></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Active time by page</h3><span>Active time</span></div><ol class="analytics-list" data-usage-list="pageTime"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Scroll milestones</h3><span>Page loads</span></div><ol class="analytics-list" data-usage-list="scrollDepth"><li class="analytics-empty">Waiting for usage data.</li></ol><p class="analytics-card-note">Portfolio page loads that reached each scroll position, including anchor jumps. Reaching a position does not prove the content was read.</p></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Pages explored</h3><span>Views</span></div><ol class="analytics-list" data-usage-list="pages"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>How people arrived</h3><span>Views</span></div><ol class="analytics-list" data-usage-list="referrers"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Sections reached</h3><span>Page visits</span></div><ol class="analytics-list" data-usage-list="sections"><li class="analytics-empty">Waiting for usage data.</li></ol><p class="analytics-card-note">Each section counts once per page load when it enters the reading area.</p></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>What gets a click</h3><span>Clicks</span></div><ol class="analytics-list" data-usage-list="interactions"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Countries</h3><span>Views</span></div><ol class="analytics-list" data-usage-list="countries"><li class="analytics-empty">Waiting for usage data.</li></ol><p class="analytics-card-note">Approximate country from the network connection.</p></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Browsers</h3><span>Views</span></div><ol class="analytics-list" data-usage-list="browsers"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card"><div class="analytics-card-heading"><h3>Devices</h3><span>Views</span></div><ol class="analytics-list" data-usage-list="devices"><li class="analytics-empty">Waiting for usage data.</li></ol></article>
+        <article class="analytics-card edge-card">
+          <div class="analytics-card-heading"><h3>At the network edge</h3><span>24 hours</span></div>
+          <p class="analytics-status" data-edge-status role="status" aria-live="polite">Traffic estimates need JavaScript and a connection to Cloudflare.</p>
+          <dl class="edge-stats"><div><dt>Requests</dt><dd data-edge-stat="requests">—</dd></div><div><dt>Visits</dt><dd data-edge-stat="visits">—</dd></div></dl>
+          <p class="analytics-card-note">Separate Cloudflare estimates. Requests include assets and bots; visits are not unique visitors. They will differ from the page views above.</p>
+        </article>
+      </div>
+      <p class="analytics-footnote">Only aggregate totals are public; no individual visitor histories appear here. Usage history starts when the service is connected; earlier browsing cannot be reconstructed. Browser privacy signals, blocked scripts, interrupted timing reports and connection failures can reduce these totals. Time samples are sent about every 15 seconds and when a page becomes inactive, so some final activity may be lost.</p>
+    </section>
+
+    <section class="privacy-policy" id="privacy-policy" aria-labelledby="policy-title">
+      <div class="policy-heading"><p class="eyebrow">02 / Privacy & policy</p><h2 id="policy-title">What’s behind the numbers<span>.</span></h2><p>Last updated <time datetime="2026-11-10">10 November 2026</time></p></div>
+      <div class="policy-layout">
+        <nav class="policy-nav" aria-label="Privacy policy contents">
+          <a href="#policy-usage">Usage analytics</a><a href="#policy-presence">Live presence & location</a><a href="#policy-storage">Browser storage</a><a href="#policy-services">Services & retention</a><a href="#policy-contact">Contact & questions</a>
+        </nav>
+        <div class="policy-copy">
+          <section id="policy-usage" aria-labelledby="usage-title">
+            <h3 id="usage-title">Usage analytics, open to everyone</h3>
+            <p>This portfolio uses a small analytics service built on Cloudflare Workers and D1. When connected, it counts page loads, sections reached, and clicks on projects, articles, CV, email, social and notebook links, skill details and theme choices. A click count shows intent; it does not confirm that a download finished or an email was sent.</p>
+            <p>It also measures estimated active time per page and section, and whether the portfolio reached 25%, 50%, 75% or the bottom of its scrollable distance. Time is counted while the page is visible and focused, pauses after 60 seconds without input or scrolling, and skips long browser-suspension gaps. It starts after the welcome overlay closes. This estimates foreground activity rather than attention or actual reading.</p>
+            <p>Time is sent in small batches, approximately every 15 seconds and on tab changes or departure, and added to daily counters. Only elapsed milliseconds and fixed section labels are included. Input events refresh an inactivity timer without recording keys, text or pointer coordinates in these analytics. One page load is limited to one hour of estimated active time and 240 timing reports. Closing a browser can prevent the last report from arriving.</p>
+            <p>Page loads are grouped by public page, referral source, browser family, device type and approximate country. Referral sources are stored as broad categories such as Google or LinkedIn; unrecognised sites are grouped as “Other websites”. URL queries, campaign tags, fragments and referral paths are not stored.</p>
+            <p>The service immediately adds to daily counters. It does not store individual event histories, raw IP addresses, full browser identifiers, names, email addresses, form contents or persistent visitor IDs in the analytics database. Counts are public on this page. It does not record sessions, screenshots or keystrokes.</p>
+            <p>This usage tracker sets no cookies and uses no browser storage. It respects Do Not Track and Global Privacy Control signals. Those signals apply to the usage tracker; essential hosting, security processing and the separate live presence feature still operate.</p>
+          </section>
+          <section id="policy-presence" aria-labelledby="presence-title">
+            <h3 id="presence-title">Live presence, cursors & location</h3>
+            <p>The portfolio’s live studio uses Firebase anonymous sign-in with an identity held in memory for each page. It shares a temporary visitor label, current section and path, approximate country, activity time and, when enabled, section-relative cursor coordinates with other connected visitors. This is separate from the daily usage counters above.</p>
+            <p>An approximate country lookup sends a request to ipwho.is, which receives your network address. Selecting “Use my precise location” asks for browser permission and sends your coordinates to BigDataCloud to resolve a city or locality. The site shares the resulting location label in live presence; it does not save the coordinates in Firebase.</p>
+            <p>You can turn cursor sharing and display off in the live studio panel. Reduced-motion settings also disable cursors. Precise location is optional and can be revoked in your browser settings. Presence records are scheduled for removal when a connection closes; stale records are hidden after about two minutes. Disconnection and cleanup can be delayed.</p>
+          </section>
+          <section id="policy-storage" aria-labelledby="storage-title">
+            <h3 id="storage-title">What stays in your browser</h3>
+            <p>Your colour theme is saved locally so the site can remember Light, Dark or Auto. The welcome animation stores a seen flag in local and session storage so it does not repeat unnecessarily. These preferences are separate from analytics and can be removed by clearing this site’s browser data.</p>
+            <p>The owner’s login page uses Firebase authentication to manage availability. Login credentials and owner access are not part of this public analytics dashboard.</p>
+          </section>
+          <section id="policy-services" aria-labelledby="services-title">
+            <h3 id="services-title">Services, security & retention</h3>
+            <p>GitHub Pages hosts the portfolio. Cloudflare handles edge delivery, security and aggregate traffic estimates. Firebase handles live presence and availability. These providers receive the network information needed to serve requests and operate under their own policies. The site’s analytics database does not store raw IP addresses; infrastructure providers may process them for delivery and security.</p>
+            <p>Daily usage counters are retained for up to 90 UTC calendar days, with a scheduled daily cleanup. The dashboard offers today, seven-day and thirty-day views. The older Firebase country counter is a separate cumulative count with no automatic expiry. Cloudflare traffic-history retention is managed separately by Cloudflare.</p>
+            <p>This portfolio does not sell visitor data or use these counters for advertising profiles. Links to external projects, social networks and the blog take you to services with their own privacy practices.</p>
+            <p class="policy-service-links"><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">Cloudflare privacy</a> · <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noreferrer">Firebase privacy</a> · <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noreferrer">GitHub privacy</a> · <a href="https://ipwhois.io/privacy" target="_blank" rel="noreferrer">ipwho.is privacy</a> · <a href="https://www.bigdatacloud.com/privacy-policy" target="_blank" rel="noreferrer">BigDataCloud privacy</a></p>
+          </section>
+          <section id="policy-contact" aria-labelledby="contact-title">
+            <h3 id="contact-title">A note about getting in touch</h3>
+            <p>Email links open your email app. Messages you choose to send are used to read and respond to your inquiry, and are not added to public analytics or a mailing list. The usage tracker records only that the email link was clicked.</p>
+            <p>For questions about this site or your information, email <a href="mailto:email@sujeetkhadka.com.np">email@sujeetkhadka.com.np</a>. This policy will be updated here if the site’s data practices change.</p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Sujeet Khadka</span>
+    <div class="footer-theme" role="group" aria-label="Colour theme"><button type="button" data-theme-choice="light">Light</button><button type="button" data-theme-choice="dark">Dark</button><button type="button" data-theme-choice="auto">Auto</button></div>
+    <div class="footer-links"><a href="/">Portfolio ↗</a><a href="#analytics-title">Analytics ↑</a><a href="#privacy-policy">Privacy & policy</a></div>
+  </footer>
+</body>
+</html>

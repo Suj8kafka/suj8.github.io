@@ -383,8 +383,8 @@ html{scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));}
 .live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}
 img,video{max-width:100%}
 </style>
-  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261109-settle-transitions" media="print">
-  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261109-settle-transitions"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
+  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261110-sidebar" media="print">
+  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261110-sidebar"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
   <script type="module" src="assets/js/page-styles.js?v=20261109-settle-transitions"></script>
   <script type="application/ld+json">
   {
@@ -564,6 +564,7 @@ img,video{max-width:100%}
       <p class="eyebrow">Live studio</p>
       <h2 id="presence-panel-title">Who's exploring.</h2>
       <p class="presence-panel-summary">Anonymous, approximate visitor activity.</p>
+      <p class="presence-panel-summary"><a href="/privacy/">Public analytics & privacy policy ↗</a></p>
       <p class="presence-panel-summary" data-availability-details>Open to freelance work, project work, full-time roles and contract work.</p>
       <label class="cursor-control"><input type="checkbox" data-live-cursors checked> Share and show live cursors</label>
       <p class="presence-panel-summary">Cursors appear on the same section and fade when idle. Reduced motion hides them.</p>
@@ -572,6 +573,20 @@ img,video{max-width:100%}
       <div class="presence-analytics">
         <h3>Countries that have visited</h3>
         <div class="country-chart" role="group" aria-label="Country visit chart"></div>
+      </div>
+      <div class="sidebar-usage" role="group" aria-labelledby="sidebar-usage-title">
+        <h3 id="sidebar-usage-title">How the site is used</h3>
+        <p class="cloudflare-analytics-status" data-sidebar-usage-status role="status" aria-live="polite">Open analytics to load site usage.</p>
+        <div class="sidebar-usage-grid" data-sidebar-usage-grid hidden>
+          <div class="cloudflare-stat"><strong data-sidebar-usage-stat="pageViews">—</strong><span>Page views</span></div>
+          <div class="cloudflare-stat"><strong data-sidebar-usage-stat="interactions">—</strong><span>Interactions</span></div>
+          <div class="cloudflare-stat"><strong data-sidebar-usage-stat="activeTimeMs">—</strong><span>Active time</span></div>
+          <div class="cloudflare-stat"><strong data-sidebar-usage-stat="averageActiveTimeMs">—</strong><span>Time per page load</span></div>
+        </div>
+        <h4 class="sidebar-time-title">Where people spend time</h4>
+        <div class="cloudflare-list-items" data-sidebar-section-time>Open analytics to load section time.</div>
+        <p class="presence-panel-summary">Estimated foreground activity over 7 days. Hidden and idle time is excluded.</p>
+        <a class="sidebar-full-report" href="/privacy/">Explore the full public report ↗</a>
       </div>
       <div class="cloudflare-analytics" role="group" aria-labelledby="cloudflare-analytics-title">
         <div class="cloudflare-analytics-heading">
@@ -1064,14 +1079,16 @@ img,video{max-width:100%}
       <button type="button" data-theme-choice="dark">Dark</button>
       <button type="button" data-theme-choice="auto">Auto</button>
     </div>
-    <div class="footer-links"><a href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">Blog <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a><a
+    <div class="footer-links"><a href="/privacy/">Privacy & policy</a><a href="https://blog.sujeetkhadka.com.np" target="_blank" rel="noreferrer">Blog <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a><a
         href="#contact" data-contact-scroll>Project inquiries <svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></a><a href="#top" data-back-to-top>Back to top <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></a></div>
   </footer>
   <script src="assets/js/main.js?v=20261109-native-skill-buttons" defer></script>
   <script type="module" src="assets/js/scroll-navigation.js?v=20261109-layout-read"></script>
   <script type="module" src="assets/js/mobile-navigation.js?v=20261109-layout-read"></script>
   <script src="loader/files/loader.js?v=20261109-early-reveal-welcome" defer></script>
-  <script type="module" src="assets/js/enhancements.js?v=20261109-first-view"></script>
+  <script type="module" src="assets/js/visitor-panel.js?v=20261110-sidebar"></script>
+  <script type="module" src="assets/js/enhancements.js?v=20261110-sidebar"></script>
+  <script type="module" src="assets/js/usage-tracker.js?v=20261110-engagement"></script>
 </body>
 
 </html>

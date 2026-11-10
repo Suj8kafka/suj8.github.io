@@ -14,9 +14,26 @@ async function loadMotion(document, window) {
   return import('./motion.js?v=20261109-mobile-lcp');
 }
 
+export async function loadServices(document, {
+  presence = () => import('./firebase-presence.js?v=20261110-sidebar'),
+  availability = () => import('./availability-client.js')
+} = {}) {
+  const results = await Promise.allSettled([Promise.resolve().then(presence), Promise.resolve().then(availability)]);
+  if (results[0].status === 'rejected') {
+    const label = document.querySelector('.live-presence-label');
+    const dot = document.querySelector('.live-presence-dot');
+    const button = document.querySelector('.live-presence');
+    if (label) label.textContent = 'Live presence unavailable';
+    if (dot) dot.dataset.state = 'error';
+    if (button) button.disabled = button.dataset?.analyticsReady !== 'true';
+    console.warn('Live presence could not be loaded.', results[0].reason);
+  }
+  return results;
+}
+
 export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
   portrait = () => import('./portrait-network.js?v=20261109-mobile-lcp'),
-  services = () => Promise.allSettled([import('./firebase-presence.js'), import('./availability-client.js')]) }) {
+  services = () => loadServices(document) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
   let imageReady = false, decoding = false, motionStarted = false;
   const listeners = [];

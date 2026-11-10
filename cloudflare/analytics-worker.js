@@ -1,3 +1,6 @@
+import { handleUsage, pruneUsage } from './usage-analytics.js';
+import { cacheAnalytics } from './analytics-cache.js';
+
 const GRAPHQL_ENDPOINT = "https://api.cloudflare.com/client/v4/graphql";
 
 const QUERY = `
@@ -44,7 +47,17 @@ function json(data, status = 200) {
 }
 
 export default {
-  async fetch(request, env) {
+  async scheduled(_event, env) {
+    await pruneUsage(env);
+  },
+  async fetch(request, env, ctx) {
+    return cacheAnalytics(request, ctx, () => fetchAnalytics(request, env));
+  }
+};
+
+async function fetchAnalytics(request, env) {
+    const usageResponse = await handleUsage(request, env);
+    if (usageResponse) return usageResponse;
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
@@ -101,5 +114,4 @@ export default {
     } catch {
       return json({ error: "Cloudflare analytics request failed" }, 502);
     }
-  }
-};
+}

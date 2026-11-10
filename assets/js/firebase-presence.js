@@ -17,18 +17,10 @@ const presenceLabel = document.querySelector(".live-presence-label");
 const presenceDot = document.querySelector(".live-presence-dot");
 const presenceButton = document.querySelector(".live-presence");
 const presenceList = document.querySelector(".live-presence-list");
-const presencePanel = document.querySelector(".presence-panel");
-const presencePanelClose = document.querySelector(".presence-panel-close");
 const locationConsent = document.querySelector(".location-consent");
 const locationStatus = document.querySelector(".location-status");
 const countryChart = document.querySelector(".country-chart");
-const cloudflareStatus = document.querySelector(".cloudflare-analytics-status");
-const cloudflareGrid = document.querySelector(".cloudflare-analytics-grid");
-const cloudflareStats = document.querySelectorAll("[data-cloudflare-stat]");
-const cloudflareLists = document.querySelectorAll("[data-cloudflare-list]");
-const cloudflareRefresh = document.querySelector("[data-cloudflare-refresh]");
 const cursorToggle = document.querySelector("[data-live-cursors]");
-const cloudflareAnalyticsUrl = "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev";
 const visitorNumber = Math.floor(1000 + Math.random() * 9000);
 let presenceRef = null;
 let currentSection = "hero";
@@ -48,8 +40,6 @@ let hasConnected = false;
 let presenceError = false;
 let publishTimer = 0;
 let visitorListSignature = '';
-let analyticsLoading = false;
-let analyticsLoadedAt = 0;
 const liveCursors = createLiveCursors({
   document, window, now: () => Date.now() + serverOffset,
   enabled: () => cursorToggle?.checked !== false,
@@ -225,82 +215,6 @@ function updateCountryCount(snapshot) {
   renderCountryChart();
 }
 
-function formatAnalyticsNumber(value) {
-  return new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
-}
-
-function renderCloudflareList(type, entries) {
-  const list = document.querySelector(`[data-cloudflare-list="${type}"]`);
-  if (!list || !Array.isArray(entries) || !entries.length) return;
-  const items = list.querySelector(".cloudflare-list-items");
-  items.innerHTML = "";
-  entries.forEach(({ name, value }) => {
-    const row = document.createElement("div");
-    row.className = "cloudflare-list-row";
-    row.innerHTML = "<span></span><strong></strong>";
-    row.querySelector("span").textContent = name;
-    row.querySelector("strong").textContent = formatAnalyticsNumber(value);
-    items.append(row);
-  });
-  list.hidden = false;
-}
-
-async function loadCloudflareAnalytics() {
-  if (!cloudflareStatus || analyticsLoading) return;
-  if (cloudflareAnalyticsUrl.includes("YOUR-WORKER")) {
-    cloudflareStatus.textContent = "Connect a Cloudflare Worker to show site activity.";
-    return;
-  }
-  analyticsLoading = true;
-  cloudflareStatus.classList.remove("is-error");
-  cloudflareStatus.textContent = "Loading Cloudflare data…";
-  if (cloudflareRefresh) cloudflareRefresh.disabled = true;
-  try {
-    const response = await fetch(cloudflareAnalyticsUrl, {
-      headers: { accept: "application/json" }, signal: AbortSignal.timeout(8000)
-    });
-    if (response.status === 503) {
-      throw new Error("Cloudflare analytics is not configured yet.");
-    }
-    if (!response.ok) throw new Error(`Analytics request returned ${response.status}`);
-    const data = await response.json();
-    if (!Number.isFinite(data.requests) || !Number.isFinite(data.visits)) throw new Error("Invalid analytics response");
-    cloudflareStats.forEach((stat) => {
-      stat.textContent = formatAnalyticsNumber(Number(data[stat.dataset.cloudflareStat]) || 0);
-    });
-    cloudflareGrid.hidden = false;
-    cloudflareLists.forEach(list => { list.hidden = true; });
-    renderCloudflareList("paths", data.paths);
-    renderCloudflareList("countries", data.countries);
-    cloudflareStatus.textContent = data.updatedAt ? `Updated ${new Date(data.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "Updated just now";
-    analyticsLoadedAt = Date.now();
-  } catch (error) {
-    console.warn("Cloudflare analytics could not be loaded.", error);
-    cloudflareStatus.textContent = error.message === "Cloudflare analytics is not configured yet."
-      ? error.message : "Analytics are temporarily unavailable. Try refreshing.";
-    cloudflareStatus.classList.add("is-error");
-  } finally {
-    analyticsLoading = false;
-    if (cloudflareRefresh) cloudflareRefresh.disabled = false;
-  }
-}
-
-function openPresencePanel() {
-  presencePanel?.classList.add("is-open");
-  presencePanel?.setAttribute("aria-hidden", "false");
-  presencePanelClose?.focus({ preventScroll: true });
-  presenceButton?.setAttribute("aria-expanded", "true");
-  if (Date.now() - analyticsLoadedAt > 300000) loadCloudflareAnalytics();
-}
-
-function closePresencePanel() {
-  if (!presencePanel?.classList.contains("is-open")) return;
-  presencePanel?.classList.remove("is-open");
-  presencePanel?.setAttribute("aria-hidden", "true");
-  presenceButton?.setAttribute("aria-expanded", "false");
-  presenceButton?.focus({ preventScroll: true });
-}
-
 async function detectIpCountry() {
   try {
     const response = await fetch("https://ipwho.is/", { signal: AbortSignal.timeout(4000) });
@@ -436,31 +350,11 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-presenceButton?.addEventListener("click", () => {
-  openPresencePanel();
-});
-presenceList?.addEventListener("click", (event) => {
-  if (event.target.closest("[data-open-analytics]")) openPresencePanel();
-});
-presencePanelClose?.addEventListener("click", closePresencePanel);
-presencePanel?.addEventListener("click", (event) => {
-  if (event.target.hasAttribute("data-presence-close")) closePresencePanel();
-});
 locationConsent?.addEventListener("click", usePreciseLocation);
-cloudflareRefresh?.addEventListener("click", loadCloudflareAnalytics);
 cursorToggle?.addEventListener("change", () => {
   liveCursors.hide();
   liveCursors.clear();
   queuePresenceUpdate();
-});
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closePresencePanel();
-  if (event.key === "Tab" && presencePanel?.classList.contains("is-open")) {
-    const controls = [...presencePanel.querySelectorAll('button:not(:disabled), input, a[href]')];
-    const first = controls[0], last = controls[controls.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-  }
 });
 
 startPresence();
