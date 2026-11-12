@@ -98,10 +98,8 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-word[data-f="ar"] { font-family: "Noto Naskh Arabic", serif; }
 .ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
 .ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
-.ld-write-stroke { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) linear var(--pen-delay) forwards; }
-.ld-write-finish { opacity: 0; animation: ld-ink-finish .12s ease .76s forwards; }
+.ld-write-stroke { opacity: 0; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) var(--pen-easing, cubic-bezier(.32,.05,.45,1)) var(--pen-delay) forwards; }
 @keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
-@keyframes ld-ink-finish { to { opacity: 1; } }
 .ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
 .ld-bar {
   width: min(160px, 45vw);
@@ -157,7 +155,7 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
 @media (prefers-reduced-motion: reduce) {
   html.loader-running #loader { display: none; }
   #loader, .ld-wash, .ld-graphic, .ld-graphic path { animation: none !important; transition: none; }
-  .ld-write-stroke, .ld-write-finish { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
+  .ld-write-stroke { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
 }
 @media (forced-colors: active) {
   .ld-wash, .ld-graphic { display: none; }

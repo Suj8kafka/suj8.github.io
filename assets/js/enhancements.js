@@ -15,7 +15,7 @@ async function loadMotion(document, window) {
 }
 
 export async function loadServices(document, {
-  presence = () => import('./firebase-presence.js?v=20261110-sidebar'),
+  presence = () => import('./firebase-presence.js?v=20261112-presence'),
   availability = () => import('./availability-client.js')
 } = {}) {
   const results = await Promise.allSettled([Promise.resolve().then(presence), Promise.resolve().then(availability)]);

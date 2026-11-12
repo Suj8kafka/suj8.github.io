@@ -1,0 +1,158 @@
+{
+    "date":  "2026-11-10",
+    "url":  "http://127.0.0.1:8000/",
+    "conditions":  {
+                       "formFactor":  "mobile",
+                       "viewport":  "412 x 823",
+                       "deviceScaleFactor":  1.75,
+                       "cpuSlowdownMultiplier":  4,
+                       "throttling":  "Lighthouse simulated mobile",
+                       "cache":  "cold",
+                       "visitorServices":  "Firebase, Cloudflare, IP country and reverse-geocoding requests blocked to avoid live visitor writes",
+                       "serving":  "uncompressed Python static HTTP server; production CDN and headers are not reproduced"
+                   },
+    "audits":  [
+                   {
+                       "phase":  "before",
+                       "source":  "refinement-before.lighthouse.json",
+                       "lighthouseVersion":  "13.6.0",
+                       "fetchTime":  "2026-11-10T04:05:19.791Z",
+                       "performance":  0.95,
+                       "accessibility":  null,
+                       "bestPractices":  null,
+                       "seo":  null,
+                       "fcpMs":  1304.455,
+                       "lcpMs":  2714.79625,
+                       "tbtMs":  101,
+                       "cls":  0
+                   },
+                   {
+                       "phase":  "after",
+                       "source":  "refinement-after-1.lighthouse.json",
+                       "lighthouseVersion":  "13.6.0",
+                       "fetchTime":  "2026-11-10T04:27:20.617Z",
+                       "performance":  0.96,
+                       "accessibility":  1,
+                       "bestPractices":  1,
+                       "seo":  1,
+                       "fcpMs":  1157.6979999999999,
+                       "lcpMs":  2634.4429999999993,
+                       "tbtMs":  90,
+                       "cls":  0
+                   },
+                   {
+                       "phase":  "after",
+                       "source":  "refinement-after-2.lighthouse.json",
+                       "lighthouseVersion":  "13.6.0",
+                       "fetchTime":  "2026-11-10T04:39:14.493Z",
+                       "performance":  0.99,
+                       "accessibility":  1,
+                       "bestPractices":  1,
+                       "seo":  1,
+                       "fcpMs":  1191.533,
+                       "lcpMs":  2125.066,
+                       "tbtMs":  64,
+                       "cls":  0
+                   },
+                   {
+                       "phase":  "after",
+                       "source":  "refinement-after-3.lighthouse.json",
+                       "lighthouseVersion":  "13.6.0",
+                       "fetchTime":  "2026-11-10T04:39:27.037Z",
+                       "performance":  0.96,
+                       "accessibility":  1,
+                       "bestPractices":  1,
+                       "seo":  1,
+                       "fcpMs":  1152.653,
+                       "lcpMs":  2784.2855,
+                       "tbtMs":  57,
+                       "cls":  0
+                   },
+                   {
+                       "phase":  "after",
+                       "source":  "refinement-after-4.lighthouse.json",
+                       "lighthouseVersion":  "13.6.0",
+                       "fetchTime":  "2026-11-10T05:01:46.276Z",
+                       "performance":  0.96,
+                       "accessibility":  1,
+                       "bestPractices":  1,
+                       "seo":  1,
+                       "fcpMs":  1170.5230000000001,
+                       "lcpMs":  2715.8305000000005,
+                       "tbtMs":  66,
+                       "cls":  0
+                   }
+               ],
+    "browser":  {
+                    "widths":  [
+                                   320,
+                                   375,
+                                   390,
+                                   430,
+                                   768,
+                                   800,
+                                   900,
+                                   1024,
+                                   1280,
+                                   1440,
+                                   1920
+                               ],
+                    "themes":  [
+                                   "light",
+                                   "dark"
+                               ],
+                    "overflowCases":  0,
+                    "clippedTextCases":  0,
+                    "minimumToolkitTextContrast":  5.48343596760258,
+                    "navigation":  {
+                                       "brokenAnchors":  [
+
+                                                         ],
+                                       "h1":  1,
+                                       "ctaIds":  [
+                                                      "nav-inquiry",
+                                                      "hero-inquiry",
+                                                      "hero-work",
+                                                      "about-cv",
+                                                      "about-notes",
+                                                      "contact-email"
+                                                  ]
+                                   },
+                    "interactions":  {
+                                         "skillOpen":  true,
+                                         "skillClosed":  true,
+                                         "workAnchor":  "#work",
+                                         "contactAnchor":  "#work",
+                                         "contactFocus":  "contact-title",
+                                         "contactTop":  24.46875,
+                                         "theme":  "dark"
+                                     },
+                    "noJavascript":  {
+                                         "overflow":  false,
+                                         "heading":  "I design clearer digital products and experiences.",
+                                         "loader":  "none",
+                                         "presenceLabel":  "Live studio",
+                                         "styles":  true
+                                     },
+                    "login":  {
+                                  "overflow":  false,
+                                  "password":  true,
+                                  "title":  "Owner login â€” Sujeet Khadka"
+                              }
+                },
+    "nodeTests":  {
+                      "before":  138,
+                      "after":  146,
+                      "failed":  0
+                  },
+    "resources":  {
+                      "localDestinationsChecked":  35,
+                      "missing":  0,
+                      "missingPageHttpStatus":  404
+                  },
+    "limits":  [
+                   "Local Lighthouse scores are not production PageSpeed Insights scores or CrUX field measurements.",
+                   "Live Firebase access, real owner saves, Worker health, external destination availability and cross-browser behavior were not verified.",
+                   "The existing Cloudflare Workers, Firebase rules, owner configuration, DNS and production deployment were not changed."
+               ]
+}

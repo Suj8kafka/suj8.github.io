@@ -289,11 +289,26 @@ test('Namaste drawing is local vector geometry with a bounded, ordered stroke se
   assert.ok(html.includes(svg.trim()), 'The inline template matches the source artwork');
   assert.doesNotMatch(svg, /<image\b|<script\b|<text\b|data:image/i);
   const timing = [...svg.matchAll(/--pen-delay:([\d.]+)ms;--pen-duration:([\d.]+)ms/g)].map(match => [Number(match[1]), Number(match[2])]);
-  assert.equal(timing.length, 18);
+  assert.equal(timing.length, 10);
   for (let index = 0; index < timing.length; index++) {
-    assert.ok(timing[index][1] > 0 && timing[index][0] + timing[index][1] <= 761);
+    assert.ok(timing[index][1] > 0 && timing[index][0] + timing[index][1] <= 860);
     if (index > 0) assert.ok(timing[index][0] >= timing[index - 1][0] + timing[index - 1][1]);
   }
+});
+
+test('Namaste draws the visible ink directly without a font reveal or finishing overlay', () => {
+  const svg = readFileSync(new URL('../loader/files/namaste.svg', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../loader/files/loader.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(svg, /<clipPath\b|<mask\b|ld-write-finish|clip-path=/i);
+  assert.match(svg, /<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">/);
+  const strokes = [...svg.matchAll(/<path\b([^>]+)\/>/g)];
+  for (const [, attributes] of strokes) {
+    assert.match(attributes, /class="ld-write-stroke"/);
+    assert.match(attributes, /pathLength="1"/);
+    assert.match(attributes, /d="M[^M]*[CQ][^M]*"/);
+  }
+  assert.match(css, /var\(--pen-easing, cubic-bezier/);
+  assert.doesNotMatch(css, /ld-write-finish|ld-ink-finish/);
 });
 
 test('desktop first visits cycle every language with compositor-friendly text motion', async () => {

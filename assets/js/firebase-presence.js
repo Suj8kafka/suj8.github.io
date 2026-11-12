@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 import { initializeAuth, inMemoryPersistence, signInAnonymously } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import { createLiveCursors, cursorColor } from "./live-cursors.js";
+import { createLiveCursors, cursorColor } from "./live-cursors.js?v=20261112-presence";
 import { firebaseConfig } from "./firebase-config.js";
 import {
   getDatabase,
@@ -40,6 +40,19 @@ let hasConnected = false;
 let presenceError = false;
 let publishTimer = 0;
 let visitorListSignature = '';
+let hasPresenceSnapshot = false;
+let presenceReadError = false;
+let expiryTimer = 0;
+let heartbeatTimer = 0;
+let viewportFrame = 0;
+let destroyed = false;
+let connectionVersion = 0;
+const subscriptions = [];
+const listeners = [];
+function listen(target, name, callback, options) {
+  target?.addEventListener(name, callback, options);
+  listeners.push(() => target?.removeEventListener(name, callback, options));
+}
 const liveCursors = createLiveCursors({
   document, window, now: () => Date.now() + serverOffset,
   enabled: () => cursorToggle?.checked !== false,
@@ -47,7 +60,7 @@ const liveCursors = createLiveCursors({
 });
 
 function queuePresenceUpdate() {
-  if (!presenceRef || !isConnected || isLeaving || publishTimer) return;
+  if (destroyed || !presenceRef || !isConnected || isLeaving || publishTimer) return;
   publishTimer = window.setTimeout(() => {
     publishTimer = 0;
     publishPresence();
@@ -55,7 +68,7 @@ function queuePresenceUpdate() {
 }
 
 function publishPresence() {
-  if (!presenceRef || !isConnected || !presenceReady || isLeaving) return;
+  if (destroyed || !presenceRef || !isConnected || !presenceReady || isLeaving) return;
   set(presenceRef, buildPresence()).catch(error => {
     console.error("Presence update failed.", error);
     presenceReady = false;
@@ -85,18 +98,23 @@ function buildPresence() {
 }
 
 async function announcePresence() {
-  if (!presenceRef || !isConnected || isLeaving) return;
+  if (destroyed || !presenceRef || !isConnected || isLeaving) return;
+  const version = connectionVersion;
   try {
     await onDisconnect(presenceRef).remove();
-    if (!isLeaving && isConnected) {
-      presenceReady = true;
+    if (!destroyed && !isLeaving && isConnected && version === connectionVersion) {
       await set(presenceRef, buildPresence());
+      if (destroyed || isLeaving || !isConnected || version !== connectionVersion) return;
+      presenceReady = true;
+      presenceError = false;
+      refreshPresenceView();
     }
   } catch (error) {
+    if (destroyed || isLeaving || version !== connectionVersion) return;
     presenceReady = false;
     presenceError = true;
     console.error("Firebase presence announce failed.", error);
-    setPresenceStatus("Live presence unavailable", "error");
+    refreshPresenceView();
   }
 }
 
@@ -155,28 +173,48 @@ function renderVisitorList(visitors) {
 }
 
 function renderPresenceSnapshot(snapshot) {
+  if (destroyed) return;
   rawVisitors = snapshot.val() || {};
+  hasPresenceSnapshot = true;
+  presenceReadError = false;
   refreshPresenceView();
 }
 
+function showPresenceFallback(message, state) {
+  liveCursors.clear();
+  setPresenceStatus(message, state);
+  const signature = `status:${message}`;
+  if (!presenceList || visitorListSignature === signature) return;
+  visitorListSignature = signature;
+  presenceList.innerHTML = "";
+  const text = document.createElement("span");
+  text.className = "live-presence-empty";
+  text.textContent = message;
+  presenceList.append(text);
+}
+
 function refreshPresenceView() {
-  if (presenceError) {
-    liveCursors.clear();
-    setPresenceStatus("Live presence unavailable", "error");
+  window.clearTimeout(expiryTimer);
+  expiryTimer = 0;
+  if (destroyed || isLeaving) return;
+  if (presenceError || presenceReadError) {
+    showPresenceFallback("Live presence unavailable", "error");
     return;
   }
-  if (!isConnected) {
-    liveCursors.clear();
-    setPresenceStatus(hasConnected ? "Reconnecting live" : "Connecting live", "connecting");
+  if (!isConnected || !presenceReady || !hasPresenceSnapshot) {
+    showPresenceFallback(hasConnected ? "Reconnecting live" : "Connecting live", "connecting");
     return;
   }
   const visitors = {};
   const now = Date.now() + serverOffset;
+  let nextExpiry = Infinity;
   Object.entries(rawVisitors).forEach(([uid, visitor]) => {
     if (!visitor || typeof visitor !== "object") return;
     const isMe = uid === presenceRef?.key;
-    if (isMe || (typeof visitor.lastSeen === "number" && now - visitor.lastSeen < DELETE_STALE_MS)) {
+    const age = now - visitor.lastSeen;
+    if (isMe || (Number.isFinite(visitor.lastSeen) && age >= -HEARTBEAT_MS && age < DELETE_STALE_MS)) {
       visitors[uid] = visitor;
+      if (!isMe) nextExpiry = Math.min(nextExpiry, DELETE_STALE_MS - age);
     }
   });
   const signature = JSON.stringify(Object.entries(visitors).map(([uid, visitor]) =>
@@ -188,6 +226,8 @@ function refreshPresenceView() {
   liveCursors.render(visitors, presenceRef?.key);
   const count = Object.keys(visitors).filter((uid) => uid !== presenceRef?.key).length;
   setPresenceStatus(count === 0 ? "You’re here alone" : `${count} other${count === 1 ? "" : "s"} here`);
+  // Expire stale rows when needed; idle pages do not need a one-second render loop.
+  if (Number.isFinite(nextExpiry)) expiryTimer = window.setTimeout(refreshPresenceView, nextExpiry + 1);
 }
 
 function renderCountryChart() {
@@ -228,7 +268,7 @@ async function detectIpCountry() {
 }
 
 async function recordCountryVisit() {
-  if (!database || visitorCountry === "Location unavailable") return;
+  if (destroyed || isLeaving || !database || visitorCountry === "Location unavailable") return;
   const countryKey = visitorCountry.replace(/[.#$/[\]]/g, "_");
   await runTransaction(ref(database, `analytics/countries/${countryKey}`), (count) => (count || 0) + 1);
 }
@@ -263,6 +303,8 @@ async function usePreciseLocation() {
 
 async function startPresence() {
   if (!presenceLabel) return;
+  if (presenceButton) presenceButton.disabled = false;
+  setPresenceStatus("Connecting live", "connecting");
 
   try {
     const app = initializeApp(firebaseConfig);
@@ -270,36 +312,34 @@ async function startPresence() {
     const auth = initializeAuth(app, { persistence: inMemoryPersistence });
     database = getDatabase(app);
     const credential = await signInAnonymously(auth);
+    if (destroyed) return;
     presenceRef = ref(database, `presence/${credential.user.uid}`);
 
-    onValue(ref(database, ".info/serverTimeOffset"), (snap) => {
+    subscriptions.push(onValue(ref(database, ".info/serverTimeOffset"), (snap) => {
       serverOffset = snap.val() || 0;
-    });
+      refreshPresenceView();
+    }));
 
-    onValue(ref(database, ".info/connected"), (snap) => {
+    subscriptions.push(onValue(ref(database, ".info/connected"), (snap) => {
+      connectionVersion++;
       isConnected = snap.val() === true;
       presenceReady = false;
       presenceError = false;
       if (isConnected) { hasConnected = true; announcePresence(); }
       refreshPresenceView();
-    });
+    }));
 
-    onValue(ref(database, "presence"), renderPresenceSnapshot, (error) => {
-      presenceError = true;
+    subscriptions.push(onValue(ref(database, "presence"), renderPresenceSnapshot, (error) => {
+      presenceReadError = true;
       console.error("Firebase presence could not be read.", error);
-      setPresenceStatus("Live presence unavailable", "error");
-    });
-    onValue(ref(database, "analytics/countries"), updateCountryCount, (error) => {
-      console.error("Country analytics could not be read.", error);
-    });
-
-    window.setInterval(() => {
-      publishPresence();
-    }, HEARTBEAT_MS);
-
-    window.setInterval(() => {
       refreshPresenceView();
-    }, 1000);
+    }));
+    subscriptions.push(onValue(ref(database, "analytics/countries"), updateCountryCount, (error) => {
+      console.error("Country analytics could not be read.", error);
+      if (countryChart) countryChart.textContent = "Country visits are temporarily unavailable.";
+    }));
+
+    startHeartbeat();
 
     // Country lookup/analytics must never block the live subscriptions.
     detectIpCountry().then(() => {
@@ -308,37 +348,61 @@ async function startPresence() {
     }).catch(error => console.warn("Country visit could not be recorded.", error));
   } catch (error) {
     console.error("Firebase anonymous presence could not be started.", error);
-    setPresenceStatus("Live presence unavailable", "error");
+    presenceError = true;
+    refreshPresenceView();
   }
 }
 
-window.addEventListener("scroll", () => {
+function startHeartbeat() {
+  if (!destroyed && !isLeaving && !heartbeatTimer) heartbeatTimer = window.setInterval(publishPresence, HEARTBEAT_MS);
+}
+
+function updateViewport() {
+  viewportFrame = 0;
+  if (destroyed || isLeaving || document.hidden) return;
   const section = getSectionAtViewportCenter();
   if (section !== currentSection) { currentSection = section; queuePresenceUpdate(); }
   liveCursors.capture();
-  if (isConnected && !presenceError) liveCursors.render(rawVisitors, presenceRef?.key);
-}, { passive: true });
-window.addEventListener("resize", () => {
-  liveCursors.capture();
-  if (isConnected && !presenceError) liveCursors.render(rawVisitors, presenceRef?.key);
-}, { passive: true });
+  if (isConnected && presenceReady && !presenceError && !presenceReadError) liveCursors.render(rawVisitors, presenceRef?.key);
+}
+function queueViewportUpdate() {
+  if (!destroyed && !isLeaving && !viewportFrame) viewportFrame = window.requestAnimationFrame(updateViewport);
+}
+listen(window, "scroll", queueViewportUpdate, { passive: true });
+listen(window, "resize", queueViewportUpdate, { passive: true });
 
-window.addEventListener("pagehide", () => {
+listen(window, "pagehide", (event) => {
   isLeaving = true;
+  connectionVersion++;
+  presenceReady = false;
+  window.clearInterval(heartbeatTimer);
+  heartbeatTimer = 0;
+  window.clearTimeout(expiryTimer);
+  window.cancelAnimationFrame(viewportFrame);
+  viewportFrame = 0;
   window.clearTimeout(publishTimer);
   publishTimer = 0;
+  liveCursors.hide();
   liveCursors.clear();
   if (presenceRef) remove(presenceRef).catch((error) => console.error("Firebase presence cleanup failed.", error));
-});
-
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) {   // page restored from back/forward cache
-    isLeaving = false;
-    announcePresence();
+  if (!event?.persisted) {
+    destroyed = true;
+    subscriptions.forEach(unsubscribe => unsubscribe?.());
+    listeners.forEach(unlisten => unlisten());
+    liveCursors.destroy();
   }
 });
 
-document.addEventListener("visibilitychange", () => {
+listen(window, "pageshow", (event) => {
+  if (event.persisted) {   // page restored from back/forward cache
+    isLeaving = false;
+    startHeartbeat();
+    announcePresence();
+    refreshPresenceView();
+  }
+});
+
+listen(document, "visibilitychange", () => {
   if (!presenceRef) return;
   if (document.hidden) {
     liveCursors.hide();
@@ -350,8 +414,8 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-locationConsent?.addEventListener("click", usePreciseLocation);
-cursorToggle?.addEventListener("change", () => {
+listen(locationConsent, "click", usePreciseLocation);
+listen(cursorToggle, "change", () => {
   liveCursors.hide();
   liveCursors.clear();
   queuePresenceUpdate();

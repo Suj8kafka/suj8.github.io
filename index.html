@@ -142,10 +142,8 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-word[data-f="ar"] { font-family: "Noto Naskh Arabic", serif; }
 .ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
 .ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
-.ld-write-stroke { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) linear var(--pen-delay) forwards; }
-.ld-write-finish { opacity: 0; animation: ld-ink-finish .12s ease .76s forwards; }
+.ld-write-stroke { opacity: 0; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) var(--pen-easing, cubic-bezier(.32,.05,.45,1)) var(--pen-delay) forwards; }
 @keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
-@keyframes ld-ink-finish { to { opacity: 1; } }
 .ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
 .ld-bar {
   width: min(160px, 45vw);
@@ -201,7 +199,7 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
 @media (prefers-reduced-motion: reduce) {
   html.loader-running #loader { display: none; }
   #loader, .ld-wash, .ld-graphic, .ld-graphic path { animation: none !important; transition: none; }
-  .ld-write-stroke, .ld-write-finish { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
+  .ld-write-stroke { animation: none !important; opacity: 1; stroke-dashoffset: 0; }
 }
 @media (forced-colors: active) {
   .ld-wash, .ld-graphic { display: none; }
@@ -359,8 +357,7 @@ h2{margin-bottom: 18px; font: 600 clamp(40px, 5vw, 69px)/1 var(--display); lette
 .hero-intro{font-size: 15px;}
 .site-header{padding: 0 12px;}
 .nav{gap: 4px;}
-.nav a:nth-child(6){display: none;}
-.button-outline{margin-top: 25px;}}
+.nav a:nth-child(6){display: none;}}
 @media (prefers-reduced-motion: reduce){*, *::before, *::after{animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
@@ -383,8 +380,8 @@ html{scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));}
 .live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}
 img,video{max-width:100%}
 </style>
-  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261110-sidebar" media="print">
-  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261110-sidebar"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
+  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.css?v=20261112-refinements" media="print">
+  <noscript><link rel="stylesheet" href="assets/css/site.css?v=20261112-refinements"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
   <script type="module" src="assets/js/page-styles.js?v=20261109-settle-transitions"></script>
   <script type="application/ld+json">
   {
@@ -449,7 +446,26 @@ img,video{max-width:100%}
   </div>
   <button class="ld-skip" type="button">Skip intro</button>
 </div>
-  <template id="ld-namaste-template"><svg class="ld-handwriting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 148" width="304" height="148" aria-hidden="true" focusable="false"><title>नमस्ते</title><metadata>Namaste letterforms rendered from Noto Sans Devanagari. Eighteen ordered pen strokes, 760 ms total, clipped to the original glyph outlines.</metadata><defs><clipPath id="ld-namaste-shape"><path d="M 242.5 16 L 253.5 17 Q 260.3 19.7 264 25.5 L 270 38.5 L 273 49.5 L 274.5 51 L 288 51 L 288 60 L 275.5 60 L 275 60.5 L 275 130.5 L 274.5 131 L 265 131 L 265 89 L 241.5 89 L 233.5 92 L 231 94.5 L 230 96.5 L 230 106.5 L 234 114.5 L 245 126.5 Q 242.3 130.3 237.5 132 Q 228.3 124.3 222 113.5 L 222 111.5 L 220 108.5 L 220 103.5 Q 218.3 102.6 219 100 L 205.5 100 L 204.5 99 L 201.5 99 L 195.5 97 L 192.5 95 L 183 99.5 L 188 106.5 L 205.5 124 L 208 125.5 L 201.5 132 L 199.5 132 Q 184.5 118 173 100.5 L 169 91.5 L 169 84.5 Q 170.8 79.3 179.5 81 L 186.5 87 L 191 81.5 L 193 71.5 L 192 70.5 L 192 64.5 L 189.5 60 L 165.5 60 L 164.5 61 L 163.5 60 L 152 60 L 152 130.5 L 151.5 131 L 142 131 L 142 99 L 113 99 L 113 108.5 L 110.5 111 L 106.5 112 L 101.5 110 L 95 103.5 L 92 97.5 L 92 93.5 Q 94.8 88.5 103 90 L 103 60 L 88.5 60 Q 87.5 62 86.5 60 L 76.5 60 L 76 60.5 L 76 130.5 L 75.5 131 L 65 131 L 65 93 L 42 93 L 42 102.5 L 39.5 106 Q 37.7 107.7 33.5 107 Q 27.3 104.7 24 99.5 L 21 93.5 L 21 87.5 L 24.5 84 L 65 84 L 65 60 L 16.5 60 L 16 59.5 L 16 51 L 263.5 51 Q 264.3 51.3 264 48.5 L 260 39.5 L 260 37.5 L 256 29.5 L 253.5 27 L 251.5 26 L 240.5 26 L 239.5 27 L 235 27 L 233 18 Q 236.4 19 237.5 17 L 241.5 17 L 242.5 16 Z M 115 60 L 113 62 L 113 90 L 142 90 L 142 60 L 115 60 Z M 201 60 Q 200 63 202 64 L 202 69 L 203 70 L 203 77 Q 201 77 202 82 L 199 89 L 202 90 L 206 90 L 207 91 L 221 91 L 223 88 L 234 81 Q 237 82 239 80 L 265 80 L 265 62 L 264 60 L 228 60 L 227 61 L 215 61 L 214 60 L 201 60 Z "/></clipPath></defs><g clip-path="url(#ld-namaste-shape)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:0.0ms;--pen-duration:37.6ms" d="M34,94 L33,91 L34,91 L36,88 L70,88"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:39.6ms;--pen-duration:21.6ms" d="M70,63 L70,88"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:63.2ms;--pen-duration:31.2ms" d="M70,88 L70,124"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:96.4ms;--pen-duration:8.1ms" d="M107,94 L107,95 L105,96 L105,100 L106,101"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:106.5ms;--pen-duration:26.8ms" d="M107,63 L107,94"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:135.4ms;--pen-duration:33.8ms" d="M107,94 L146,94"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:171.1ms;--pen-duration:26.8ms" d="M146,63 L146,94"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:199.9ms;--pen-duration:26.8ms" d="M146,94 L146,125"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:228.8ms;--pen-duration:13.7ms" d="M178,92 L191,91 L193,90"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:244.5ms;--pen-duration:30.8ms" d="M178,92 L180,104 L182,105 L184,109 L186,110 L193,119"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:277.3ms;--pen-duration:26.2ms" d="M196,63 L196,66 L197,67 L197,77 L196,77 L195,83 L194,83 L194,88 L193,90"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:305.4ms;--pen-duration:28.6ms" d="M193,90 L195,92 L202,94 L224,95"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:336.1ms;--pen-duration:45.4ms" d="M224,95 L225,95 L226,91 L229,89 L229,88 L235,85 L237,85 L237,84 L269,84"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:383.5ms;--pen-duration:34.4ms" d="M224,95 L225,109 L232,120 L233,120 L238,126"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:419.9ms;--pen-duration:18.2ms" d="M269,63 L269,84"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:440.0ms;--pen-duration:35.5ms" d="M269,84 L269,125"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:477.5ms;--pen-duration:43.9ms" d="M238,22 L239,21 L251,21 L256,23 L260,28 L263,34 L263,36 L264,36 L265,41 L266,41 L266,44 L267,44 L267,47"/><path class="ld-write-stroke" pathLength="1" stroke-width="22" style="--pen-delay:523.4ms;--pen-duration:234.6ms" d="M16,55 L287,55"/></g><g class="ld-write-finish" fill="currentColor"><path d="M 242.5 16 L 253.5 17 Q 260.3 19.7 264 25.5 L 270 38.5 L 273 49.5 L 274.5 51 L 288 51 L 288 60 L 275.5 60 L 275 60.5 L 275 130.5 L 274.5 131 L 265 131 L 265 89 L 241.5 89 L 233.5 92 L 231 94.5 L 230 96.5 L 230 106.5 L 234 114.5 L 245 126.5 Q 242.3 130.3 237.5 132 Q 228.3 124.3 222 113.5 L 222 111.5 L 220 108.5 L 220 103.5 Q 218.3 102.6 219 100 L 205.5 100 L 204.5 99 L 201.5 99 L 195.5 97 L 192.5 95 L 183 99.5 L 188 106.5 L 205.5 124 L 208 125.5 L 201.5 132 L 199.5 132 Q 184.5 118 173 100.5 L 169 91.5 L 169 84.5 Q 170.8 79.3 179.5 81 L 186.5 87 L 191 81.5 L 193 71.5 L 192 70.5 L 192 64.5 L 189.5 60 L 165.5 60 L 164.5 61 L 163.5 60 L 152 60 L 152 130.5 L 151.5 131 L 142 131 L 142 99 L 113 99 L 113 108.5 L 110.5 111 L 106.5 112 L 101.5 110 L 95 103.5 L 92 97.5 L 92 93.5 Q 94.8 88.5 103 90 L 103 60 L 88.5 60 Q 87.5 62 86.5 60 L 76.5 60 L 76 60.5 L 76 130.5 L 75.5 131 L 65 131 L 65 93 L 42 93 L 42 102.5 L 39.5 106 Q 37.7 107.7 33.5 107 Q 27.3 104.7 24 99.5 L 21 93.5 L 21 87.5 L 24.5 84 L 65 84 L 65 60 L 16.5 60 L 16 59.5 L 16 51 L 263.5 51 Q 264.3 51.3 264 48.5 L 260 39.5 L 260 37.5 L 256 29.5 L 253.5 27 L 251.5 26 L 240.5 26 L 239.5 27 L 235 27 L 233 18 Q 236.4 19 237.5 17 L 241.5 17 L 242.5 16 Z M 115 60 L 113 62 L 113 90 L 142 90 L 142 60 L 115 60 Z M 201 60 Q 200 63 202 64 L 202 69 L 203 70 L 203 77 Q 201 77 202 82 L 199 89 L 202 90 L 206 90 L 207 91 L 221 91 L 223 88 L 234 81 Q 237 82 239 80 L 265 80 L 265 62 L 264 60 L 228 60 L 227 61 L 215 61 L 214 60 L 201 60 Z "/></g></svg></template>
+  <template id="ld-namaste-template"><svg class="ld-handwriting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 148" width="304" height="148" aria-hidden="true" focusable="false">
+  <title>नमस्ते</title>
+  <metadata>Hand-drawn Namaste. Ten continuous pen strokes with short lifts, finishing with the Devanagari headline at 860 ms. The visible ink follows each path directly.</metadata>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- न: the small loop and connecting arm, then the downstroke. -->
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.5" style="--pen-delay:0ms;--pen-duration:75ms" d="M27 87 C21 88 25 101 33 102 C42 103 40 88 33 87 C45 89 58 88 71 86"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.2" style="--pen-delay:87ms;--pen-duration:60ms" d="M72 55 C71 77 70 105 72 128"/>
+    <!-- म: one flowing downstroke, loop and arm, followed by its stem. -->
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.5" style="--pen-delay:161ms;--pen-duration:96ms" d="M108 55 C106 72 107 91 107 104 C107 114 93 102 97 96 C100 90 116 96 128 95 L146 94"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.2" style="--pen-delay:269ms;--pen-duration:60ms" d="M147 56 C145 79 145 105 147 128"/>
+    <!-- स्त: the curved half-स, its join, then त and its downstroke. -->
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.5" style="--pen-delay:343ms;--pen-duration:92ms" d="M193 56 C203 72 200 88 181 95 C171 100 169 78 177 88 C184 102 193 116 203 128"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7" style="--pen-delay:445ms;--pen-duration:32ms" d="M192 91 Q206 98 225 94"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.5" style="--pen-delay:487ms;--pen-duration:75ms" d="M269 83 C253 82 236 80 227 91 C218 103 228 118 240 128"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7.2" style="--pen-delay:574ms;--pen-duration:60ms" d="M270 54 C269 77 269 104 271 128"/>
+    <!-- े is added above the last letter before the final headline. -->
+    <path class="ld-write-stroke" pathLength="1" stroke-width="7" style="--pen-delay:648ms;--pen-duration:60ms" d="M270 53 C263 31 262 15 237 22"/>
+    <path class="ld-write-stroke" pathLength="1" stroke-width="6.8" style="--pen-delay:724ms;--pen-duration:136ms;--pen-easing:cubic-bezier(.2,.05,.65,1)" d="M17 55 C88 53 192 58 287 54"/>
+  </g>
+</svg></template>
   <noscript><style>#loader { display: none !important; }</style></noscript>
   <svg class="icon-sprite" aria-hidden="true" width="0" height="0">
     <symbol id="icon-arrow-up-right" viewBox="0 0 16 16">
@@ -535,9 +551,9 @@ img,video{max-width:100%}
     <div class="header-tools">
       <div class="live-presence-wrap">
         <div class="live-counter">
-          <button class="live-presence" type="button" aria-expanded="false" aria-controls="presence-panel" aria-haspopup="dialog">
-            <span class="live-presence-dot" aria-hidden="true"></span>
-            <span class="live-presence-label">Connecting live</span>
+          <button class="live-presence" type="button" aria-expanded="false" aria-controls="presence-panel" aria-haspopup="dialog" disabled>
+            <span class="live-presence-dot" data-state="connecting" aria-hidden="true"></span>
+            <span class="live-presence-label">Live studio</span>
           </button>
           <div class="live-presence-list" id="live-presence-list" role="status"
             aria-label="Anonymous visitors currently on this page"></div>
@@ -572,7 +588,7 @@ img,video{max-width:100%}
       <p class="location-status" aria-live="polite"></p>
       <div class="presence-analytics">
         <h3>Countries that have visited</h3>
-        <div class="country-chart" role="group" aria-label="Country visit chart"></div>
+        <div class="country-chart" role="group" aria-label="Country visit chart">Loading country visits…</div>
       </div>
       <div class="sidebar-usage" role="group" aria-labelledby="sidebar-usage-title">
         <h3 id="sidebar-usage-title">How the site is used</h3>
@@ -698,6 +714,7 @@ img,video{max-width:100%}
             <span class="selected-work-role">UI/UX designer · Research, wireframes, prototypes, usability testing,
               developer handoff and implementation review.</span>
           </div>
+          <span class="selected-work-link">Visit live product <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></span>
         </a>
         <a class="featured-work-card" href="https://blog.sujeetkhadka.com.np/pages/carrom-karrom-a-mobile-game"
           target="_blank" rel="noreferrer">
@@ -722,7 +739,7 @@ img,video{max-width:100%}
         <a class="featured-work-card" href="https://apkpure.com/nakka-nepali-traditional-game/com.bloggernepal.nakka"
           target="_blank" rel="noreferrer">
           <!-- TODO [CONFIRM]: Confirm that the role is UI/UX and visual design. -->
-          <div class="selected-work-image">
+          <div class="selected-work-image selected-work-screen-image">
             <picture>
               <source srcset="assets/images/selected-work/nakka-screen-0-compact.webp?v=73bc4c4f90ea" type="image/webp">
               <img src="assets/images/selected-work/nakka-screen-0.jpg?v=52b973fdb355" width="369" height="800"
@@ -736,15 +753,13 @@ img,video{max-width:100%}
               play.</p>
             <span class="selected-work-role">UI/UX and visual design</span>
           </div>
+          <span class="selected-work-link">View game listing <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></span>
         </a>
         <a class="featured-work-card" href="https://medium.com/design-bootcamp/improving-esewas-user-experience-reducing-accidental-top-ups-fixing-home-screen-clutter-6a7c7afc0c70"
           target="_blank" rel="noreferrer">
-          <div class="selected-work-image selected-work-brand-image">
-            <picture>
-              <source srcset="assets/images/selected-work/esewa-brand.webp?v=f14957446c9a" type="image/webp">
-              <img src="assets/images/selected-work/esewa-brand.png?v=6b3c34f09857" width="1200" height="630"
-                loading="lazy" decoding="async" alt="eSewa logo illustrating the user-experience redesign case study">
-            </picture>
+          <div class="selected-work-image selected-work-screen-image selected-work-redesign-image">
+            <img src="assets/images/selected-work/esewa-redesign.webp?v=ea5a83402396" width="640" height="1385"
+              loading="lazy" decoding="async" alt="eSewa homepage redesign with distinct Send Money, Load Money and Bank Transfer actions above grouped utility payments">
           </div>
           <div class="selected-work-content">
             <p class="selected-work-kicker">Case study</p>
@@ -752,9 +767,8 @@ img,video{max-width:100%}
             <p>A redesign proposal for reducing accidental top-ups and home-screen clutter, based on real user
               complaints and heuristic evaluation.</p>
             <span class="selected-work-role">Self-initiated case study · Research, analysis and redesign.</span>
-            <small class="selected-work-credit">Current image is an official eSewa brand visual; before-and-after
-              screens can replace it.</small>
           </div>
+          <span class="selected-work-link">Read redesign case study <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></span>
         </a>
       </div>
       <div class="more-projects">
@@ -998,7 +1012,7 @@ img,video{max-width:100%}
         </button>
       </div>
       <div class="about-copy">
-        <h2 id="about-title">I learn things by designing<br><em>and working on it.</em></h2>
+        <h2 id="about-title">I learn by making.<br><em>Then refining.</em></h2>
         <p>I’m a designer from Nepal. My work began with a final-year school project and grew through personal
           experiments in mobile games, small web products, and interface design.</p>
         <p>I learn by making — designing in Figma, building selected ideas with Godot, HTML, CSS, and JavaScript, and
@@ -1087,7 +1101,7 @@ img,video{max-width:100%}
   <script type="module" src="assets/js/mobile-navigation.js?v=20261109-layout-read"></script>
   <script src="loader/files/loader.js?v=20261109-early-reveal-welcome" defer></script>
   <script type="module" src="assets/js/visitor-panel.js?v=20261110-sidebar2"></script>
-  <script type="module" src="assets/js/enhancements.js?v=20261110-sidebar"></script>
+  <script type="module" src="assets/js/enhancements.js?v=20261112-refinements"></script>
   <script type="module" src="assets/js/usage-tracker.js?v=20261110-engagement"></script>
 </body>
 

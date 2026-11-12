@@ -1,8 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { scheduleEnhancements } from '../assets/js/enhancements.js';
+import { loadServices, scheduleEnhancements } from '../assets/js/enhancements.js';
 
 const flush = async () => { for (let index = 0; index < 5; index++) await Promise.resolve(); };
+
+test('a blocked presence module shows an unavailable state while availability still loads', async context => {
+  context.mock.method(console, 'warn', () => {});
+  const label = {}, dot = { dataset: {} }, button = {};
+  let availabilityLoaded = false;
+  const document = { querySelector: selector => ({ '.live-presence-label': label, '.live-presence-dot': dot, '.live-presence': button })[selector] };
+  await loadServices(document, {
+    presence: () => Promise.reject(new Error('Network unavailable')),
+    availability: () => { availabilityLoaded = true; }
+  });
+  assert.equal(availabilityLoaded, true);
+  assert.equal(label.textContent, 'Live presence unavailable');
+  assert.equal(dot.dataset.state, 'error');
+  assert.equal(button.disabled, true);
+});
+
 function preview({ compact = true, reduced = false, ready = true, loader = false, constrained = false, idleSupport = true, failMotion = false, decode = 'ready', scrollY = 0 } = {}) {
   function target() {
     const events = new Map();

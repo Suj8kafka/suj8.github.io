@@ -1,0 +1,79 @@
+/* A quiet, Mac-inspired welcome; the portfolio retains its own visual identity. */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink, #18211e);
+  background: var(--paper, #f5f3ee);
+  transition: opacity .28s ease, visibility .28s ease;
+  /* Also dismiss if JavaScript or a CDN dependency fails entirely. */
+  animation: loader-failsafe 0s 5s forwards;
+}
+.page-loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-greeting { width: 100%; padding: 0 24px; text-align: center; transform: translateY(-24px); }
+.loader-word {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(140px, 24vw, 190px);
+  font: 400 clamp(44px, 11vw, 88px)/1.65 "Noto Sans Devanagari", sans-serif;
+  letter-spacing: -.035em;
+  will-change: opacity, filter, transform;
+}
+.loader-word.loader-hello {
+  width: max-content;
+  margin: 0 auto;
+  padding: 0 .12em;
+  font: 500 clamp(100px, 22vw, 170px)/1.1 "Caveat", "Segoe Print", cursive;
+  letter-spacing: -.065em;
+  animation: loader-write .7s cubic-bezier(.4, 0, .2, 1) both;
+}
+.loader-language {
+  display: block;
+  margin-top: 16px;
+  color: var(--muted, #68716c);
+  font: 400 11px/1.5 var(--body, sans-serif);
+  letter-spacing: .12em;
+}
+.loader-progress {
+  position: absolute;
+  top: calc(50% + 132px);
+  width: min(168px, 42vw);
+  height: 3px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--line, #d8d9d2);
+}
+.loader-progress-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.loader-skip {
+  position: absolute;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  min-height: 44px;
+  padding: 10px 4px;
+  border: 0;
+  color: var(--muted, #68716c);
+  background: transparent;
+  font: 400 12px var(--body, sans-serif);
+  cursor: pointer;
+}
+.loader-skip span { margin-left: 8px; }
+.loader-skip:hover { color: var(--ink, #18211e); }
+.loader-skip:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+@keyframes loader-write {
+  from { clip-path: inset(0 100% 0 0); opacity: .2; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes loader-failsafe { to { visibility: hidden; pointer-events: none; } }
+@media (prefers-reduced-motion: reduce) { .page-loader { display: none; } }

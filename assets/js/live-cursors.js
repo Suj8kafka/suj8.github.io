@@ -22,9 +22,10 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
   let cursor = { x: 0, y: 0, section: 'hero', visible: false, updatedAt: 0 };
   let lastPointer = null;
   let layer = null;
+  let destroyed = false;
   const nodes = new Map();
   const idleTimers = new Map();
-  const allowed = () => enabled() && !motion?.matches;
+  const allowed = () => !destroyed && enabled() && !motion?.matches;
   const sections = () => [...document.querySelectorAll('main > section[id], main > section.hero')];
   const regions = () => [...document.querySelectorAll('main > section, .site-header, .footer-toolkit, .site-footer')]
     .map((element, index) => ({ element, key: `@${element.id || `region-${index}`}` }));
@@ -73,17 +74,28 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
       return;
     }
     const visible = new Set();
+    let regionElements;
+    let sectionElements;
+    const bounds = new Map();
+    function regionBounds(key, viewportWidth) {
+      if (bounds.has(key)) return bounds.get(key);
+      let rect;
+      if (key === '@viewport') rect = { top: 0, height: window.innerHeight };
+      else {
+        const anchor = viewportWidth
+          ? (regionElements ||= regions()).find(region => region.key === key)?.element
+          : (sectionElements ||= sections()).find(element => (element.id || 'hero') === key);
+        rect = anchor?.getBoundingClientRect();
+      }
+      bounds.set(key, rect);
+      return rect;
+    }
     for (const [key, visitor] of Object.entries(visitors)) {
-      if (key === selfKey || visitor.path !== (window.location?.pathname || '/') || !isRecentCursor(visitor.cursor, now())) continue;
+      if (!visitor || key === selfKey || visitor.path !== (window.location?.pathname || '/') || !isRecentCursor(visitor.cursor, now())) continue;
       const regionKey = visitor.cursor.section;
       const viewportWidth = regionKey.startsWith('@');
       // Older tabs still send positions relative to the section's content width.
-      const anchor = viewportWidth
-        ? regions().find(region => region.key === regionKey)?.element
-        : sections().find(element => (element.id || 'hero') === regionKey);
-      const rect = regionKey === '@viewport'
-        ? { top: 0, height: window.innerHeight }
-        : anchor?.getBoundingClientRect();
+      const rect = regionBounds(regionKey, viewportWidth);
       if (!rect || rect.height <= 0) continue;
       const x = viewportWidth ? visitor.cursor.x * window.innerWidth : rect.left + visitor.cursor.x * rect.width;
       const y = rect.top + visitor.cursor.y * rect.height;
@@ -118,9 +130,9 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
         if (age < FADE_MS) {
           idleTimers.set(key, window.setTimeout(() => {
             node.dataset.idle = 'true';
-            idleTimers.delete(key);
+            idleTimers.set(key, window.setTimeout(() => removeCursor(key), IDLE_MS - FADE_MS));
           }, FADE_MS - age));
-        }
+        } else idleTimers.set(key, window.setTimeout(() => removeCursor(key), IDLE_MS - age));
       }
       node.querySelector('span').textContent = typeof visitor.label === 'string' ? visitor.label.slice(0, 40) : 'Visitor';
       visible.add(key);
@@ -130,14 +142,25 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
     }
   }
 
-  window.addEventListener('pointermove', event => {
+  function onPointerMove(event) {
     if (event.pointerType === 'touch' || !allowed()
       || event.target?.closest?.('input, textarea, select, [contenteditable], .presence-panel, .skill-modal, #loader')) return hide();
     lastPointer = { x: event.clientX, y: event.clientY };
     capture();
-  }, { passive: true });
+  }
+  function onMotionChange() { hide(); clear(); }
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
   document.addEventListener('pointerleave', hide);
-  motion?.addEventListener('change', () => { hide(); clear(); });
+  motion?.addEventListener('change', onMotionChange);
 
-  return { color, get cursor() { return cursor; }, capture, hide, render, clear };
+  return { color, get cursor() { return cursor; }, capture, hide, render, clear, destroy() {
+    destroyed = true;
+    hide();
+    clear();
+    layer?.remove();
+    layer = null;
+    window.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerleave', hide);
+    motion?.removeEventListener('change', onMotionChange);
+  } };
 }

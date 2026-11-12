@@ -169,6 +169,14 @@ test('idle cursor fades at three seconds, ignores heartbeats, and restores opaci
   peer.cursor = { ...peer.cursor, x: .6, updatedAt: clock };
   cursors.render({ peer }, 'self');
   assert.equal(node.dataset.idle, 'false');
+  clock = 16000;
+  for (const [id, timer] of [...timers]) { if (timer.time <= clock) { timers.delete(id); timer.fn(); } }
+  assert.equal(node.dataset.idle, 'true');
+  assert.equal([...timers.values()][0].time, 18000);
+  clock = 18000;
+  for (const [id, timer] of [...timers]) { if (timer.time <= clock) { timers.delete(id); timer.fn(); } }
+  assert.equal(node.removed, true, 'Idle cursors expire without a presence render loop');
+  assert.equal(timers.size, 0);
   cursors.clear();
   assert.equal(node.removed, true);
   assert.equal(timers.size, 0);
