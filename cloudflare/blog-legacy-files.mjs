@@ -1,0 +1,28 @@
+// Original public file paths for the prepared blog-domain cutover.
+export const legacyFiles = {
+  "/icons/512 x 512icon-512.png": "/assets/images/blog/carrom-karrom-icon.png",
+  "/icons/nakka.png": "/assets/images/blog/nakka-icon.png",
+  "/icons/2048iconicon-512.png": "/assets/images/blog/2048-icon.png",
+  "/icons/bus res sys.png": "/assets/images/blog/bus-reservation-system-icon.png",
+  "/icons/connectum.png": "/assets/images/blog/connectum-icon.png",
+  "/icons/festivecount.png": "/assets/images/blog/nepali-festive-counter-icon.png",
+  "/frame 168.png": "/assets/images/blog/original-blog-mark.png",
+  "/favi.png": "/assets/images/blog/original-blog-favicon.png",
+  "/pages/imgs/cleanest theme.png": "/assets/images/blog/2048-light-theme.png",
+  "/pages/imgs/setting pressed darkmode.png": "/assets/images/blog/2048-dark-settings.png",
+  "/public/video/screenrecording_20251113_203255.mp4": "/assets/videos/blog/2048-gameplay.mp4",
+  "/sujeet_khadka_resume2026.pdf": "/assets/documents/blog/resume-2026.pdf",
+  "/resume2025.pdf": "/assets/documents/blog/resume-2025.pdf",
+  "/docs/sujeet-khadka-resume.pdf": "/assets/documents/blog/sujeet-khadka-resume.pdf",
+  "/docs/sujeet_khadka_resume2025np.pdf": "/assets/documents/blog/resume-2025-np.pdf",
+  "/docs/sujeet_khadka_cv.pdf": "/assets/documents/blog/sujeet-khadka-cv.pdf",
+  "/docs/sujeet khadka_resume2025.docx": "/assets/documents/blog/resume-2025.docx",
+  "/docs/sujeet_khadka_uiux_resume.docx": "/assets/documents/blog/uiux-resume.docx",
+  "/sujeet_khadka_cv.pdf": "/assets/documents/blog/earlier-blog-cv.pdf",
+  "/docs/cv.html": "/blog/",
+  "/docs/sujeet-khadka-resume-2025.pdf": "/assets/documents/blog/resume-2025.pdf",
+  "/docs/sujeet-khadka-resume-2025-np.pdf": "/assets/documents/blog/resume-2025-np.pdf",
+  "/docs/sujeet-khadka-cv.pdf": "/assets/documents/blog/sujeet-khadka-cv.pdf",
+  "/docs/sujeet-khadka-resume-2025.docx": "/assets/documents/blog/resume-2025.docx",
+  "/docs/sujeet-khadka-uiux-resume.docx": "/assets/documents/blog/uiux-resume.docx"
+};

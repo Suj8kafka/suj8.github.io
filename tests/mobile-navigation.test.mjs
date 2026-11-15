@@ -7,7 +7,7 @@ function preview({ compact = true, welcoming = false } = {}) {
   const events = new Map(), frames = new Map();
   let sequence = 0, geometryReads = 0;
   const positions = [0, 900, 2000, 3500, 5000];
-  const ids = ['top', 'work', 'skills', 'about', 'contact'];
+  const ids = ['top', 'work', 'about', 'writing', 'contact'];
   const links = ids.map(id => {
     const attributes = new Map([['href', `#${id}`]]);
     return { getAttribute: name => attributes.get(name), setAttribute: (name, value) => attributes.set(name, value), removeAttribute: name => attributes.delete(name) };
@@ -84,6 +84,7 @@ test('five labelled mobile links retain real destinations and decorative icons',
   const nav = html.match(/<nav class="mobile-nav"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const anchors = [...nav.matchAll(/<a href="#([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
   assert.equal(anchors.length, 5);
+  assert.deepEqual(anchors.map(([, id]) => id), ['top', 'work', 'about', 'writing', 'contact']);
   for (const [, id, contents] of anchors) {
     assert.match(html, new RegExp(`id="${id}"`));
     assert.match(contents, /<span>[^<]+<\/span>/);

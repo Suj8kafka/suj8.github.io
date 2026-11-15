@@ -1,0 +1,709 @@
+{
+  "assets": [
+    {
+      "source": "Blogpage/Icons/512 x 512icon-512.png",
+      "path": "assets/images/blog/carrom-karrom-icon.png",
+      "sha256": "047315b1e1572277a4a43c0b38cb2ec0ee1ef58e180236ce63dbdb3a01a62f92",
+      "originalUrl": "/Icons/512 x 512icon-512.png"
+    },
+    {
+      "source": "Blogpage/Icons/Nakka.png",
+      "path": "assets/images/blog/nakka-icon.png",
+      "sha256": "0935244f2c153ce2e6f0b4f6c58e734a1ab97a53df2c730c2e55f2c294bd840f",
+      "originalUrl": "/Icons/Nakka.png"
+    },
+    {
+      "source": "Blogpage/Icons/2048iconicon-512.png",
+      "path": "assets/images/blog/2048-icon.png",
+      "sha256": "0785a2854a0e79ba20a90a48891cbfae1bfd4df122e3b84138fe856ed03df329",
+      "originalUrl": "/Icons/2048iconicon-512.png"
+    },
+    {
+      "source": "Blogpage/Icons/Bus Res Sys.png",
+      "path": "assets/images/blog/bus-reservation-system-icon.png",
+      "sha256": "7f66309a9ff8bf54be5168476e6faf6819fc9c7ac07d0c3748bcb8a1f8e704ec",
+      "originalUrl": "/Icons/Bus Res Sys.png"
+    },
+    {
+      "source": "Blogpage/Icons/Connectum.png",
+      "path": "assets/images/blog/connectum-icon.png",
+      "sha256": "fd61aff214fc0980e2d36e9601c9a1016174c104dd7044049be89a8f87089a0c",
+      "originalUrl": "/Icons/Connectum.png"
+    },
+    {
+      "source": "Blogpage/Icons/Festivecount.png",
+      "path": "assets/images/blog/nepali-festive-counter-icon.png",
+      "sha256": "ae33fc809f9472a72a4317c14822c3c4728a785617742ccd393f0490fb499fcc",
+      "originalUrl": "/Icons/Festivecount.png"
+    },
+    {
+      "source": "Blogpage/Frame 168.png",
+      "path": "assets/images/blog/original-blog-mark.png",
+      "sha256": "901f120fb48e3c629a8a42328678391ffd95ef6254dad47cad03e9b9bde9b091",
+      "originalUrl": "/Frame 168.png"
+    },
+    {
+      "source": "Blogpage/favi.png",
+      "path": "assets/images/blog/original-blog-favicon.png",
+      "sha256": "1165eb18e4d12fdbd648eb44b044382102cd177ac6b9b2f71401d1e19052c960",
+      "originalUrl": "/favi.png"
+    },
+    {
+      "source": "Blogpage/pages/Imgs/Cleanest Theme.png",
+      "path": "assets/images/blog/2048-light-theme.png",
+      "sha256": "fd1ee93a64f7ef15c2f66441d5789638e981b7d6aedecef2b6752e14a74e7166",
+      "originalUrl": "/pages/Imgs/Cleanest Theme.png"
+    },
+    {
+      "source": "Blogpage/pages/Imgs/Setting pressed Darkmode.png",
+      "path": "assets/images/blog/2048-dark-settings.png",
+      "sha256": "1451e64c9f3269afb8a089a66b2c61d481d1ba3dc3e23ea2a2874c9d4b8b3a6c",
+      "originalUrl": "/pages/Imgs/Setting pressed Darkmode.png"
+    },
+    {
+      "source": "Blogpage/public/video/Screenrecording_20251113_203255.mp4",
+      "path": "assets/videos/blog/2048-gameplay.mp4",
+      "sha256": "662513bc8c845165677fc95e2a931250e3d0e0a844d41f7f29b2698a174264b5",
+      "originalUrl": "/public/video/Screenrecording_20251113_203255.mp4"
+    },
+    {
+      "source": "Blogpage/Sujeet_Khadka_Resume2026.pdf",
+      "path": "assets/documents/blog/resume-2026.pdf",
+      "sha256": "b224ce84dee346b450e4c378a697cfaea5999b9bbee772e37af8b84e54ad6d28",
+      "originalUrl": "/Sujeet_Khadka_Resume2026.pdf"
+    },
+    {
+      "source": "Blogpage/Resume2025.pdf",
+      "path": "assets/documents/blog/resume-2025.pdf",
+      "sha256": "309a76cc01981ad2cd2bab091bee09e3c3b2f4966628082de962ae4633e8ae4e",
+      "originalUrl": "/Resume2025.pdf"
+    },
+    {
+      "source": "Blogpage/Docs/sujeet-khadka-resume.pdf",
+      "path": "assets/documents/blog/sujeet-khadka-resume.pdf",
+      "sha256": "a848522210aeb8e5f7546bf90ae2ee5655a8f72ad587d1c8c0bf5b372217d3f0",
+      "originalUrl": "/Docs/sujeet-khadka-resume.pdf"
+    },
+    {
+      "source": "Blogpage/Docs/Sujeet_Khadka_Resume2025np.pdf",
+      "path": "assets/documents/blog/resume-2025-np.pdf",
+      "sha256": "15f5ae92c91b9500bdddd297571b81f3845d6588b298ba593e02c6b12ea5c85e",
+      "originalUrl": "/Docs/Sujeet_Khadka_Resume2025np.pdf"
+    },
+    {
+      "source": "Blogpage/Docs/Sujeet_Khadka_CV.pdf",
+      "path": "assets/documents/blog/sujeet-khadka-cv.pdf",
+      "sha256": "3845dec804ed6d8eba4c7e58fa94426e34be9e8e4045216aba6cb05b42a413ab",
+      "originalUrl": "/Docs/Sujeet_Khadka_CV.pdf"
+    },
+    {
+      "source": "Blogpage/Docs/Sujeet Khadka_Resume2025.docx",
+      "path": "assets/documents/blog/resume-2025.docx",
+      "sha256": "7db0133e19453906d2a48939e1b048e89554dc7045c314802adf1c9a58402a3e",
+      "originalUrl": "/Docs/Sujeet Khadka_Resume2025.docx"
+    },
+    {
+      "source": "Blogpage/Docs/Sujeet_Khadka_UIUX_Resume.docx",
+      "path": "assets/documents/blog/uiux-resume.docx",
+      "sha256": "53db7dc5df4beda528305a3a994c56b0f7122a024e3c79d62970d0694a12d9b8",
+      "originalUrl": "/Docs/Sujeet_Khadka_UIUX_Resume.docx"
+    },
+    {
+      "source": "Sujeet_Khadka_CV.pdf",
+      "path": "assets/documents/blog/earlier-blog-cv.pdf",
+      "sha256": "3845dec804ed6d8eba4c7e58fa94426e34be9e8e4045216aba6cb05b42a413ab",
+      "originalUrl": "/Sujeet_Khadka_CV.pdf"
+    },
+    {
+      "source": "https://miro.medium.com/v2/resize:fit:720/format:webp/1*cd7KMV3FQdHYHsbnc_hU4A.png",
+      "path": "assets/images/blog/carrom-play-store-2025.webp",
+      "sha256": "e60cb85f1d1e0dffe1b3a54b3309150de5387a0a2f8f36e71515ccca8bc92529"
+    },
+    {
+      "source": "https://miro.medium.com/v2/resize:fit:720/format:webp/1*zOPPOXMSqMGi0Yz33UpzrQ.png",
+      "path": "assets/images/blog/carrom-original-statistics.webp",
+      "sha256": "0c8a42647c3bd844868c610b9eb0d541cf169d84130d4bf334a9aca9d1fc051c"
+    },
+    {
+      "source": "https://the-progressbar-np.netlify.app/assets/icons/favicon.svg",
+      "path": "assets/images/blog/the-progress-bar-icon.svg",
+      "sha256": "ab3e2f222e9968624dd66f6299131064c68ad66eda0d9afc67a8616fdcd2988b"
+    }
+  ],
+  "articles": [
+    {
+      "source": "Blogpage/pages/Carrom-karrom-a-mobile-game.html",
+      "path": "blog/carrom-karrom/index.html",
+      "sections": [
+        "Introduction",
+        "How It All Started",
+        "The Development Process",
+        "Unexpected Growth & Stats",
+        "Industry-Wide Patterns",
+        "About the Developer",
+        "Moving Forward"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "3c86ef0eb8594b364dd66e144cdaa6473672db81e82f1a43c5a113f2f07496e7",
+      "textCharacters": 4818,
+      "originalHeadings": [
+        "App/Game Size – User Growth"
+      ]
+    },
+    {
+      "source": "Blogpage/pages/2048-Puzzle-Case-Study.html",
+      "path": "blog/2048-ux-case-study/index.html",
+      "sections": [
+        "2048 Puzzle – UX & UI Case Study",
+        "Project Overview",
+        "Research Insights",
+        "Design Goals",
+        "Final Designs",
+        "Outcomes",
+        "Reflection"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "a68461fae8ffec046cd8f10578c330a64badaaa77c229dd5503ca1eab10e564f",
+      "textCharacters": 1688,
+      "originalHeadings": [
+        "2048 – Dark Mode Puzzle Game",
+        "2048 Puzzle – UX & UI Case Study"
+      ]
+    },
+    {
+      "source": "Blogpage/pages/Nakka-Nepali-Traditional-Game.htm",
+      "path": "blog/nakka/index.html",
+      "sections": [
+        "Introduction",
+        "Why This Version?",
+        "Key Features",
+        "Development Notes",
+        "APK Pure Link",
+        "What's Next?"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "f7804450bd5068c19342007b1b7ef5d2e893bc47c881f0247cc7ec78e12e6c78",
+      "textCharacters": 1957,
+      "originalHeadings": [
+        "Nakka – Nepali Traditional Game"
+      ]
+    },
+    {
+      "source": "Blogpage/pages/2048-dark-mode.htm",
+      "path": "blog/2048-dark-mode/index.html",
+      "sections": [
+        "Introduction",
+        "Why This Version?",
+        "Key Features",
+        "Development Notes",
+        "Play Store Link",
+        "Gameplay Demo",
+        "What's Next?"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "e4a1b4bd344352ab3b2daff2d6f1c48e5db0ada8aa3190664c309c5008c00e35",
+      "textCharacters": 1877,
+      "originalHeadings": [
+        "2048 – Dark Mode Puzzle Game"
+      ]
+    },
+    {
+      "source": "Blogpage/pages/Festive-Counter.htm",
+      "path": "blog/nepali-festive-counter/index.html",
+      "sections": [
+        "Introduction",
+        "Why This Site?",
+        "Key Highlights",
+        "Development Notes",
+        "What’s Next?",
+        "Explore the Site"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "8a4636bc3a990f86adba3f9129341b25ce70715bbd37508597543e45050888cc",
+      "textCharacters": 1649,
+      "originalHeadings": [
+        "Nepali Festive Count"
+      ]
+    },
+    {
+      "source": "Blogpage/pages/The-Progress-Bar-np.html",
+      "path": "blog/the-progress-bar-np/index.html",
+      "sections": [
+        "Introduction",
+        "Why This Project?",
+        "Key Highlights",
+        "Live Project Link",
+        "What's Next?"
+      ],
+      "preservation": "Complete authored article body; markup, links and media paths adapted to the portfolio.",
+      "textSha256": "d4783bc318c2d46419d01fe6fec6bdae3493325270dc979872afe69c151f3985",
+      "textCharacters": 1117,
+      "originalHeadings": [
+        "The Progress Bar np"
+      ]
+    }
+  ],
+  "unavailableMedia": [
+    {
+      "source": "https://scontent.fktm8-1.fna.fbcdn.net/v/t39.30808-6/441174461_429181726402450_426604864771474990_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x2048&ctp=s2048x2048&_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=fvV7aV4lZUwQ7kNvwFcUrgK&_nc_oc=AdouNtUyU4UKNcMFcZ3hWUbGgwVm2vaNMSQmzXhz2CANkLaQhM9XWMztjE-bpAVUDOcBCGSsK-xq0SGlp-6F0Uky&_nc_zt=23&_nc_ht=scontent.fktm8-1.fna&_nc_gid=BdoKORom85Cs5oiJ7AvHwA&_nc_ss=7b2a8&oh=00_AQLutj_Jt55AxEVE7yiT_Qca_r3LLtgX6ZmRSK0zkuW2EA&oe=6AADAE75",
+      "reason": "The original Facebook CDN URL timed out; an alternate CDN host returned HTTP 403.",
+      "replacement": "Local copy of the live Progress Bar project icon: /assets/images/blog/the-progress-bar-icon.svg"
+    }
+  ],
+  "sourceRoot": "Blogpage",
+  "homepage": {
+    "source": "Blogpage/index.html",
+    "path": "blog/index.html",
+    "blocks": [
+      {
+        "tag": "h1",
+        "text": "Sujeet Khadka"
+      },
+      {
+        "tag": "p",
+        "text": "Accidental Game Developer → UI/UX Designer"
+      },
+      {
+        "tag": "p",
+        "text": "Welcome to my portfolio and blog – focused on clean interfaces, intuitive design, and my journey through development & design."
+      },
+      {
+        "tag": "h2",
+        "text": "About Sujeet Khadka"
+      },
+      {
+        "tag": "p",
+        "text": "I'm Sujeet Khadka, a designer based in Nepal, currently focused on UI/UX and visual design. My work began with a final-year school project and grew through personal experiments in mobile games, small web products, and interface design."
+      },
+      {
+        "tag": "p",
+        "text": "I learn by making: designing in Figma, building selected ideas with tools like Godot, HTML, CSS, and JavaScript, and using AI-assisted tools to explore and iterate. I am not presenting myself as a full-stack developer; I am a designer who enjoys understanding how an idea becomes a usable product."
+      },
+      {
+        "tag": "p",
+        "text": "Current Focus:"
+      },
+      {
+        "tag": "p",
+        "text": "UI/UX design, visual systems, interaction design, Figma prototyping, responsive interfaces, and thoughtful use of AI during exploration and development."
+      },
+      {
+        "tag": "p",
+        "text": "Selected Work:"
+      },
+      {
+        "tag": "li",
+        "text": "Carrom Karrom – A lightweight mobile game shaped by design, performance, and the realities of older devices."
+      },
+      {
+        "tag": "li",
+        "text": "Nakka – A digital interpretation of a traditional Nepali game, designed around nostalgia, accessibility, and offline play."
+      },
+      {
+        "tag": "li",
+        "text": "2048 Dark Mode – A UX-focused redesign exploring dark mode, feedback, undo history, and more comfortable play."
+      },
+      {
+        "tag": "li",
+        "text": "Online Bus Reservation System – A final-year school project that introduced me to designing and building a larger web application."
+      },
+      {
+        "tag": "p",
+        "text": "I am still growing, but the direction is clear: make interfaces easier to understand, more enjoyable to use, and grounded in the people and context they are made for."
+      },
+      {
+        "tag": "h2",
+        "text": "Featured Projects"
+      },
+      {
+        "tag": "h3",
+        "text": "Carrom Karrom"
+      },
+      {
+        "tag": "p",
+        "text": "Mobile game with 10K+ downloads. Built with Godot and AWS for online play."
+      },
+      {
+        "tag": "h3",
+        "text": "Bus Reservation System"
+      },
+      {
+        "tag": "p",
+        "text": "Full-stack app using Node.js, Flowbite UI, TypeORM, and Figma-driven design process."
+      },
+      {
+        "tag": "h3",
+        "text": "Nakka -Nepali Traditional Game"
+      },
+      {
+        "tag": "p",
+        "text": "A nostalgic game project with 1k+ downloads. Designed based on traditional gameplay insights."
+      },
+      {
+        "tag": "h3",
+        "text": "2048 — Dark Mode Edition"
+      },
+      {
+        "tag": "p",
+        "text": "A refined version of 2048 puzzle with default dark mode and user-requested improvements."
+      },
+      {
+        "tag": "h3",
+        "text": "Connectum Mobile Game"
+      },
+      {
+        "tag": "p",
+        "text": "This one just has a simple connect-the-dots gameplay UI and Assets which wasn't developed as rest of the games."
+      },
+      {
+        "tag": "h3",
+        "text": "Nepali Festive Counter"
+      },
+      {
+        "tag": "p",
+        "text": "A festive counter app showcasing Nepali festivals with interactive elements."
+      },
+      {
+        "tag": "h3",
+        "text": "The Progress Bar np"
+      },
+      {
+        "tag": "p",
+        "text": "A portfolio-style project showcase with a live Netlify build and design-first process notes."
+      },
+      {
+        "tag": "h2",
+        "text": "Blog & Insights"
+      },
+      {
+        "tag": "p",
+        "text": "Notes from the projects that have shaped how I think about design, constraints, and usable digital experiences."
+      },
+      {
+        "tag": "h3",
+        "text": "Designing a More Thoughtful 2048"
+      },
+      {
+        "tag": "p",
+        "text": "What dark mode, move history, sound feedback, and small interaction details can change in a familiar puzzle game."
+      },
+      {
+        "tag": "h3",
+        "text": "Why Lightweight Design Matters"
+      },
+      {
+        "tag": "p",
+        "text": "Building Carrom Karrom around older devices showed me how performance constraints can lead to clearer, simpler products."
+      },
+      {
+        "tag": "h3",
+        "text": "Bringing Nakka to Mobile"
+      },
+      {
+        "tag": "p",
+        "text": "A reflection on preserving the feeling of a traditional Nepali game while making it accessible on a modern phone."
+      }
+    ]
+  },
+  "sourceFiles": [
+    {
+      "path": "blog1.html",
+      "bytes": 1282,
+      "sha256": "2dea3bc60a5fdab09547af0d6a601645b74456258c567e589c284e90fcaf9b59"
+    },
+    {
+      "path": "blog2.html",
+      "bytes": 1264,
+      "sha256": "7055ba55436bbbd0ca580bfcaee044f7c01950291179aa0cadbef5a372aec8a7"
+    },
+    {
+      "path": "blog3.html",
+      "bytes": 1290,
+      "sha256": "e4c24fe0b7299e70383f4e1ceb844de6c4a9481cd8cff4779c9d38650e3451ae"
+    },
+    {
+      "path": "Blogpage/.gitignore",
+      "bytes": 39,
+      "sha256": "500a970b8531940f3f0df00326473062002ad37ba4d39526a6294e8a6b1a1ae3"
+    },
+    {
+      "path": "Blogpage/Docs/cv.html",
+      "bytes": 2013,
+      "sha256": "3603737dd2e4ad37bbcf0f818bb840d904413b09f9baa0cb927525036beb279c"
+    },
+    {
+      "path": "Blogpage/Docs/Sujeet Khadka_Resume2025.docx",
+      "bytes": 26640,
+      "sha256": "7db0133e19453906d2a48939e1b048e89554dc7045c314802adf1c9a58402a3e"
+    },
+    {
+      "path": "Blogpage/Docs/sujeet-khadka-resume.pdf",
+      "bytes": 6001,
+      "sha256": "a848522210aeb8e5f7546bf90ae2ee5655a8f72ad587d1c8c0bf5b372217d3f0"
+    },
+    {
+      "path": "Blogpage/Docs/Sujeet_Khadka_CV.pdf",
+      "bytes": 203652,
+      "sha256": "3845dec804ed6d8eba4c7e58fa94426e34be9e8e4045216aba6cb05b42a413ab"
+    },
+    {
+      "path": "Blogpage/Docs/Sujeet_Khadka_Resume2025np.pdf",
+      "bytes": 192821,
+      "sha256": "15f5ae92c91b9500bdddd297571b81f3845d6588b298ba593e02c6b12ea5c85e"
+    },
+    {
+      "path": "Blogpage/Docs/Sujeet_Khadka_UIUX_Resume.docx",
+      "bytes": 37851,
+      "sha256": "53db7dc5df4beda528305a3a994c56b0f7122a024e3c79d62970d0694a12d9b8"
+    },
+    {
+      "path": "Blogpage/favi.png",
+      "bytes": 7687,
+      "sha256": "1165eb18e4d12fdbd648eb44b044382102cd177ac6b9b2f71401d1e19052c960"
+    },
+    {
+      "path": "Blogpage/Frame 168.png",
+      "bytes": 2843,
+      "sha256": "901f120fb48e3c629a8a42328678391ffd95ef6254dad47cad03e9b9bde9b091"
+    },
+    {
+      "path": "Blogpage/htm.html",
+      "bytes": 13038,
+      "sha256": "f55924a78ed68a0218c15a342c25f142dadc797f6c439cb27ad54ed4d490b39b"
+    },
+    {
+      "path": "Blogpage/Icons/2048iconicon-512.png",
+      "bytes": 2998512,
+      "sha256": "0785a2854a0e79ba20a90a48891cbfae1bfd4df122e3b84138fe856ed03df329"
+    },
+    {
+      "path": "Blogpage/Icons/512 x 512icon-512.png",
+      "bytes": 323858,
+      "sha256": "047315b1e1572277a4a43c0b38cb2ec0ee1ef58e180236ce63dbdb3a01a62f92"
+    },
+    {
+      "path": "Blogpage/Icons/Bus Res Sys.png",
+      "bytes": 242686,
+      "sha256": "7f66309a9ff8bf54be5168476e6faf6819fc9c7ac07d0c3748bcb8a1f8e704ec"
+    },
+    {
+      "path": "Blogpage/Icons/Connectum.png",
+      "bytes": 680154,
+      "sha256": "fd61aff214fc0980e2d36e9601c9a1016174c104dd7044049be89a8f87089a0c"
+    },
+    {
+      "path": "Blogpage/Icons/Festivecount.png",
+      "bytes": 251272,
+      "sha256": "ae33fc809f9472a72a4317c14822c3c4728a785617742ccd393f0490fb499fcc"
+    },
+    {
+      "path": "Blogpage/Icons/Nakka.png",
+      "bytes": 4151403,
+      "sha256": "0935244f2c153ce2e6f0b4f6c58e734a1ab97a53df2c730c2e55f2c294bd840f"
+    },
+    {
+      "path": "Blogpage/index.html",
+      "bytes": 52554,
+      "sha256": "ef92d7370095c2d0e4f1946733f04cd5368f3c9b6ebcf7d4752d228c134994bf"
+    },
+    {
+      "path": "Blogpage/originalindex.txt",
+      "bytes": 6648,
+      "sha256": "f6f8dea4c7e3ca861fbf40d8443dc849daded5d0916c8b4ee54b6d20bcd201ba"
+    },
+    {
+      "path": "Blogpage/pages/2048-dark-mode.htm",
+      "bytes": 6533,
+      "sha256": "151c4541acaa9f8d55ff4da829f579fa2430e1fb73616d1e403fe15d564bdc8b"
+    },
+    {
+      "path": "Blogpage/pages/2048-Puzzle-Case-Study.html",
+      "bytes": 5670,
+      "sha256": "bfd89f491e47aea5424d85544631db7ca47e8ee05b3d652f905b0a191c9aefc2"
+    },
+    {
+      "path": "Blogpage/pages/Bus-reservation-system.html",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Blogpage/pages/Carrom-karrom-a-mobile-game.html",
+      "bytes": 11145,
+      "sha256": "ada950a673b9636eea3fb4afad27906b1961828a411c6fdc2422f3c5982503d8"
+    },
+    {
+      "path": "Blogpage/pages/Festive-Counter.htm",
+      "bytes": 5167,
+      "sha256": "8a70b5895e78254198e701876f34c8410640a4f48c255ed8600c1e2e162f5d55"
+    },
+    {
+      "path": "Blogpage/pages/Imgs/Cleanest Theme.png",
+      "bytes": 558288,
+      "sha256": "fd1ee93a64f7ef15c2f66441d5789638e981b7d6aedecef2b6752e14a74e7166"
+    },
+    {
+      "path": "Blogpage/pages/Imgs/Setting pressed Darkmode.png",
+      "bytes": 367967,
+      "sha256": "1451e64c9f3269afb8a089a66b2c61d481d1ba3dc3e23ea2a2874c9d4b8b3a6c"
+    },
+    {
+      "path": "Blogpage/pages/Nakka-Nepali-Traditional-Game.htm",
+      "bytes": 5611,
+      "sha256": "59f18d82f1f080d46c65fe639bff05fb67064f37242d5ff6b23f5ee95fe4944d"
+    },
+    {
+      "path": "Blogpage/pages/The-Progress-Bar-np.html",
+      "bytes": 4042,
+      "sha256": "afc09fd3301248c23b7cc4754cfa4bee2cecd908f301af62c4582c5e63d8a34a"
+    },
+    {
+      "path": "Blogpage/public/video/Screenrecording_20251113_203255.mp4",
+      "bytes": 13732005,
+      "sha256": "662513bc8c845165677fc95e2a931250e3d0e0a844d41f7f29b2698a174264b5"
+    },
+    {
+      "path": "Blogpage/README.md",
+      "bytes": 46,
+      "sha256": "c26e1b8fd8a67884ad55813aedb68442b802fc7fe35bc692b0e127c355edfe9b"
+    },
+    {
+      "path": "Blogpage/Resume2025.pdf",
+      "bytes": 192741,
+      "sha256": "309a76cc01981ad2cd2bab091bee09e3c3b2f4966628082de962ae4633e8ae4e"
+    },
+    {
+      "path": "Blogpage/robots.txt",
+      "bytes": 115,
+      "sha256": "04589b9becb9b6530876cf8fb2518f1df7f21ed8639db15d250d889d8bea6059"
+    },
+    {
+      "path": "Blogpage/script.js",
+      "bytes": 2245,
+      "sha256": "102386edfbba74f98d7610a0c8f61a0c3413103eaa6dff7a7c26b9eaa71a521d"
+    },
+    {
+      "path": "Blogpage/sitemap.xml",
+      "bytes": 1470,
+      "sha256": "ee265bbcf05e1f830627f401428cd24a54428c942975d94c31b4a67a179e126b"
+    },
+    {
+      "path": "Blogpage/style.css",
+      "bytes": 13409,
+      "sha256": "39e0b45652c6c39ba2d9d1ceb119457345cc001f498318c49c404abca02ac3fb"
+    },
+    {
+      "path": "Blogpage/Sujeet_Khadka_Resume2026.pdf",
+      "bytes": 203098,
+      "sha256": "b224ce84dee346b450e4c378a697cfaea5999b9bbee772e37af8b84e54ad6d28"
+    },
+    {
+      "path": "Blogpage/zportfo.htm",
+      "bytes": 2265,
+      "sha256": "27c5a226b160721c22d904e101c29d3ac8041a13fcc77b7aad124f85c7c021e7"
+    },
+    {
+      "path": "index.html",
+      "bytes": 8239,
+      "sha256": "08c716791dd06e5c25e831e3c63af729f1fb43a1e7a6ca7bcd31a19fd99d6347"
+    },
+    {
+      "path": "originalindex.txt",
+      "bytes": 6648,
+      "sha256": "f6f8dea4c7e3ca861fbf40d8443dc849daded5d0916c8b4ee54b6d20bcd201ba"
+    },
+    {
+      "path": "pages/2048-dark-mode.htm",
+      "bytes": 4209,
+      "sha256": "a34325d027a43e9057096882419c8ef5c946dcff803d59cab1992ba93f367ae7"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 84,
+      "sha256": "c06eb265654306e118cd647d1b3d66b36ad07d9dd433033ad738c31d65e80628"
+    },
+    {
+      "path": "script.js",
+      "bytes": 693,
+      "sha256": "9e3a70aa7cdc4bc37694bca384cc24ae475643195e9247d56542e58864181dc1"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 504,
+      "sha256": "3b00106b931a0c1f4b83cd27ebd516fbec42a2390257a949d6456a0d16aef62c"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 1321,
+      "sha256": "da6ee538ab216cda3f3aa2195435df79782fee7f9bd4c292c6c9d85ce47b05c1"
+    },
+    {
+      "path": "Sujeet_Khadka_CV.pdf",
+      "bytes": 203652,
+      "sha256": "3845dec804ed6d8eba4c7e58fa94426e34be9e8e4045216aba6cb05b42a413ab"
+    }
+  ],
+  "sourceArchive": {
+    "path": "assets/documents/blog/original-blog-source.zip",
+    "sha256": "57f754e175ca4c104a5aaac8915aab18644546b1b57a2dadb7f67df40844db0d",
+    "entries": 47,
+    "sourceBytes": 24540675
+  },
+  "sourceDownloads": [
+    {
+      "source": "index.html",
+      "path": "assets/documents/blog/source-pages/index.html",
+      "sha256": "08c716791dd06e5c25e831e3c63af729f1fb43a1e7a6ca7bcd31a19fd99d6347"
+    },
+    {
+      "source": "originalindex.txt",
+      "path": "assets/documents/blog/source-pages/originalindex.txt",
+      "sha256": "f6f8dea4c7e3ca861fbf40d8443dc849daded5d0916c8b4ee54b6d20bcd201ba"
+    },
+    {
+      "source": "Blogpage/originalindex.txt",
+      "path": "assets/documents/blog/source-pages/Blogpage/originalindex.txt",
+      "sha256": "f6f8dea4c7e3ca861fbf40d8443dc849daded5d0916c8b4ee54b6d20bcd201ba"
+    },
+    {
+      "source": "pages/2048-dark-mode.htm",
+      "path": "assets/documents/blog/source-pages/pages/2048-dark-mode.htm",
+      "sha256": "a34325d027a43e9057096882419c8ef5c946dcff803d59cab1992ba93f367ae7"
+    },
+    {
+      "source": "blog1.html",
+      "path": "assets/documents/blog/source-pages/blog1.html",
+      "sha256": "2dea3bc60a5fdab09547af0d6a601645b74456258c567e589c284e90fcaf9b59"
+    },
+    {
+      "source": "blog2.html",
+      "path": "assets/documents/blog/source-pages/blog2.html",
+      "sha256": "7055ba55436bbbd0ca580bfcaee044f7c01950291179aa0cadbef5a372aec8a7"
+    },
+    {
+      "source": "blog3.html",
+      "path": "assets/documents/blog/source-pages/blog3.html",
+      "sha256": "e4c24fe0b7299e70383f4e1ceb844de6c4a9481cd8cff4779c9d38650e3451ae"
+    },
+    {
+      "source": "Blogpage/zportfo.htm",
+      "path": "assets/documents/blog/source-pages/Blogpage/zportfo.htm",
+      "sha256": "27c5a226b160721c22d904e101c29d3ac8041a13fcc77b7aad124f85c7c021e7"
+    },
+    {
+      "source": "Blogpage/htm.html",
+      "path": "assets/documents/blog/source-pages/Blogpage/htm.html",
+      "sha256": "f55924a78ed68a0218c15a342c25f142dadc797f6c439cb27ad54ed4d490b39b"
+    },
+    {
+      "source": "Blogpage/README.md",
+      "path": "assets/documents/blog/source-pages/Blogpage/README.md",
+      "sha256": "c26e1b8fd8a67884ad55813aedb68442b802fc7fe35bc692b0e127c355edfe9b"
+    }
+  ],
+  "documentBrowsing": {
+    "enabled": false,
+    "retiredRoute": "/blog/documents/",
+    "redirect": "/blog/",
+    "reason": "Owner requested removal of duplicate document hyperlinks."
+  }
+}

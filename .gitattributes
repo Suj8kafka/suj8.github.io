@@ -1,0 +1,2 @@
+# Archived downloads must retain their original bytes and content hashes.
+assets/documents/blog/** -text

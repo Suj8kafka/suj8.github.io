@@ -1,4 +1,14 @@
-## Action hierarchy
+## Current action hierarchy — 15 November 2026
+
+The homepage now leads with **Explore selected work → Selected work**, followed by **Get in touch → Contact**. The header uses Work, About, Writing and the existing CV PDF, with a separate Get in touch action. Mobile navigation uses Home, Work, About, Writing and Contact. The project notebook remains a secondary About/footer resource.
+
+Contact has two native email drafts: **Email your project brief** retains the project/design-help/timeline prompts; **Discuss a design role** adds role, team/company, working arrangement and hiring timeline prompts. Both explicitly open drafts, with a visible direct email link as a fallback.
+
+Existing measurement IDs are retained with `data-cta-version="portfolio-home-v2"`. New IDs are `nav-cv` and `contact-hiring`. These attributes identify the design version; the current aggregate usage tracker groups native email clicks as `contact-email`, PDF clicks as `resume-download`, and project-card clicks as `project-open`. It does not collect CTA IDs, copy versions, delivered emails or completed downloads. No per-intent reporting or conversion improvement is claimed.
+
+The local implementation and validation are recorded in [portfolio-homepage.md](portfolio-homepage.md). The sections below preserve the earlier design and its verification history; their client-first hierarchy and future-tracking plan describe the previous version.
+
+## Previous action hierarchy — 9 November 2026
 
 The primary client path is **Discuss your project → project inquiry section → Email your project brief**. Portfolio exploration is the main secondary path, labelled **See selected work**. The hero keeps its original headline, image and layout; it has two actions, with one filled button and a quieter work link. Notes remain available in About, navigation and the footer.
 

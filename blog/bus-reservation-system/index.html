@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sujeet Khadka revisits a school bus reservation system project, connecting Figma design and Flowbite UI with a Node.js, TypeORM, and SQLite web app.">
+  <meta name="author" content="Sujeet Khadka">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#f5f3ee">
+  <title>Bus Reservation System: Figma &amp; Web UI | Sujeet Khadka</title>
+  <link rel="canonical" href="https://www.sujeetkhadka.com.np/blog/bus-reservation-system/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.sujeetkhadka.com.np/#person",
+        "name": "Sujeet Khadka",
+        "url": "https://www.sujeetkhadka.com.np/"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#webpage",
+        "url": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/",
+        "name": "Bus Reservation System: Figma & Web UI | Sujeet Khadka",
+        "description": "Sujeet Khadka revisits a school bus reservation system project, connecting Figma design and Flowbite UI with a Node.js, TypeORM, and SQLite web app.",
+        "inLanguage": "en",
+        "isPartOf": {
+          "@id": "https://www.sujeetkhadka.com.np/#website"
+        },
+        "breadcrumb": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#breadcrumb"
+        },
+        "mainEntity": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#article"
+        }
+      },
+      {
+        "@type": "BlogPosting",
+        "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#article",
+        "url": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/",
+        "headline": "Online Bus Reservation System: an early UI design project",
+        "description": "Sujeet Khadka revisits a school bus reservation system project, connecting Figma design and Flowbite UI with a Node.js, TypeORM, and SQLite web app.",
+        "inLanguage": "en",
+        "author": {
+          "@id": "https://www.sujeetkhadka.com.np/#person"
+        },
+        "publisher": {
+          "@id": "https://www.sujeetkhadka.com.np/#person"
+        },
+        "mainEntityOfPage": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#webpage"
+        },
+        "isPartOf": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/#blog"
+        },
+        "articleSection": "Early project note",
+        "dateModified": "2026-11-15"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Sujeet Khadka",
+            "item": "https://www.sujeetkhadka.com.np/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Project notebook",
+            "item": "https://www.sujeetkhadka.com.np/blog/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Online Bus Reservation System: an early UI design project",
+            "item": "https://www.sujeetkhadka.com.np/blog/bus-reservation-system/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <meta property="article:author" content="https://www.sujeetkhadka.com.np/">
+  <meta property="article:modified_time" content="2026-11-15">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Sujeet Khadka">
+  <meta property="og:title" content="Bus Reservation System: Figma &amp; Web UI | Sujeet Khadka">
+  <meta property="og:description" content="Sujeet Khadka revisits a school bus reservation system project, connecting Figma design and Flowbite UI with a Node.js, TypeORM, and SQLite web app.">
+  <meta property="og:url" content="https://www.sujeetkhadka.com.np/blog/bus-reservation-system/">
+  <meta property="og:image" content="https://www.sujeetkhadka.com.np/assets/images/sujeet-at-exhibition.jpeg?v=8449d193e9e6">
+  <meta property="og:image:alt" content="Sujeet Khadka viewing artwork at an exhibition">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bus Reservation System: Figma &amp; Web UI | Sujeet Khadka">
+  <meta name="twitter:description" content="Sujeet Khadka revisits a school bus reservation system project, connecting Figma design and Flowbite UI with a Node.js, TypeORM, and SQLite web app.">
+  <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/sujeet-at-exhibition.jpeg?v=8449d193e9e6">
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
+  <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-portfolio-home">
+  <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-blog-seo">
+  <script type="module" src="/assets/js/blog.js?v=20261115-design-loop"></script>
+</head>
+<body class="blog-page">
+  <a class="skip-link" href="#blog-main">Skip to content</a>
+  <header class="blog-header">
+    <a class="wordmark" href="/" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
+    <nav class="blog-nav" aria-label="Main navigation">
+      <a href="/#work">Work</a>
+      <a href="/blog/" aria-current="true">Notebook</a>
+      <a href="/#contact">Contact <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main class="blog-main" id="blog-main" tabindex="-1">
+    <nav class="story-breadcrumb" aria-label="Breadcrumb"><a href="/">Sujeet Khadka</a><span aria-hidden="true">/</span><a href="/blog/">Project notebook</a></nav>
+    <article>
+      <header class="story-heading">
+        <p class="eyebrow">Early project note</p>
+        <h1>Online Bus Reservation System: an early UI design project</h1>
+        <p class="story-deck">The Online Bus Reservation System was my final-year school project and an early opportunity to connect interface design with a larger web application.</p>
+        <div class="story-meta"><span>By <a href="/#about" rel="author">Sujeet Khadka</a></span><span>2 min read</span><span>Revised <time datetime="2026-11-15">15 Nov 2026</time></span></div>
+      </header>
+      <dl class="story-facts"><div><dt>Project</dt><dd>Online Bus Reservation System</dd></div><div><dt>Context</dt><dd>Final-year school project</dd></div><div><dt>Tools</dt><dd>Figma · Flowbite · Node.js · TypeORM · SQLite</dd></div></dl>
+      <div class="story-layout">
+        <aside class="story-toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#starting-out">An early connection between design and build</a></li><li><a href="#why-it-matters">Why it belongs in the notebook</a></li></ol></aside>
+        <div class="story-body">
+          <section id="starting-out" aria-labelledby="starting-out-title"><h2 id="starting-out-title">An early connection between design and build</h2><p>This project introduced me to the process of designing and building a larger web application. I used Figma for the interface direction, then worked with HTML, CSS, and Flowbite components as part of the front-end build.</p><p>The broader project used Node.js, TypeORM, and SQLite. That exposure helped me understand how interface decisions connect to the application behind them.</p></section>
+          <section id="why-it-matters" aria-labelledby="why-it-matters-title"><h2 id="why-it-matters-title">Why it belongs in the notebook</h2><p>My work has since moved towards UI/UX and visual design. This school project remains part of that story: an early chance to think about an application as a connected experience rather than a collection of isolated screens.</p><p>The repository is the place to explore the original implementation. This is a short project note based on the existing portfolio description, rather than a claim of a production booking service.</p><p><a href="https://github.com/Suj8kafka/Online_Bus_ReservationSys" target="_blank" rel="noopener noreferrer">Explore the original project on GitHub <span aria-hidden="true">↗</span></a></p></section>
+          <p class="story-credit">Written by <a href="/#about" rel="author">Sujeet Khadka</a>, a product and UI/UX designer based in Lalitpur, Nepal. Explore <a href="/#work">my design work</a> and <a href="/blog/">more UI/UX case studies and project notes</a>.</p>
+        </div>
+      </div>
+    </article>
+    <aside class="story-related" aria-labelledby="story-related-title">
+      <h2 id="story-related-title">Explore a related design question</h2>
+      <ul>
+        <li><a href="/blog/the-progress-bar-np/">The Progress Bar np</a></li>
+        <li><a href="/blog/nepali-festive-counter/">Nepali Festive Count</a></li>
+      </ul>
+    </aside>
+    <nav class="story-next" aria-label="More from the notebook"><a href="/blog/">← All stories</a><a href="/blog/carrom-karrom/">Next: App/Game Size – User Growth →</a></nav>
+  </main>
+  <footer class="site-footer blog-footer">
+    <span>© 2026 Sujeet Khadka · Notes from the work.</span>
+    <div class="footer-theme" role="group" aria-label="Colour theme" data-blog-theme hidden>
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+    </div>
+    <a href="/privacy/">Privacy &amp; public analytics</a>
+    <a href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sujeet Khadka</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #0b3cdb, #0a2fa3);
+  color: white;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 60px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+nav a {
+  margin-left: 30px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.8);
+  font-weight: 400;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+/* Hero Section */
+.hero {
+  height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  padding: 0 60px;
+}
+
+.hero-content h1 {
+  font-size: 140px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.solid {
+  color: #fff;
+}
+
+.outline {
+  font-size: 120px;
+  font-weight: 700;
+  -webkit-text-stroke: 2px white;
+  color: transparent;
+}
+
+/* Subtitle */
+.subtitle {
+  margin-top: 30px;
+  max-width: 700px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.85);
+}
+
+.subtitle strong {
+  font-weight: 600;
+}
+
+    </style>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">suj8kafka</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Experiences</a>
+      <a href="#">Projects</a>
+      <a href="#">Resume</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>
+        <span class="solid">SUJ</span><span class="solid">E</span><span class="solid">ET</span>
+        <span class="outline"> khadka</span>
+      </h1>
+
+      <p class="subtitle">
+        A <strong>full-stack</strong> developer passionate about building beautiful,
+        functional, and user-centric web applications.  
+        Let's create something amazing together.
+      </p>
+    </div>
+  </section>
+
+</body>
+</html>

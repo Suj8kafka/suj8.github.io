@@ -1,0 +1,137 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, existsSync } from 'node:fs';
+import { legacyArticles } from '../cloudflare/blog-redirect.mjs';
+
+const origin = 'https://www.sujeetkhadka.com.np';
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const decode = source => source.replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|lt|gt);/gi, (_, entity) => {
+  if (entity[0] === '#') return String.fromCodePoint(entity[1].toLowerCase() === 'x' ? parseInt(entity.slice(2), 16) : Number(entity.slice(1)));
+  return { amp:'&', quot:'"', apos:"'", lt:'<', gt:'>' }[entity.toLowerCase()];
+});
+const text = source => decode(source.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+const attributes = source => Object.fromEntries([...source.matchAll(/([\w-]+)="([^"]*)"/g)].map(match => [match[1],decode(match[2])]));
+const meta = (html, name) => [...html.matchAll(/<meta\b[^>]+>/g)].map(match => attributes(match[0]))
+  .find(item => item.name === name || item.property === name)?.content;
+const canonical = html => [...html.matchAll(/<link\b[^>]+>/g)].map(match => attributes(match[0])).find(item => item.rel === 'canonical')?.href;
+function graph(html) {
+  const blocks = [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
+  assert.equal(blocks.length, 1, 'Keep one coherent graph per page');
+  const data = JSON.parse(blocks[0][1]);
+  assert.equal(data['@context'], 'https://schema.org');
+  return data['@graph'];
+}
+const stories = Object.values(legacyArticles).map(slug => ({ path:`blog/${slug}/index.html`, url:`${origin}/blog/${slug}/` }));
+const pages = [{ path:'index.html', url:`${origin}/` }, { path:'blog/index.html', url:`${origin}/blog/` }, ...stories];
+
+test('the homepage and articles identify the same real person and profile without duplicate identities', () => {
+  const homepage = read('index.html'), entities = graph(homepage);
+  const person = entities.find(item => item['@type'] === 'Person');
+  const website = entities.find(item => item['@type'] === 'WebSite');
+  const profile = entities.find(item => item['@type'] === 'ProfilePage');
+  assert.equal(person['@id'], `${origin}/#person`);
+  assert.equal(person.name, 'Sujeet Khadka');
+  assert.equal(person.url, `${origin}/`);
+  assert.equal(person.address.addressLocality, 'Lalitpur');
+  assert.match(homepage, /based in Lalitpur, Nepal/);
+  assert.equal(website.name, person.name);
+  assert.equal(website.publisher['@id'], person['@id']);
+  assert.equal(profile.mainEntity['@id'], person['@id']);
+  assert.equal(profile.url, `${origin}/`);
+  for (const url of person.sameAs) assert.ok((homepage + read('blog/index.html')).includes(`href="${url}"`), url);
+  for (const page of pages) {
+    const author = graph(read(page.path)).find(item => item['@type'] === 'Person');
+    assert.equal(author['@id'], person['@id'], page.path);
+    assert.equal(author.name, person.name, page.path);
+    assert.equal(author.url, person.url, page.path);
+  }
+});
+
+test('search and share metadata agree on the identity, topic and canonical URL of every primary page', () => {
+  const titles = new Set(), descriptions = new Set();
+  for (const page of pages) {
+    const html = read(page.path), title = decode(html.match(/<title>([\s\S]*?)<\/title>/)[1]);
+    const description = meta(html, 'description');
+    assert.equal(canonical(html), page.url, page.path);
+    assert.equal(meta(html, 'og:url'), page.url);
+    assert.equal(meta(html, 'og:title'), title);
+    assert.equal(meta(html, 'twitter:title'), title);
+    assert.equal(meta(html, 'og:description'), description);
+    assert.equal(meta(html, 'twitter:description'), description);
+    assert.match(title, /Sujeet Khadka/);
+    assert.match(description, /Sujeet Khadka/);
+    assert.match(meta(html, 'robots'), /max-image-preview:large/);
+    assert.doesNotMatch(meta(html, 'robots'), /noindex/);
+    assert.equal(titles.has(title), false, `Duplicate title: ${page.path}`);
+    assert.equal(descriptions.has(description), false, `Duplicate description: ${page.path}`);
+    titles.add(title); descriptions.add(description);
+  }
+});
+
+test('article markup matches visible headlines, linked bylines, revision dates and project imagery', () => {
+  for (const page of stories) {
+    const html = read(page.path), entities = graph(html);
+    const article = entities.find(item => item['@type'] === 'BlogPosting');
+    const webpage = entities.find(item => item['@type'] === 'WebPage');
+    assert.equal(article.headline, text(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1]), page.path);
+    assert.equal(article.url, page.url);
+    assert.equal(article.author['@id'], `${origin}/#person`);
+    assert.equal(article.mainEntityOfPage['@id'], webpage['@id']);
+    assert.equal(webpage.mainEntity['@id'], article['@id']);
+    assert.equal(article.isPartOf['@id'], `${origin}/blog/#blog`);
+    assert.equal(article.description, meta(html, 'description'));
+    assert.equal(article.dateModified, html.match(/Revised <time datetime="([^"]+)"/)[1]);
+    assert.equal(article.datePublished, undefined, 'Unknown original publication dates must not be fabricated');
+    assert.match(html, /<div class="story-meta"><span>By <a href="\/#about" rel="author">Sujeet Khadka<\/a>/);
+    if (article.image) {
+      const image = new URL(article.image);
+      assert.equal(image.origin, origin);
+      assert.ok(existsSync(new URL(`..${decodeURIComponent(image.pathname)}`, import.meta.url)));
+      assert.doesNotMatch(image.pathname, /sujeet-at-exhibition/, 'Article images must represent the project');
+    }
+    const breadcrumb = entities.find(item => item['@type'] === 'BreadcrumbList');
+    assert.equal(breadcrumb['@id'], webpage.breadcrumb['@id']);
+    assert.deepEqual(breadcrumb.itemListElement.map(item => item.position), [1,2,3]);
+    assert.deepEqual(breadcrumb.itemListElement.map(item => item.item), [`${origin}/`,`${origin}/blog/`,page.url]);
+    assert.equal(breadcrumb.itemListElement.at(-1).name, article.headline);
+  }
+});
+
+test('the notebook catalogue and topic paths lead crawlers and readers to all seven complete stories', () => {
+  const html = read('blog/index.html'), entities = graph(html);
+  const catalogue = entities.find(item => item['@type'] === 'ItemList');
+  const collection = entities.find(item => item['@type'] === 'CollectionPage');
+  assert.equal(collection.mainEntity['@id'], catalogue['@id']);
+  assert.equal(catalogue.numberOfItems, 7);
+  assert.deepEqual(catalogue.itemListElement.map(item => item.position), [1,2,3,4,5,6,7]);
+  assert.deepEqual(new Set(catalogue.itemListElement.map(item => item.url)), new Set(stories.map(item => item.url)));
+  const guide = html.match(/<section class="notebook-topics-guide"[^>]*>([\s\S]*?)<\/section>/)[1];
+  for (const page of stories) {
+    assert.ok(guide.includes(`href="${new URL(page.url).pathname}"`), page.path);
+    const story = read(page.path);
+    const related = story.match(/<aside class="story-related"[^>]*>([\s\S]*?)<\/aside>/)[1];
+    const links = [...related.matchAll(/href="([^"]+)"/g)].map(match => new URL(match[1], origin).href);
+    assert.equal(new Set(links).size, 2);
+    for (const link of links) {
+      assert.notEqual(link, page.url);
+      assert.ok(stories.some(item => item.url === link), link);
+    }
+  }
+});
+
+test('every sitemap entry is a real canonical indexable page and private or duplicate sources are excluded', () => {
+  const sitemap = read('sitemap.xml');
+  const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+  assert.equal(new Set(urls).size, urls.length);
+  for (const page of pages) assert.ok(urls.includes(page.url), page.path);
+  for (const url of urls) {
+    const parsed = new URL(url);
+    assert.equal(parsed.origin, origin);
+    assert.doesNotMatch(parsed.pathname, /\/login\/|\/Blogpage\/|\/pages\/|\/assets\/documents\//i);
+    const html = read(parsed.pathname.slice(1) + 'index.html');
+    assert.equal(canonical(html), url);
+    assert.doesNotMatch(meta(html, 'robots') || '', /noindex/);
+  }
+  assert.match(read('robots.txt'), /Sitemap: https:\/\/www\.sujeetkhadka\.com\.np\/sitemap\.xml/);
+  assert.match(read('login/index.html'), /name="robots" content="noindex, nofollow"/);
+});

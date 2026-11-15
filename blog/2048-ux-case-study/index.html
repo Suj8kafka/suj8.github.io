@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A 2048 UI/UX case study by Sujeet Khadka: Figma prototyping, dark and light themes, four-step undo, sound feedback, and interaction design.">
+  <meta name="author" content="Sujeet Khadka">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#f5f3ee">
+  <title>2048 UX Case Study: Themes, Undo &amp; Feedback | Sujeet Khadka</title>
+  <link rel="canonical" href="https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.sujeetkhadka.com.np/#person",
+        "name": "Sujeet Khadka",
+        "url": "https://www.sujeetkhadka.com.np/"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#webpage",
+        "url": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/",
+        "name": "2048 UX Case Study: Themes, Undo & Feedback | Sujeet Khadka",
+        "description": "A 2048 UI/UX case study by Sujeet Khadka: Figma prototyping, dark and light themes, four-step undo, sound feedback, and interaction design.",
+        "inLanguage": "en",
+        "isPartOf": {
+          "@id": "https://www.sujeetkhadka.com.np/#website"
+        },
+        "breadcrumb": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#breadcrumb"
+        },
+        "mainEntity": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#article"
+        }
+      },
+      {
+        "@type": "BlogPosting",
+        "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#article",
+        "url": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/",
+        "headline": "2048 Puzzle – UX & UI Case Study",
+        "description": "A 2048 UI/UX case study by Sujeet Khadka: Figma prototyping, dark and light themes, four-step undo, sound feedback, and interaction design.",
+        "inLanguage": "en",
+        "author": {
+          "@id": "https://www.sujeetkhadka.com.np/#person"
+        },
+        "publisher": {
+          "@id": "https://www.sujeetkhadka.com.np/#person"
+        },
+        "mainEntityOfPage": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#webpage"
+        },
+        "isPartOf": {
+          "@id": "https://www.sujeetkhadka.com.np/blog/#blog"
+        },
+        "articleSection": "UX case study",
+        "dateModified": "2026-11-15",
+        "image": "https://www.sujeetkhadka.com.np/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Sujeet Khadka",
+            "item": "https://www.sujeetkhadka.com.np/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Project notebook",
+            "item": "https://www.sujeetkhadka.com.np/blog/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "2048 Puzzle – UX & UI Case Study",
+            "item": "https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <meta property="article:author" content="https://www.sujeetkhadka.com.np/">
+  <meta property="article:modified_time" content="2026-11-15">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Sujeet Khadka">
+  <meta property="og:title" content="2048 UX Case Study: Themes, Undo &amp; Feedback | Sujeet Khadka">
+  <meta property="og:description" content="A 2048 UI/UX case study by Sujeet Khadka: Figma prototyping, dark and light themes, four-step undo, sound feedback, and interaction design.">
+  <meta property="og:url" content="https://www.sujeetkhadka.com.np/blog/2048-ux-case-study/">
+  <meta property="og:image" content="https://www.sujeetkhadka.com.np/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7">
+  <meta property="og:image:alt" content="2048 puzzle game interface">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="2048 UX Case Study: Themes, Undo &amp; Feedback | Sujeet Khadka">
+  <meta name="twitter:description" content="A 2048 UI/UX case study by Sujeet Khadka: Figma prototyping, dark and light themes, four-step undo, sound feedback, and interaction design.">
+  <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7">
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
+  <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-portfolio-home">
+  <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-blog-seo">
+  <script type="module" src="/assets/js/blog.js?v=20261115-design-loop"></script>
+</head>
+<body class="blog-page">
+  <a class="skip-link" href="#blog-main">Skip to content</a>
+  <header class="blog-header">
+    <a class="wordmark" href="/" aria-label="Sujeet Khadka home">S<span>u</span>jeet<span class="dot">.</span></a>
+    <nav class="blog-nav" aria-label="Main navigation">
+      <a href="/#work">Work</a>
+      <a href="/blog/" aria-current="true">Notebook</a>
+      <a href="/#contact">Contact <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main class="blog-main" id="blog-main" tabindex="-1">
+    <nav class="story-breadcrumb" aria-label="Breadcrumb"><a href="/">Sujeet Khadka</a><span aria-hidden="true">/</span><a href="/blog/">Project notebook</a></nav>
+    <article>
+      <header class="story-heading">
+        <p class="eyebrow">UX case study</p>
+        <h1>2048 Puzzle – UX &amp; UI Case Study</h1>
+        <p class="story-deck">A familiar puzzle became a way to explore a larger design question: how much can small interaction choices change the way a game feels?</p>
+        <div class="story-meta"><span>By <a href="/#about" rel="author">Sujeet Khadka</a></span><span>2 min read</span><span>Revised <time datetime="2026-11-15">15 Nov 2026</time></span></div>
+      </header>
+      <dl class="story-facts"><div><dt>Original project</dt><dd>2048 – Dark Mode Puzzle Game</dd></div><div><dt>Project</dt><dd>2048 Dark Mode · UX case study</dd></div><div><dt>My role</dt><dd>UX research, interaction & UI design</dd></div><div><dt>Focus</dt><dd>Theme choice · Feedback · Recovery</dd></div></dl>
+      <p class="story-origin-note">Download totals in the archived draft conflict and have not been verified. This case study documents the interface decisions rather than a measured adoption result.</p>
+      <div class="story-layout">
+        <aside class="story-toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#2048-puzzle-ux-ui-case-study">2048 Puzzle – UX &amp; UI Case Study</a></li><li><a href="#project-overview">Project Overview</a></li><li><a href="#research-insights">Research Insights</a></li><li><a href="#design-goals">Design Goals</a></li><li><a href="#final-designs">Final Designs</a></li><li><a href="#outcomes">Outcomes</a></li><li><a href="#reflection">Reflection</a></li></ol></aside>
+        <div class="story-body"><p class="story-origin-note">From the project archive. Figures and future plans reflect the time of the original write-up.</p><div class="original-blog-content">  <section id="2048-puzzle-ux-ui-case-study" aria-labelledby="2048-puzzle-ux-ui-case-study-title"> <h2 id="2048-puzzle-ux-ui-case-study-title">2048 Puzzle – UX &amp; UI Case Study</h2> <p>Redesigning a classic puzzle game with a focus on accessibility, engagement, and user delight. Built in Figma, achieving 30K+ downloads on Play Store.</p> </section>  <section id="project-overview" aria-labelledby="project-overview-title"> <h2 id="project-overview-title"> Project Overview</h2> <p>This project was about rethinking the popular 2048 puzzle game from a UX perspective. While many versions exist, most lacked key features like dark mode, engaging interactions, and visual polish. My role covered UX research, UX design, and UI design. The game was prototyped in Figma—repurposing a design tool for functional game outcomes.</p> </section>  <section id="research-insights" aria-labelledby="research-insights-title"> <h2 id="research-insights-title">Research Insights</h2> <ul> <li>Players wanted <strong>dark &amp; light mode</strong> options to reduce eye strain.</li> <li>Most competitors had <strong>no sound feedback</strong>.</li> <li>Games felt <strong>bland and repetitive</strong> without small dopamine triggers.</li> <li>Undo moves were usually limited to <strong>2 steps</strong>; we introduced <strong>4 steps</strong>.</li> <li>Minimal UI variation across versions—few attempts at improving immersion.</li> </ul> </section>  <section id="design-goals" aria-labelledby="design-goals-title"> <h2 id="design-goals-title"> Design Goals</h2> <div> <div> <h3>Accessibility</h3> <p>Provide dark &amp; light modes for flexible play conditions.</p> </div> <div> <h3>Engagement</h3> <p>Add sounds and micro-interactions to keep players motivated.</p> </div> <div> <h3>Challenge</h3> <p>Introduce 4-step undo for fair but exciting gameplay.</p> </div> <div> <h3>Delight</h3> <p>Move beyond bland visuals with a playful and modern UI.</p> </div> </div> </section>  <section id="final-designs" aria-labelledby="final-designs-title"> <h2 id="final-designs-title"> Final Designs</h2> <div class="story-screens"> <a href="/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image: Game board screenshot"><img src="/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7" alt="Game board screenshot" loading="lazy" decoding="async" width="2400" height="4096"></a> <a href="/assets/images/blog/2048-dark-settings.png?v=1451e64c9f32" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image: Dark mode UI"><img src="/assets/images/blog/2048-dark-settings.png?v=1451e64c9f32" alt="Dark mode UI" loading="lazy" decoding="async" width="2400" height="4096"></a> </div> </section>  <section id="outcomes" aria-labelledby="outcomes-title"> <h2 id="outcomes-title"> Outcomes</h2> <ul> <li>Game reached <strong>500+ downloads</strong> on Play Store.</li> <li>Positive user reviews highlighted design and usability.</li> <li>Validated that even with limited coding, thoughtful design drives adoption.</li> </ul> </section>  <section id="reflection" aria-labelledby="reflection-title"> <h2 id="reflection-title">Reflection</h2> <p>This project taught me how much impact design alone can have on user engagement. Using Figma for game prototyping pushed me to be resourceful and rethink tools beyond their typical use cases. It also confirmed my growing interest in <strong>Human–Computer Interaction</strong> and how design can shape user behavior in subtle but powerful ways.</p> </section></div> 
+          <p class="story-credit">Written by <a href="/#about" rel="author">Sujeet Khadka</a>, a product and UI/UX designer based in Lalitpur, Nepal. Explore <a href="/#work">my design work</a> and <a href="/blog/">more UI/UX case studies and project notes</a>.</p>
+        </div>
+      </div>
+    </article>
+    <aside class="story-related" aria-labelledby="story-related-title">
+      <h2 id="story-related-title">Explore a related design question</h2>
+      <ul>
+        <li><a href="/blog/2048-dark-mode/">2048 – Dark Mode Puzzle Game</a></li>
+        <li><a href="/blog/carrom-karrom/">Carrom Karrom: App/Game Size – User Growth</a></li>
+      </ul>
+    </aside>
+    <nav class="story-next" aria-label="More from the notebook"><a href="/blog/">← All stories</a><a href="/blog/nakka/">Next: Nakka – Nepali Traditional Game →</a></nav>
+  </main>
+  <footer class="site-footer blog-footer">
+    <span>© 2026 Sujeet Khadka · Notes from the work.</span>
+    <div class="footer-theme" role="group" aria-label="Colour theme" data-blog-theme hidden>
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+    </div>
+    <a href="/privacy/">Privacy &amp; public analytics</a>
+    <a href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>

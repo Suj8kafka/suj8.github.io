@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Documents</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .pdf-container {
+      width: 100%;
+      max-width: 900px; /* large screen width */
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px; /* desktop default */
+      border: none;
+    }
+
+    @media (max-width: 768px) {
+      iframe {
+        height: 400px; /* smaller height for phones/tablets */
+      }
+    }
+
+    .label {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📄 My Documents</h1>
+
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka Resume (PDF)</div>
+  <iframe src="sujeet-khadka-resume.pdf"></iframe>
+</div>
+
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka Resume 2025 (PDF)</div>
+  <iframe src="sujeet-khadka-resume-2025.pdf"></iframe>
+</div>
+
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka Resume 2025 (NP PDF)</div>
+  <iframe src="sujeet-khadka-resume-2025-np.pdf"></iframe>
+</div>
+
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka CV (PDF)</div>
+  <iframe src="sujeet-khadka-cv.pdf"></iframe>
+</div>
+
+<!-- DOCX files can't be viewed inline, keep download links -->
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka Resume 2025 (DOCX – download)</div>
+  <p style="text-align:center;"><a href="sujeet-khadka-resume-2025.docx" download>Download DOCX</a></p>
+</div>
+
+<div class="pdf-container">
+  <div class="label">Sujeet Khadka UI/UX Resume (DOCX – download)</div>
+  <p style="text-align:center;"><a href="sujeet-khadka-uiux-resume.docx" download>Download DOCX</a></p>
+</div>
+
+</body>
+</html>

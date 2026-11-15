@@ -8,6 +8,13 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../assets/css/site.css', import.meta.url), 'utf8');
 const flush = async () => { for (let index = 0; index < 8; index++) await Promise.resolve(); };
 
+test('critical CSS compaction preserves quoted values, descendant selectors and calc operators', () => {
+  const generated = criticalStyles('.hero :focus-visible { content: "a ; b, \\"quoted\\""; width: calc(100% - 2px); color: var(--ink); }');
+  assert.ok(generated.includes('.hero :focus-visible{'));
+  assert.ok(generated.includes('content:"a ; b, \\"quoted\\"";'));
+  assert.ok(generated.includes('width:calc(100% - 2px);'));
+});
+
 test('generated first-screen CSS is synchronized, bounded and loads only the headline font', () => {
   const generated = criticalStyles(css);
   assert.equal(html.match(/<style id="critical-styles">\n([\s\S]*?)<\/style>/)[1], generated);
@@ -21,7 +28,7 @@ test('generated first-screen CSS is synchronized, bounded and loads only the hea
   assert.match(deferred, /\sdata-href="assets\/css\/site\.css/);
   assert.match(html, /<noscript><link rel="stylesheet" href="assets\/css\/site\.css/);
   assert.match(generated, /\.hero\s*\{/);
-  assert.match(generated, /max-width: 800px/);
+  assert.match(generated, /max-width:\s*800px/);
   assert.match(generated, /html\[data-page-transitions="pending"\]/);
   assert.match(generated, /html\.loader-running\[data-page-styles="pending"\] main > section:not\(\.hero\)/,
     'Offscreen layout containment must be temporary and leave no-JavaScript pages alone');

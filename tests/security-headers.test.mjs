@@ -63,3 +63,21 @@ test('CSP blocks embedding and inline executable scripts while allowing site dep
   assert.ok(csp.includes('wss://*.asia-southeast1.firebasedatabase.app'));
   assert.ok(securityHeaders['Permissions-Policy'].includes('geolocation=(self)'));
 });
+
+test('preserved source websites and downloads are noindex while the portfolio and stories remain indexable', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response('preserved content', { headers:{ 'Content-Type':'text/html' } });
+  try {
+    for (const path of ['/Blogpage', '/Blogpage/Blogpage/index.html', '/%42logpage/index.html', '/archive/legacy-homepage.html',
+      '/assets/documents/blog/source-pages/index.html', '/assets/documents/blog/original-blog-source.zip']) {
+      const response = await worker.fetch(new Request(`https://www.sujeetkhadka.com.np${path}`));
+      assert.equal(response.headers.get('X-Robots-Tag'), 'noindex, follow', path);
+      assert.equal(await response.text(), 'preserved content');
+      assert.equal(response.status, 200);
+    }
+    for (const path of ['/', '/blog/', '/blog/carrom-karrom/', '/blog/archive/', '/docs/sujeet-khadka-cv-2026.pdf', '/archive-work/']) {
+      const response = await worker.fetch(new Request(`https://www.sujeetkhadka.com.np${path}`));
+      assert.equal(response.headers.get('X-Robots-Tag'), null, path);
+    }
+  } finally { globalThis.fetch = originalFetch; }
+});

@@ -1,0 +1,10 @@
+// Cutover configuration only: no deployment or DNS changes are performed by local edits.
+{
+  "name": "sujeet-blog-redirect",
+  "main": "blog-redirect.mjs",
+  "compatibility_date": "2026-11-15",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "blog.sujeetkhadka.com.np/*", "zone_name": "sujeetkhadka.com.np" }
+  ]
+}

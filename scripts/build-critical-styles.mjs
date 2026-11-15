@@ -25,6 +25,27 @@ function rules(source) {
 const criticalClass = /\.(?:hero[\w-]*|portrait[\w-]*|art-note|note-one|note-two|site-header|mobile-nav|wordmark|nav(?:-contact)?|header-tools|live-presence[\w-]*|live-counter|availability[\w-]*|button[\w-]*|text-link|eyebrow|status-dot|icon(?:-sprite)?|image-caption|landscape[\w-]*)(?![\w-])/;
 const globalSelector = /(?:^|,)\s*(?::root|\[data-theme|html\b|body\b|\*(?![\w-])|a(?=[\s.:{,]|$)|h[123](?=[\s.:{,]|$)|p(?=[\s.:{,]|$))/;
 
+// Compact generated CSS without changing quoted text or the spacing required
+// by selectors and calc() expressions. Keep the source stylesheet readable.
+function compactWhitespace(source) {
+  let result = '', quote = '', space = false;
+  for (let index = 0; index < source.length; index++) {
+    const char = source[index];
+    if (quote) {
+      result += char;
+      if (char === '\\') result += source[++index] || '';
+      else if (char === quote) quote = '';
+      continue;
+    }
+    if (/\s/.test(char)) { space = true; continue; }
+    if (space && result && !/[{};,]$/.test(result) && !/[{};,]/.test(char) && !result.endsWith(':')) result += ' ';
+    space = false;
+    result += char;
+    if (char === '"' || char === "'") quote = char;
+  }
+  return result;
+}
+
 export function criticalStyles(source) {
   const clean = source.replace(/\/\*[\s\S]*?\*\//g, '');
   function select(css) {
@@ -45,10 +66,10 @@ export function criticalStyles(source) {
       return essential ? [`${selector}{${body.trim()}}`] : [];
     }).join('\n');
   }
-  return `${select(clean).replaceAll('../fonts/', 'assets/fonts/')}\n`
+  return compactWhitespace(`${select(clean).replaceAll('../fonts/', 'assets/fonts/')}\n`
     + '.presence-panel,.skill-modal{visibility:hidden;pointer-events:none;position:fixed;inset:0}\n'
     + '.live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}\n'
-    + 'img,video{max-width:100%}\n';
+    + 'img,video{max-width:100%}\n') + '\n';
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

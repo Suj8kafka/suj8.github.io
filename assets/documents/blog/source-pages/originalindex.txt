@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sujeet Khadka | UI/UX Portfolio & Blog</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Hero Section -->
+  <section class="bg-white shadow p-8">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-4xl font-bold text-gray-900">Sujeet Khadka</h1>
+      <p class="mt-2 text-lg text-gray-600">Game Developer turned UI/UX Designer</p>
+      <p class="mt-4 text-sm text-gray-500">Welcome to my portfolio and blog – focused on clean interfaces, intuitive design, and my journey through development & design.</p>
+    </div>
+  </section>
+
+  <!-- About Me -->
+  <section class="py-12 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-4">About Me</h2>
+      <p class="mb-4">
+        I'm a developer with a background in mobile game development and full-stack web apps. My projects include:
+      </p>
+      <ul class="list-disc ml-6 text-gray-700 space-y-1">
+        <li><strong>Carrom Karrom</strong> – A mobile carrom game with 10K+ downloads on the Play Store.</li>
+        <li><strong>Nakka</strong> – A digital adaptation of a traditional Nepali game.</li>
+        <li><strong>2048 Puzzle</strong> – A classic game with a clean UI spin.</li>
+        <li><strong>Online Bus Reservation System</strong> – A full-stack college project with Figma UI designs, Node.js, TypeORM, SQLite, and Flowbite UI components.</li>
+      </ul>
+      <p class="mt-4">Now shifting gears to UI/UX, I’m diving deep into creating beautiful, user-focused designs and experiences.</p>
+    </div>
+  </section>
+
+  <!-- Portfolio/Highlights -->
+  <section class="bg-gray-100 py-10 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-6">Featured Projects</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <a href="https://play.google.com/store/apps/details?id=com.bloggernepal.carrom" class="group block">
+          <div class="bg-white shadow-md p-4 rounded-lg transition transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:bg-blue-400">
+            <h3 class="font-semibold text-lg transition-colors duration-300 group-hover:text-white">Carrom Karrom</h3>
+            <p class="text-sm text-gray-600 transition-colors duration-300 group-hover:text-white">Mobile game with 10K+ downloads. Built with Godot an Open Source Game Engine with AWS for the Internet play use case.</p>
+          </div>
+        </a>
+        <a href="https://github.com/Suj8kafka/Online_Bus_ReservationSys.git" class="group block">
+          <div class="bg-white shadow-md p-4 rounded-lg transition transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:bg-blue-400">
+            <h3 class="font-semibold text-lg transition-colors duration-300 group-hover:text-white">Bus Reservation System</h3>
+            <p class="text-sm text-gray-600 transition-colors duration-300 group-hover:text-white">Full-stack app using Node.js, Flowbite UI, TypeORM, and Figma-driven design process.</p>
+          </div>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.bloggernepal.nakka" class="group block">
+          <div class="bg-white shadow-md p-4 rounded-lg transition transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:bg-blue-400">
+            <h3 class="font-semibold text-lg transition-colors duration-300 group-hover:text-white">Nakka a Nepali Traditional Game</h3>
+            <p class="text-sm text-gray-600 transition-colors duration-300 group-hover:text-white">Quite unsure about the game myself Sagar Dai actually wanted to feel nostalgic to playing his traditional and local game that he used to play during his childhood. I tried to become more precise according to his explanation and tried to match the vibe hence, we have the output with 1k+ downloads on Playstore. </p>
+          </div>
+        </a>
+
+        <div class="group relative bg-white shadow-md rounded-lg p-6 pt-12 transition transform duration-300 hover:-translate-y-2 hover:shadow-2xl hover:bg-blue-500">
+  
+
+          <!-- Play Store Button (top-right corner) -->
+          <a href="https://play.google.com/store/apps/details?id=com.timeandupdate.dark2048"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="absolute top-3 right-3 bg-white text-blue-600 text-xs px-3 py-1 rounded-full shadow hover:bg-blue-100 hover:text-blue-800 transition flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M3.596 1.014a1 1 0 0 0-1.462.887v20.197a1 1 0 0 0 1.462.886l15.38-10.1a1 1 0 0 0 0-1.773L3.596 1.014zM5 4.236l10.708 7.024L5 18.283V4.236z"/>
+            </svg>
+            Play Store
+          </a>
+        
+          <!-- Blog Content Link -->
+          <a href="pages/2048-dark-mode.htm" class="block space-y-2">
+            <h3 class="text-lg font-semibold transition-colors duration-300 group-hover:text-white">
+              2048 — A Puzzle with Default Dark Mode & More Features
+            </h3>
+            <p class="text-sm text-gray-600 transition-colors duration-300 group-hover:text-white">
+              A refined version of the classic 2048 puzzle with dark mode and user-requested improvements. Built after deep review analysis from Play Store feedback.
+            </p>
+          </a>
+        </div>
+        
+
+
+        
+        <!-- Add more cards or make dynamic -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section Placeholder -->
+  <section class="py-10 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-4">Blog & Insights</h2>
+      <p class="text-gray-600 mb-6">I’ll be writing about UI/UX design principles, prototyping in Figma, and lessons from development.</p>
+      <div class="bg-white p-4 shadow rounded text-gray-500 italic">
+        Coming soon: First post on how to turn a wireframe into a functional frontend with Flowbite + Tailwind.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white py-6 mt-10 border-t">
+    <div class="text-center text-sm text-gray-500">
+      © 2025 Sujeet Khadka. 
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ export const securityHeaders = {
     "img-src 'self' data:",
     "media-src 'self'",
     "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://*.asia-southeast1.firebasedatabase.app wss://*.asia-southeast1.firebasedatabase.app https://ipwho.is https://api.bigdatacloud.net https://nameless-truth-99f0.sujeetkhadka00001.workers.dev",
-    "frame-src https://sujeet-portfolio.firebaseapp.com",
+    "frame-src https://sujeet-portfolio.firebaseapp.com https://nepalifestivecount.netlify.app",
     "upgrade-insecure-requests"
   ].join("; "),
   "X-Frame-Options": "DENY",
@@ -46,6 +46,12 @@ export default {
     }
     for (const [name, value] of Object.entries(securityHeaders)) {
       response.headers.set(name, value);
+    }
+    // Preserve downloadable history without indexing duplicate source websites.
+    let path = url.pathname.toLowerCase();
+    try { path = decodeURIComponent(path).toLowerCase(); } catch {}
+    if (['/blogpage', '/archive', '/assets/documents/blog'].some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
+      response.headers.set('X-Robots-Tag', 'noindex, follow');
     }
     applyAssetCache(request, response);
     return response;
