@@ -2,7 +2,13 @@
 
 The homepage is the primary destination for **Sujeet Khadka** and the designer's professional identity. The notebook and individual articles support that identity with first-hand project writing and distinct subject matter. Moving URLs is not a guarantee of higher rankings, and structured data does not guarantee a rich result or first position. No Google Search Console account, indexing report, manual-action report, or search-performance data was available during this audit.
 
-## Public-site findings
+## Publication status
+
+The reviewed homepage, notebook, animation, SEO metadata, legacy aliases, and assets were pushed to `origin/master` in commit `0c4c2c359c7fff8eccb4ba2cfbdc42df107512ce` on 15 November 2026. GitHub Pages reported that exact commit built successfully. Direct public checks confirmed the homepage, notebook, all seven articles, sitemap, stylesheet, and both blog modules return 200 with the expected content. Every primary page has its expected title, self-referencing canonical, and static structured data; the sitemap includes all seven articles. An archived HTML download also retained its expected content hash.
+
+The old blog homepage still returns 200 without redirecting. Cloudflare redirect and source-indexing policies remain prepared source only; they were not deployed by the Git push. Google indexing, selected canonicals, and ranking changes are still unverified. The exact published application snapshot passed all 208 Node tests; separate analytics edits and the transferred source repository were left local.
+
+## Before-publication findings
 
 Direct HTTP GET checks on 15 November 2026 found:
 
@@ -18,7 +24,7 @@ Direct HTTP GET checks on 15 November 2026 found:
 | `https://blog.sujeetkhadka.com.np/` | 200 with the original blog; declares the non-www main homepage as its canonical rather than the new notebook URL. |
 | Old Carrom `.html` URL | 301 to an extensionless URL on the old subdomain, then 200; does not redirect to the new main-domain article. |
 
-The migration prepared in this checkout is not live. Google cannot index the new notebook and Carrom article while they return 404. This does **not** establish why the existing homepage is below another result for the owner's name: that requires Google's indexing and performance data. Audit details are in the ignored local artifact `.tmp/seo-live-audit.json`; no publication, account changes, or DNS changes were made.
+At the time of that audit, the migration was not live and the new notebook and Carrom article could not be indexed while returning 404. The subsequent GitHub Pages publication resolved those missing destinations, as recorded above. The audit does **not** establish why the existing homepage is below another result for the owner's name: that requires Google's indexing and performance data. Audit details are in the ignored local artifact `.tmp/seo-live-audit.json`; post-publication checks are in `.tmp/blog-publication-report.json`. No account or DNS changes were made.
 
 ## Prepared local improvements
 
@@ -48,7 +54,9 @@ These are relevant target subjects, not claims of current rankings or search vol
 
 Keep future writing grounded in actual work: problem, personal role and collaborators, dated evidence, constraints, alternative designs, decisions, original artifacts, and lessons. The short project notes should remain short until there is more evidence to add. Do not create near-duplicate pages for spelling variants, buy links, add hidden keywords, or invent testimonials, ratings, research, or results. A deeper Aama Cure case study needs the evidence listed in `portfolio-homepage.md` before publication.
 
-## Publication order — requires owner approval
+## Publication order and remaining steps
+
+Steps 1–2 were completed after the owner authorized the Git push. Worker publication in step 3 still requires authorization.
 
 1. Review and publish the main-site notebook, its assets, the homepage links and SEO changes, legacy main-domain aliases, and updated sitemap to the existing GitHub Pages origin. Preserve unrelated working-tree changes and exclude local caches, credentials, and QA artifacts from the release. Keep the GitHub Pages origin and canonical www host.
 2. Confirm the canonical notebook and **all seven** article URLs return 200 with readable HTML, correct titles and self-referencing canonicals. Check the deployed sitemap contains them. Do not activate old-host redirects while destinations return 404.

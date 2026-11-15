@@ -71,6 +71,8 @@ The public HTTP audit on 15 November 2026 found `/blog/` and `/blog/carrom-karro
 
 The redirect Worker now returns 404 for unknown paths instead of redirecting them to an unrelated notebook homepage. Its `robots.txt` permits crawling during the move, and its sitemap redirects to the canonical main-domain sitemap. The prepared security Worker excludes preserved raw source websites and downloads from indexing through scoped response headers; the active notebook, archive overview, current CV and portfolio stay indexable. These policies require their separate reviewed Worker publication.
 
+The owner subsequently authorized a Git push. Commit `0c4c2c359c7fff8eccb4ba2cfbdc42df107512ce` was pushed to `origin/master` and GitHub Pages reported it built successfully on 15 November 2026. The public homepage, notebook, all seven articles, updated sitemap, and animation assets were verified with successful responses and expected metadata/content. The old blog homepage still returns 200; redirect and indexing Worker publication remain pending. See the publication status in `search-visibility.md` for the checked scope and remaining work.
+
 ## Validation
 
 - Publication snapshot: `node --test tests/*.test.mjs` passed all 208 tests against the exact staged files, independently of the separate unpublished analytics edits. Coverage includes the source-content audit, document-link removal, shared SEO identity and static structured data, canonical metadata, migration crawler responses, scoped source noindex headers, scroll frame batching, design-loop pause/resume, reduced-motion changes, resizing, bfcache, cleanup, constrained devices, and existing portfolio regressions.
