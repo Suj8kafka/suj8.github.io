@@ -1,3 +1,4 @@
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 const clamp = value => Math.max(0, Math.min(1, value));
 
 export function createBlogMotion({ document, window }) {
@@ -29,10 +30,10 @@ export function createBlogMotion({ document, window }) {
   function updateDesign() {
     if (!design) return;
     design.dataset.designRunning = String(!destroyed && !suspended && !document.hidden
-      && !reducedMotion.matches && designVisible && !designPaused);
+      && !motionIsReduced(root, reducedMotion) && designVisible && !designPaused);
     design.dataset.designPaused = String(designPaused);
     if (pause) {
-      pause.hidden = destroyed || reducedMotion.matches;
+      pause.hidden = destroyed || motionIsReduced(root, reducedMotion);
       pause.textContent = designPaused ? 'Play animation' : 'Pause animation';
     }
   }
@@ -42,7 +43,7 @@ export function createBlogMotion({ document, window }) {
   }
   function paint() {
     frame = 0;
-    if (destroyed || suspended || document.hidden || reducedMotion.matches) return;
+    if (destroyed || suspended || document.hidden || motionIsReduced(root, reducedMotion)) return;
     if (needsMeasure) {
       maximum = Math.max(0, root.scrollHeight - window.innerHeight);
       needsMeasure = false;
@@ -60,7 +61,7 @@ export function createBlogMotion({ document, window }) {
     }
   }
   function schedule() {
-    if (!destroyed && !suspended && !document.hidden && !reducedMotion.matches && !frame) frame = window.requestAnimationFrame(paint);
+    if (!destroyed && !suspended && !document.hidden && !motionIsReduced(root, reducedMotion) && !frame) frame = window.requestAnimationFrame(paint);
   }
   function refresh() {
     needsMeasure = true;
@@ -68,10 +69,10 @@ export function createBlogMotion({ document, window }) {
   }
   function updatePreference() {
     stop();
-    progress.hidden = reducedMotion.matches;
-    root.dataset.blogMotion = reducedMotion.matches ? 'off' : 'active';
+    progress.hidden = motionIsReduced(root, reducedMotion);
+    root.dataset.blogMotion = motionIsReduced(root, reducedMotion) ? 'off' : 'active';
     updateDesign();
-    if (reducedMotion.matches) {
+    if (motionIsReduced(root, reducedMotion)) {
       image?.style.removeProperty('--blog-image-offset');
       lastOffset = -1;
     } else refresh();
@@ -103,6 +104,7 @@ export function createBlogMotion({ document, window }) {
   listen(window, 'resize', refresh);
   listen(document, 'visibilitychange', visibility);
   listen(reducedMotion, 'change', updatePreference);
+  listen(document, 'display-preferences:change', updatePreference);
   listen(window, 'pagehide', event => {
     suspended = true;
     updateDesign();

@@ -2,6 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script id="display-bootstrap">window.skDisplayPreferences = (function hydrateDisplayPreferences({ document, window }) {
+  const key = 'sk-a11y-prefs';
+  const allowed = {
+    layout: ['crafted', 'reader'], motion: ['full', 'reduced'], sound: ['on', 'off'],
+    contrast: ['standard', 'high'], textScale: ['100', '115', '130'], dyslexiaSpacing: ['off', 'on']
+  };
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const contrast = window.matchMedia('(prefers-contrast: more)');
+  function normalize(value) {
+    const clean = {};
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      Object.keys(allowed).forEach(name => {
+        if (Object.hasOwn(value, name) && allowed[name].includes(value[name])) clean[name] = value[name];
+      });
+    }
+    return clean;
+  }
+  function read() {
+    try { return normalize(JSON.parse(window.localStorage.getItem(key))); } catch { return {}; }
+  }
+  function resolve(overrides) {
+    overrides = normalize(overrides);
+    const prefs = { layout: 'crafted', motion: motion.matches ? 'reduced' : 'full',
+      contrast: contrast.matches ? 'high' : 'standard', textScale: '100', dyslexiaSpacing: 'off', ...overrides };
+    prefs.sound = overrides.sound || (prefs.motion === 'reduced' ? 'off' : 'on');
+    return prefs;
+  }
+  function apply(overrides) {
+    const prefs = resolve(overrides);
+    Object.keys(allowed).forEach(name => { document.documentElement.dataset[name] = prefs[name]; });
+    return prefs;
+  }
+  const overrides = read();
+  const initial = apply(overrides);
+  // The homepage normally defers below-fold CSS until its portrait decodes. Saved
+  // reading layouts need the complete sheet before paint, even with a slow image.
+  if (document.documentElement.hasAttribute?.('data-page-styles')
+    && (initial.layout === 'reader' || initial.textScale !== '100' || initial.dyslexiaSpacing === 'on')) {
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261115-display';
+    sheet.setAttribute('blocking', 'render');
+    document.head.append(sheet);
+  }
+  return { key, allowed, motion, contrast, normalize, read, resolve, apply, overrides };
+})({ document, window });</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Sujeet Khadka shares the 2048 Dark Mode game project: themes, move history, responsive controls, sound feedback, and a gameplay recording.">
   <meta name="author" content="Sujeet Khadka">
@@ -101,10 +146,12 @@
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/blog/2048-light-theme.png?v=fd1ee93a64f7">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
   <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
-  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-portfolio-home">
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-display">
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
-  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-blog-seo">
-  <script type="module" src="/assets/js/blog.js?v=20261115-design-loop"></script>
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-display">
+  <script type="module" src="/assets/js/blog.js?v=20261115-display"></script>
+  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261115-display-contrast">
+  <script type="module" src="/assets/js/display-preferences.js?v=20261115-display"></script>
 </head>
 <body class="blog-page">
   <a class="skip-link" href="#blog-main">Skip to content</a>

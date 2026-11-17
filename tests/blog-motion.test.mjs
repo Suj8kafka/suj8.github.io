@@ -80,6 +80,24 @@ test('blog scroll motion batches bursts, clamps progress, and leaves no idle ani
   page.controller.destroy();
 });
 
+test('live display choices cancel notebook motion and Reader keeps the design loop still', () => {
+  const page = preview();
+  page.root.dataset.motion = 'reduced';
+  page.document.emit('display-preferences:change');
+  assert.equal(page.frames.size, 0);
+  assert.equal(page.root.dataset.blogMotion, 'off');
+  assert.equal(page.design.dataset.designRunning, 'false');
+  page.root.dataset.motion = 'full';
+  page.root.dataset.layout = 'reader';
+  page.document.emit('display-preferences:change');
+  assert.equal(page.root.dataset.blogMotion, 'off');
+  page.root.dataset.layout = 'crafted';
+  page.document.emit('display-preferences:change');
+  assert.equal(page.root.dataset.blogMotion, 'active');
+  page.controller.destroy();
+  assert.equal(page.document.listenerCount(), 0);
+});
+
 test('reduced motion cancels work immediately and can resume at the same scroll position', () => {
   const page = preview({ reduced:true });
   assert.equal(page.frames.size, 0);

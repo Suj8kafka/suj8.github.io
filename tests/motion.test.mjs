@@ -67,3 +67,21 @@ test('missing GSAP or ScrollTrigger leaves the page static and readable', () => 
   page.controller.destroy(); page.window.dispatch('load');
   assert.equal(page.root.dataset.motionEngine, undefined);
 });
+
+test('display preferences stop live GSAP work immediately and can resume without a reload', () => {
+  const page = preview();
+  page.root.dataset.motion = 'reduced';
+  page.document.dispatch('display-preferences:change');
+  assert.equal(page.reverted(), true);
+  assert.equal(page.root.dataset.motionEngine, 'static');
+  page.root.dataset.motion = 'full';
+  page.document.dispatch('display-preferences:change');
+  assert.equal(page.root.dataset.motionEngine, 'gsap');
+  page.root.dataset.layout = 'reader';
+  page.document.dispatch('display-preferences:change');
+  assert.equal(page.root.dataset.motionEngine, 'static');
+  page.controller.destroy();
+  page.root.dataset.layout = 'crafted';
+  page.document.dispatch('display-preferences:change');
+  assert.equal(page.root.dataset.motionEngine, undefined);
+});

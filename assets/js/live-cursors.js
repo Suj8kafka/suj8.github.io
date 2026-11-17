@@ -1,3 +1,4 @@
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 export const CURSOR_COLORS = ['#5f7288', '#796783', '#56776c', '#916c59', '#79764f'];
 const LEGACY_COLORS = ['#356dff', '#b045b8', '#237c64', '#bc4d30', '#7161c4'];
 const IDLE_MS = 5000;
@@ -25,7 +26,7 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
   let destroyed = false;
   const nodes = new Map();
   const idleTimers = new Map();
-  const allowed = () => !destroyed && enabled() && !motion?.matches;
+  const allowed = () => !destroyed && enabled() && !motionIsReduced(document.documentElement, motion);
   const sections = () => [...document.querySelectorAll('main > section[id], main > section.hero')];
   const regions = () => [...document.querySelectorAll('main > section, .site-header, .footer-toolkit, .site-footer')]
     .map((element, index) => ({ element, key: `@${element.id || `region-${index}`}` }));
@@ -144,7 +145,7 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
 
   function onPointerMove(event) {
     if (event.pointerType === 'touch' || !allowed()
-      || event.target?.closest?.('input, textarea, select, [contenteditable], .presence-panel, .skill-modal, #loader')) return hide();
+      || event.target?.closest?.('input, textarea, select, [contenteditable], .presence-panel, .skill-modal, .display-popover, #loader')) return hide();
     lastPointer = { x: event.clientX, y: event.clientY };
     capture();
   }
@@ -152,6 +153,7 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
   window.addEventListener('pointermove', onPointerMove, { passive: true });
   document.addEventListener('pointerleave', hide);
   motion?.addEventListener('change', onMotionChange);
+  document.addEventListener('display-preferences:change', onMotionChange);
 
   return { color, get cursor() { return cursor; }, capture, hide, render, clear, destroy() {
     destroyed = true;
@@ -162,5 +164,6 @@ export function createLiveCursors({ document, window, onChange, now, enabled = (
     window.removeEventListener('pointermove', onPointerMove);
     document.removeEventListener('pointerleave', hide);
     motion?.removeEventListener('change', onMotionChange);
+    document.removeEventListener('display-preferences:change', onMotionChange);
   } };
 }

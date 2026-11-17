@@ -2,9 +2,9 @@
 
 The homepage now leads with **Explore selected work → Selected work**, followed by **Get in touch → Contact**. The header uses Work, About, Writing and the existing CV PDF, with a separate Get in touch action. Mobile navigation uses Home, Work, About, Writing and Contact. The project notebook remains a secondary About/footer resource.
 
-Contact has two native email drafts: **Email your project brief** retains the project/design-help/timeline prompts; **Discuss a design role** adds role, team/company, working arrangement and hiring timeline prompts. Both explicitly open drafts, with a visible direct email link as a fallback.
+Contact has one centered **I have a project** card, with supporting text that also welcomes product challenges and opportunities on a team. **Email your project brief** opens a native draft with project-or-opportunity, design-help and timeline prompts. A visible direct email link is available as a fallback.
 
-Existing measurement IDs are retained with `data-cta-version="portfolio-home-v2"`. New IDs are `nav-cv` and `contact-hiring`. These attributes identify the design version; the current aggregate usage tracker groups native email clicks as `contact-email`, PDF clicks as `resume-download`, and project-card clicks as `project-open`. It does not collect CTA IDs, copy versions, delivered emails or completed downloads. No per-intent reporting or conversion improvement is claimed.
+Existing measurement IDs are retained with `data-cta-version="portfolio-home-v2"`, including `nav-cv` and the single `contact-email` action. The separate `contact-hiring` action was removed when the contact cards were combined. These attributes identify the design version; the current aggregate usage tracker groups native email clicks as `contact-email`, PDF clicks as `resume-download`, and project-card clicks as `project-open`. It does not collect CTA IDs, copy versions, delivered emails or completed downloads. No per-intent reporting or conversion improvement is claimed.
 
 The local implementation and validation are recorded in [portfolio-homepage.md](portfolio-homepage.md). The sections below preserve the earlier design and its verification history; their client-first hierarchy and future-tracking plan describe the previous version.
 

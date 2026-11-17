@@ -1,4 +1,4 @@
-import { createBlogMotion } from './blog-motion.js?v=20261115-design-loop';
+import { createBlogMotion } from './blog-motion.js?v=20261115-display';
 
 export function createBlogController({ document, window }) {
   let motion;

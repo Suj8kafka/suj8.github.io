@@ -10,7 +10,7 @@ const actions = new Map([...html.matchAll(/(<a\b[^>]*data-cta-id="[^"]+"[^>]*>)(
 }));
 
 test('the homepage leads with selected work and keeps a distinct contact route', () => {
-  assert.equal(actions.size, 8);
+  assert.equal(actions.size, 7);
   const inquiry = actions.get('hero-inquiry'), work = actions.get('hero-work');
   assert.equal(inquiry.label, 'Get in touch');
   assert.equal(inquiry.attrs.href, '#contact');
@@ -34,24 +34,17 @@ test('the inquiry action creates an honest email draft with a valid address and 
   assert.equal(action.attrs['data-cta-intent'], 'email-draft');
   assert.match(url.searchParams.get('subject'), /Project inquiry/);
   const body = url.searchParams.get('body');
-  for (const prompt of ['Project:', 'What I need help with:', 'Timeline:']) assert.ok(body.includes(prompt));
-  assert.match(html, /Each option opens an email draft with a few prompts/);
+  for (const prompt of ['Project or opportunity:', 'What I need help with:', 'Timeline:']) assert.ok(body.includes(prompt));
+  assert.match(html, /This opens an email draft with a few prompts/);
   assert.match(html, /Or write to <a href="mailto:email@sujeetkhadka.com.np">email@sujeetkhadka.com.np<\/a>/);
 });
 
-test('hiring visitors get a separate draft with role and working-arrangement prompts', () => {
-  const action = actions.get('contact-hiring');
-  const project = new URL(actions.get('contact-email').attrs.href);
-  const url = new URL(action.attrs.href);
-  assert.equal(url.protocol, 'mailto:');
-  assert.equal(url.pathname, project.pathname);
-  assert.equal(action.attrs['data-cta-intent'], 'email-draft');
-  assert.equal(action.label, 'Discuss a design role');
-  assert.match(url.searchParams.get('subject'), /Product design role/);
-  assert.notEqual(url.searchParams.get('subject'), project.searchParams.get('subject'));
-  for (const prompt of ['Role:', 'Team or company:', 'Working arrangement:', 'Hiring timeline:']) {
-    assert.ok(url.searchParams.get('body').includes(prompt));
-  }
+test('one project contact card also welcomes opportunities on a team', () => {
+  const contact = html.match(/<section\b[^>]*id="contact"[\s\S]*?<\/section>/)[0];
+  assert.equal([...contact.matchAll(/<article\b/g)].length, 1);
+  assert.match(contact, /<h3 id="project-contact-title">I have a project<\/h3>/);
+  assert.match(contact, /Tell me about your project, product challenge, or an opportunity on your team/);
+  assert.equal(actions.has('contact-hiring'), false);
 });
 
 test('supporting resource labels match their destinations and measurement hooks contain no visitor data', () => {

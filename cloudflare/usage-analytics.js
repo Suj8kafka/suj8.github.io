@@ -131,28 +131,47 @@ async function collect(request, env) {
 async function report(request, env) {
   if (!env.ANALYTICS_DB) return json({ error: 'Usage analytics is not configured yet' }, 503);
   const rawDays = new URL(request.url).searchParams.get('days') || '7';
-  if (!['1', '7', '30'].includes(rawDays)) return json({ error: 'Choose 1, 7 or 30 days' }, 400);
-  const days = Number(rawDays);
+  if (!['1', '7', '30', 'all'].includes(rawDays)) return json({ error: 'Choose 1, 7, 30 or all' }, 400);
+  const allTime = rawDays === 'all';
+  const days = allTime ? 'all' : Number(rawDays);
   const end = new Date();
-  const start = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) - (days - 1) * dayMs);
+  const endDay = end.toISOString().slice(0, 10);
+  const endMonth = endDay.slice(0, 7);
   try {
-    const result = await env.ANALYTICS_DB.prepare(
+    // One query sees daily counters and archived months in the same snapshot,
+    // including while the retention batch moves older counters between tables.
+    const query = allTime ? env.ANALYTICS_DB.prepare(
+      "SELECT CASE WHEN metric = 'pageviews' THEN month ELSE '' END AS day, "
+      + 'MIN(month) AS firstMonth, metric, label, SUM(count) AS count FROM ('
+      + 'SELECT substr(day, 1, 7) AS month, metric, label, count FROM daily_metrics WHERE day <= ? '
+      + 'UNION ALL SELECT month, metric, label, count FROM monthly_metrics WHERE month <= ?) '
+      + "GROUP BY metric, label, CASE WHEN metric = 'pageviews' THEN month ELSE '' END ORDER BY day"
+    ).bind(endDay, endMonth) : env.ANALYTICS_DB.prepare(
       "SELECT CASE WHEN metric = 'pageviews' THEN day ELSE '' END AS day, metric, label, SUM(count) AS count "
       + 'FROM daily_metrics WHERE day >= ? AND day <= ? '
       + "GROUP BY metric, label, CASE WHEN metric = 'pageviews' THEN day ELSE '' END ORDER BY day"
-    ).bind(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10)).all();
+    ).bind(new Date(Date.parse(endDay) - (days - 1) * dayMs).toISOString().slice(0, 10), endDay);
+    const result = await query.all();
     if (result.success !== true || !Array.isArray(result.results)) throw new Error('Read failed');
     const totals = { pages: {}, referrers: {}, browsers: {}, devices: {}, countries: {}, interactions: {}, sections: {},
       pageTime: {}, sectionTime: {}, scrollDepth: {} };
-    const daily = new Map(Array.from({ length: days }, (_, i) => [
-      new Date(start.getTime() + i * dayMs).toISOString().slice(0, 10), 0
-    ]));
+    const series = new Map();
+    if (allTime) {
+      const firstMonth = result.results.reduce((first, row) => row.firstMonth < first ? row.firstMonth : first, endMonth);
+      for (const date = new Date(`${firstMonth}-01T00:00:00Z`); date <= end; date.setUTCMonth(date.getUTCMonth() + 1)) {
+        series.set(date.toISOString().slice(0, 7), 0);
+      }
+    } else {
+      for (let i = days - 1; i >= 0; i--) {
+        series.set(new Date(Date.parse(endDay) - i * dayMs).toISOString().slice(0, 10), 0);
+      }
+    }
     let pageViews = 0, timingPageViews = 0;
     for (const row of result.results) {
       if (!Number.isSafeInteger(row.count) || row.count < 0) throw new Error('Invalid count');
       if (row.metric === 'pageviews') {
         pageViews += row.count;
-        if (daily.has(row.day)) daily.set(row.day, daily.get(row.day) + row.count);
+        if (series.has(row.day)) series.set(row.day, series.get(row.day) + row.count);
       } else if (row.metric === 'timingPageViews') timingPageViews += row.count;
       else if (Object.hasOwn(totals, row.metric)) {
         const group = totals[row.metric];
@@ -167,7 +186,8 @@ async function report(request, env) {
     const activeTimeMs = lists.pageTime.reduce((sum, item) => sum + item.value, 0);
     return json({ days, pageViews, interactions: lists.interactions.reduce((sum, item) => sum + item.value, 0),
       activeTimeMs, timingPageViews, averageActiveTimeMs: timingPageViews ? Math.round(activeTimeMs / timingPageViews) : null,
-      daily: [...daily].map(([date, value]) => ({ date, value })), breakdowns: lists, updatedAt: end.toISOString() });
+      [allTime ? 'monthly' : 'daily']: [...series].map(([date, value]) => ({ date, value })),
+      breakdowns: lists, updatedAt: end.toISOString() });
   } catch { return json({ error: 'Usage analytics are temporarily unavailable' }, 502); }
 }
 
@@ -191,6 +211,16 @@ export async function handleUsage(request, env) {
 export async function pruneUsage(env) {
   if (!env.ANALYTICS_DB) return;
   const cutoff = new Date(Date.now() - 89 * dayMs).toISOString().slice(0, 10);
-  const result = await env.ANALYTICS_DB.prepare('DELETE FROM daily_metrics WHERE day < ?').bind(cutoff).run();
-  if (result.success !== true) throw new Error('Analytics retention cleanup failed');
+  // D1 batches are atomic: archive and delete together so retries cannot lose
+  // counts or add the same expired daily counters to history twice.
+  const results = await env.ANALYTICS_DB.batch([
+    env.ANALYTICS_DB.prepare(
+      'INSERT INTO monthly_metrics (month, metric, label, count) '
+      + 'SELECT substr(day, 1, 7), metric, label, SUM(count) FROM daily_metrics WHERE day < ? '
+      + 'GROUP BY substr(day, 1, 7), metric, label '
+      + 'ON CONFLICT(month, metric, label) DO UPDATE SET count = count + excluded.count'
+    ).bind(cutoff),
+    env.ANALYTICS_DB.prepare('DELETE FROM daily_metrics WHERE day < ?').bind(cutoff)
+  ]);
+  if (results.some(result => result.success !== true)) throw new Error('Analytics retention cleanup failed');
 }

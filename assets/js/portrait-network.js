@@ -1,3 +1,4 @@
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export function monochromeFill(fill) {
@@ -103,7 +104,7 @@ export function createPortraitNetwork({ document, window }) {
     control.setAttribute('aria-label', active ? 'Show the vector portrait in monochrome' : 'Show the vector portrait in colour');
   }
   function configure() {
-    interactive = !motion.matches && hover.matches;
+    interactive = !motionIsReduced(document.documentElement, motion) && hover.matches;
     frame.dataset.networkMode = interactive ? 'interactive' : 'static';
     control.hidden = !interactive;
     hovering = focused = false;
@@ -148,6 +149,7 @@ export function createPortraitNetwork({ document, window }) {
     listen(control, 'keydown', event => { if (event.key === 'Escape') show(false); });
     listen(document, 'visibilitychange', () => { if (document.hidden && interactive) show(false); });
     listen(motion, 'change', configure);
+    listen(document, 'display-preferences:change', configure);
     listen(hover, 'change', configure);
     configure();
     frame.dataset.vectorReady = 'true';

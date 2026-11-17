@@ -1,3 +1,4 @@
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 // Let the browser own scroll positions; a viewport-sized blur fades with scroll speed.
 export function createScrollNavigation({ document, window }) {
   const root = document.documentElement;
@@ -24,10 +25,10 @@ export function createScrollNavigation({ document, window }) {
     listeners.push(() => target?.removeEventListener(event, callback, options));
   }
   function updateEffects() {
-    fullEffects = !constrained && !connection?.saveData && !reducedMotion.matches
+    fullEffects = !constrained && !connection?.saveData && !motionIsReduced(root, reducedMotion)
       && finePointer.matches && wideScreen.matches;
-    root.dataset.scrollEffects = reducedMotion.matches ? 'minimal' : fullEffects ? 'full' : 'light';
-    if (reducedMotion.matches) streak.style.opacity = '0';
+    root.dataset.scrollEffects = motionIsReduced(root, reducedMotion) ? 'minimal' : fullEffects ? 'full' : 'light';
+    if (motionIsReduced(root, reducedMotion)) streak.style.opacity = '0';
   }
   function updateHeader(y) {
     if (!header) return;
@@ -82,7 +83,7 @@ export function createScrollNavigation({ document, window }) {
     // Use lighter blur if actual scroll frames repeatedly miss their budget.
     active.slowFrames = delta > 45 ? active.slowFrames + 1 : 0;
     if (active.slowFrames >= 3 && fullEffects) { constrained = true; updateEffects(); }
-    if (!reducedMotion.matches) {
+    if (!motionIsReduced(root, reducedMotion)) {
       const velocity = Math.min(1, Math.abs(y - active.previousY) / delta / 4.5);
       active.speed += (velocity - active.speed) * (1 - Math.exp(-delta / 70));
       streak.style.opacity = (Math.sqrt(active.speed) * .95).toFixed(3);
@@ -104,7 +105,7 @@ export function createScrollNavigation({ document, window }) {
     event.preventDefault();
     cancel();
     const keyboard = event.detail === 0;
-    if (reducedMotion.matches) {
+    if (motionIsReduced(root, reducedMotion)) {
       target.scrollIntoView({ block: 'start', behavior: 'instant' });
       updateHeader(window.scrollY);
       focusDestination({ target, keyboard });
@@ -120,7 +121,7 @@ export function createScrollNavigation({ document, window }) {
   }
   function onMotionChange() {
     updateEffects();
-    if (reducedMotion.matches && active) {
+    if (motionIsReduced(root, reducedMotion) && active) {
       const trip = active;
       cancel();
       trip.target.scrollIntoView({ block: 'start', behavior: 'instant' });
@@ -142,6 +143,7 @@ export function createScrollNavigation({ document, window }) {
   listen(window, 'pagehide', cancel);
   listen(window, 'resize', () => { updateEffects(); onScroll(); });
   listen(reducedMotion, 'change', onMotionChange);
+  listen(document, 'display-preferences:change', onMotionChange);
   listen(finePointer, 'change', updateEffects);
   listen(connection, 'change', updateEffects);
   updateEffects(); updateHeader(initialY);

@@ -15,8 +15,8 @@
   <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
   <link rel="stylesheet" href="/assets/css/site.css?v=20261112-refinements">
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
-  <link rel="stylesheet" href="/assets/css/privacy.css?v=20261110-engagement">
-  <script type="module" src="/assets/js/privacy.js?v=20261110-sidebar"></script>
+  <link rel="stylesheet" href="/assets/css/privacy.css?v=20261112-all-time">
+  <script type="module" src="/assets/js/privacy.js?v=20261115-range-compat"></script>
   <script type="module" src="/assets/js/usage-tracker.js?v=20261110-engagement"></script>
 </head>
 <body class="privacy-page">
@@ -39,15 +39,16 @@
         <div class="analytics-controls">
           <label for="analytics-period">Usage period
             <select id="analytics-period" data-analytics-period>
+              <option value="all" selected>All Time</option>
               <option value="1">Today (UTC)</option>
-              <option value="7" selected>Last 7 days</option>
+              <option value="7">Last 7 days</option>
               <option value="30">Last 30 days</option>
             </select>
           </label>
           <button type="button" data-analytics-refresh>Refresh data <span aria-hidden="true">↻</span></button>
         </div>
       </div>
-      <p class="analytics-note">Daily totals, including today. Repeat visits count again. These are activity counts, not unique people, and may include automated traffic. Reports may be cached for up to five minutes.</p>
+      <p class="analytics-note">All Time includes all recorded usage, including today. Choose a shorter period for recent totals. Repeat visits count again. These are activity counts, not unique people, and may include automated traffic. Reports may be cached for up to five minutes.</p>
       <p class="analytics-status" data-usage-status role="status" aria-live="polite">Usage data needs JavaScript and a connection to the analytics service.</p>
       <noscript><p class="analytics-notice">Enable JavaScript to load the public dashboard. The full privacy policy is readable below.</p></noscript>
       <div class="usage-stats">
@@ -58,8 +59,8 @@
       </div>
       <p class="analytics-note">Time is estimated while a page is visible and focused, pausing after 60 seconds without activity. It cannot confirm that someone is reading. Time per page load uses the active time and measured page loads received within this period; it is not a unique-visitor or session-duration metric.</p>
       <div class="analytics-card daily-card">
-        <div class="analytics-card-heading"><h3>Page views over time</h3><span>Daily · UTC</span></div>
-        <ol class="daily-chart" data-daily-chart aria-label="Daily page views"><li class="analytics-empty">Waiting for usage data.</li></ol>
+        <div class="analytics-card-heading"><h3>Page views over time</h3><span data-chart-period>Monthly · UTC</span></div>
+        <ol class="daily-chart" data-daily-chart data-interval="month" aria-label="Monthly page views, all time"><li class="analytics-empty">Waiting for usage data.</li></ol>
       </div>
       <div class="analytics-breakdowns">
         <article class="analytics-card"><div class="analytics-card-heading"><h3>Where people spend time</h3><span>Active time</span></div><ol class="analytics-list" data-usage-list="sectionTime"><li class="analytics-empty">Waiting for usage data.</li></ol><p class="analytics-card-note">Time is assigned to the section near the upper-middle of the screen. Time in layout gaps or open dialogs stays in the page totals.</p></article>
@@ -83,7 +84,7 @@
     </section>
 
     <section class="privacy-policy" id="privacy-policy" aria-labelledby="policy-title">
-      <div class="policy-heading"><p class="eyebrow">02 / Privacy & policy</p><h2 id="policy-title">What’s behind the numbers<span>.</span></h2><p>Last updated <time datetime="2026-11-10">10 November 2026</time></p></div>
+      <div class="policy-heading"><p class="eyebrow">02 / Privacy & policy</p><h2 id="policy-title">What’s behind the numbers<span>.</span></h2><p>Last updated <time datetime="2026-11-12">12 November 2026</time></p></div>
       <div class="policy-layout">
         <nav class="policy-nav" aria-label="Privacy policy contents">
           <a href="#policy-usage">Usage analytics</a><a href="#policy-presence">Live presence & location</a><a href="#policy-storage">Browser storage</a><a href="#policy-services">Services & retention</a><a href="#policy-contact">Contact & questions</a>
@@ -112,7 +113,7 @@
           <section id="policy-services" aria-labelledby="services-title">
             <h3 id="services-title">Services, security & retention</h3>
             <p>GitHub Pages hosts the portfolio. Cloudflare handles edge delivery, security and aggregate traffic estimates. Firebase handles live presence and availability. These providers receive the network information needed to serve requests and operate under their own policies. The site’s analytics database does not store raw IP addresses; infrastructure providers may process them for delivery and security.</p>
-            <p>Daily usage counters are retained for up to 90 UTC calendar days, with a scheduled daily cleanup. The dashboard offers today, seven-day and thirty-day views. The older Firebase country counter is a separate cumulative count with no automatic expiry. Cloudflare traffic-history retention is managed separately by Cloudflare.</p>
+            <p>Daily usage counters are retained for up to 90 UTC calendar days. A scheduled daily job combines older counters into monthly aggregates, which have no automatic expiry and preserve All Time totals and breakdowns. The dashboard offers All Time, today, seven-day and thirty-day views; All Time charts show monthly totals. The older Firebase country counter is a separate cumulative count with no automatic expiry. Cloudflare traffic-history retention is managed separately by Cloudflare.</p>
             <p>This portfolio does not sell visitor data or use these counters for advertising profiles. Links to external projects, social networks and the blog take you to services with their own privacy practices.</p>
             <p class="policy-service-links"><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">Cloudflare privacy</a> · <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noreferrer">Firebase privacy</a> · <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noreferrer">GitHub privacy</a> · <a href="https://ipwhois.io/privacy" target="_blank" rel="noreferrer">ipwho.is privacy</a> · <a href="https://www.bigdatacloud.com/privacy-policy" target="_blank" rel="noreferrer">BigDataCloud privacy</a></p>
           </section>

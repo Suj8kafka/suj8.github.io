@@ -7,7 +7,8 @@ const groups = ['pages', 'referrers', 'countries', 'browsers', 'devices', 'inter
 function usage(days = 7) {
   return { days, pageViews: 5, interactions: 2, updatedAt: '2026-11-10T10:00:00Z',
     activeTimeMs: 60000, timingPageViews: 5, averageActiveTimeMs: 12000,
-    daily: Array.from({ length: days }, (_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, value: i === 0 ? 5 : 0 })),
+    ...(days === 'all' ? { monthly: ['09', '10', '11'].map((month, i) => ({ date: `2026-${month}`, value: i === 0 ? 5 : 0 })) }
+      : { daily: Array.from({ length: days }, (_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, value: i === 0 ? 5 : 0 })) }),
     breakdowns: Object.fromEntries(groups.map(key => [key, [{ name: key === 'pages' || key === 'pageTime' ? '/' : '<script>untrusted</script>',
       value: key === 'pageTime' ? 60000 : key === 'sectionTime' ? 30000 : 5 }]])) };
 }
@@ -22,13 +23,13 @@ function element() {
     removeEventListener(name) { listeners.delete(name); },
     dispatch(name, event) { return listeners.get(name)?.(event); }, listeners };
 }
-function harness(fetch) {
+function harness(fetch, period = '7') {
   const nodes = new Map();
   const get = selector => {
     if (!nodes.has(selector)) nodes.set(selector, element());
     return nodes.get(selector);
   };
-  get('[data-analytics-period]').value = '7';
+  get('[data-analytics-period]').value = period;
   const choices = ['light', 'dark', 'auto'].map(value => { const node = element(); node.dataset.themeChoice = value; return node; });
   const document = { querySelector: get, querySelectorAll: () => choices,
     createElement: () => element(), documentElement: { dataset: {} } };
@@ -53,6 +54,132 @@ test('validates reports, rejecting missing, inconsistent, negative and nonnumeri
     const data = usage(); change(data);
     assert.throws(() => validateUsage(data, 7));
   }
+});
+
+test('validates all-time monthly reports without accepting incomplete or mismatched history', () => {
+  assert.equal(validateUsage(usage('all'), 'all').pageViews, 5);
+  const yearBoundary = usage('all');
+  yearBoundary.monthly = [{ date: '2025-12', value: 2 }, { date: '2026-01', value: 3 }];
+  validateUsage(yearBoundary, 'all');
+  for (const change of [data => { data.days = 7; }, data => { delete data.monthly; },
+    data => { data.monthly = []; }, data => { data.monthly[0].value = -1; },
+    data => { data.monthly[0].value = '5'; }, data => { data.monthly[0].value = 2; },
+    data => { data.monthly[0].date = '2026-99'; }, data => { data.monthly[0].date = '2026-09-01'; },
+    data => { data.monthly[1].date = '2026-09'; }, data => { data.monthly.splice(1, 1); }]) {
+    const data = usage('all'); change(data);
+    assert.throws(() => validateUsage(data, 'all'));
+  }
+  assert.throws(() => validateUsage(usage('all'), 7));
+});
+
+test('loads all-time totals and switches to seven-day and thirty-day daily reports', async () => {
+  const requests = [];
+  let fail = false;
+  const h = harness(async url => {
+    requests.push(url);
+    if (fail && url.includes('/usage')) return new Response('', { status: 502 });
+    const period = new URL(url).searchParams.get('days');
+    return Response.json(url.includes('/usage') ? usage(period === 'all' ? 'all' : Number(period))
+      : { requests: 42, visits: 6, updatedAt: '2026-11-10T10:00:00Z' });
+  }, 'all');
+  await flush();
+  assert.ok(requests.some(url => url.endsWith('/usage?days=all')));
+  assert.equal(h.get('[data-usage-stat="pageViews"]').textContent, '5');
+  assert.equal(h.get('[data-usage-stat="activeTimeMs"]').textContent, '1m 0s');
+  assert.equal(h.get('[data-daily-chart]').children.length, 3);
+  assert.equal(h.get('[data-daily-chart]').children[0].children[1].textContent, '2026-09');
+  assert.equal(h.get('[data-daily-chart]').attributes['aria-label'], 'Monthly page views, all time');
+  assert.equal(h.get('[data-chart-period]').textContent, 'Monthly · UTC');
+  assert.match(h.get('[data-usage-status]').textContent, /All recorded usage/);
+  for (const days of ['7', '30']) {
+    h.get('[data-analytics-period]').value = days;
+    await h.get('[data-analytics-period]').dispatch('change');
+    assert.equal(h.get('[data-daily-chart]').children.length, Number(days));
+    assert.equal(h.get('[data-daily-chart]').dataset.interval, 'day');
+    assert.equal(h.get('[data-chart-period]').textContent, 'Daily · UTC');
+  }
+  h.get('[data-analytics-period]').value = 'all';
+  await h.get('[data-analytics-period]').dispatch('change');
+  assert.equal(h.get('[data-daily-chart]').dataset.interval, 'month');
+  fail = true;
+  await h.get('[data-analytics-refresh]').dispatch('click');
+  assert.equal(h.get('[data-usage-stat="pageViews"]').textContent, '—');
+  assert.equal(h.get('[data-daily-chart]').children.length, 0);
+  assert.equal(h.get('[data-usage-status]').dataset.state, 'error');
+  assert.equal(h.get('[data-edge-stat="requests"]').textContent, '42');
+  h.dashboard.destroy();
+});
+
+test('a legacy service falls back from unsupported All Time to a clearly labelled seven-day report', async () => {
+  const requests = [];
+  let supportsAllTime = false;
+  const h = harness(async url => {
+    requests.push(url);
+    if (!url.includes('/usage')) return Response.json({ requests: 42, visits: 6, updatedAt: '2026-11-10T10:00:00Z' });
+    const period = new URL(url).searchParams.get('days');
+    if (period === 'all' && !supportsAllTime) return Response.json({ error: 'Choose 1, 7 or 30 days' }, { status: 400 });
+    return Response.json(usage(period === 'all' ? 'all' : Number(period)));
+  }, 'all');
+  await flush();
+  assert.ok(requests.some(url => url.endsWith('/usage?days=all')));
+  assert.ok(requests.some(url => url.endsWith('/usage?days=7')));
+  assert.equal(h.get('[data-analytics-period]').value, '7');
+  assert.equal(h.get('[data-usage-stat="pageViews"]').textContent, '5');
+  assert.equal(h.get('[data-usage-status]').dataset.state, 'ready');
+  assert.match(h.get('[data-usage-status]').textContent, /All Time is not available.*Showing the last 7 days/);
+  assert.equal(h.get('[data-daily-chart]').children.length, 7);
+  assert.equal(h.get('[data-daily-chart]').dataset.interval, 'day');
+  assert.equal(h.get('[data-chart-period]').textContent, 'Daily · UTC');
+  assert.equal(h.get('[data-edge-stat="requests"]').textContent, '42');
+  assert.equal(h.get('[data-analytics-refresh]').disabled, false);
+  supportsAllTime = true;
+  h.get('[data-analytics-period]').value = 'all';
+  await h.get('[data-analytics-period]').dispatch('change');
+  assert.equal(h.get('[data-daily-chart]').dataset.interval, 'month');
+  assert.doesNotMatch(h.get('[data-usage-status]').textContent, /not available/);
+  h.dashboard.destroy();
+});
+
+test('All Time service errors do not turn into successful recent or empty reports', async () => {
+  for (const failure of [
+    Response.json({ error: 'Usage analytics could not be loaded' }, { status: 502 }),
+    Response.json({ error: 'Usage analytics is not configured yet' }, { status: 503 }),
+    Response.json({ error: 'Another bad request' }, { status: 400 })
+  ]) {
+    const requests = [];
+    const h = harness(async url => {
+      requests.push(url);
+      return url.includes('/usage') ? failure.clone()
+        : Response.json({ requests: 42, visits: 6, updatedAt: '2026-11-10T10:00:00Z' });
+    }, 'all');
+    await flush();
+    assert.equal(requests.filter(url => url.includes('/usage')).length, 1);
+    assert.equal(h.get('[data-analytics-period]').value, 'all');
+    assert.equal(h.get('[data-usage-stat="pageViews"]').textContent, '—');
+    assert.equal(h.get('[data-usage-status]').dataset.state, 'error');
+    assert.equal(h.get('[data-edge-stat="requests"]').textContent, '42');
+    h.dashboard.destroy();
+  }
+});
+
+test('a late unsupported-range response cannot change a newer selected period', async () => {
+  let finishOld;
+  const requests = [];
+  const h = harness(url => {
+    requests.push(url);
+    if (url.endsWith('/usage?days=all')) return new Promise(resolve => { finishOld = resolve; });
+    const period = new URL(url).searchParams.get('days');
+    return Promise.resolve(Response.json(url.includes('/usage') ? usage(Number(period))
+      : { requests: 42, visits: 6, updatedAt: '2026-11-10T10:00:00Z' }));
+  }, 'all');
+  h.get('[data-analytics-period]').value = '30';
+  await h.get('[data-analytics-period]').dispatch('change');
+  finishOld(Response.json({ error: 'Choose 1, 7 or 30 days' }, { status: 400 }));
+  await flush();
+  assert.equal(h.get('[data-analytics-period]').value, '30');
+  assert.equal(h.get('[data-daily-chart]').children.length, 30);
+  assert.ok(!requests.some(url => url.endsWith('/usage?days=7')));
+  h.dashboard.destroy();
 });
 
 test('renders real counts with text nodes, preserves theme and clears stale data after failure', async () => {
@@ -144,4 +271,8 @@ test('footer opens a standalone dashboard before the readable policy and never o
   assert.match(privacy, /ipwho\.is/);
   assert.match(privacy, /BigDataCloud/);
   assert.match(privacy, /Global Privacy Control/);
+  assert.match(privacy, /<option value="all" selected>All Time<\/option>/);
+  assert.match(privacy, /<option value="7">Last 7 days<\/option>/);
+  assert.match(privacy, /<option value="30">Last 30 days<\/option>/);
+  assert.match(privacy, /monthly aggregates, which have no automatic expiry/);
 });

@@ -46,6 +46,7 @@
 .analytics-card-note { color: var(--muted); font-size: 11px; line-height: 1.8; margin: 18px 0 0; }
 .daily-chart { list-style: none; display: flex; align-items: stretch; gap: 5px; min-height: 180px; margin: 0; padding: 0 0 4px; overflow-x: auto; }
 .daily-chart li:not(.analytics-empty) { position: relative; isolation: isolate; flex: 1 0 24px; min-width: 24px; height: 180px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding-top: 5px; font: 400 9px/1.4 "DM Mono", monospace; }
+.daily-chart[data-interval="month"] li:not(.analytics-empty) { flex-basis: 48px; min-width: 48px; }
 .daily-chart li:not(.analytics-empty)::before { content: ""; position: absolute; z-index: -1; bottom: 24px; width: min(100%, 58px); height: calc(var(--bar-size, 0%) * .72); border-radius: 4px 4px 0 0; background: color-mix(in srgb, var(--accent) 23%, var(--paper)); }
 .daily-chart strong { color: var(--ink); font-weight: 500; }
 .daily-chart span { padding-top: 4px; color: var(--muted); }

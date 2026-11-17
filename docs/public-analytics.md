@@ -71,6 +71,13 @@ pages; section-level active time still needs dedicated instrumentation. See
 
 ## Local implementation
 
+The local dashboard remains compatible with the deployed service during the
+All Time rollout. If `days=all` returns the older Worker's explicit HTTP 400
+`Choose 1, 7 or 30 days` response, it selects Last 7 days, fetches that report,
+and explains the narrower range in its status. Other errors remain visible;
+recent totals are never labelled All Time. Selecting All Time again retries it,
+so the full view works after the service is upgraded without a frontend change.
+
 - `assets/js/usage-tracker.js` runs on the production home and privacy pages only.
   Localhost, previews and `/login/` do not submit usage events. No visitor ID,
   cookie, local-storage entry or fingerprint is created by this tracker.
@@ -83,15 +90,25 @@ pages; section-level active time still needs dedicated instrumentation. See
   Browser/device families and the approximate country come from request metadata;
   the full user agent and network address are not stored in D1. Referral hosts
   become fixed source categories; unknown hosts become “Other websites”.
-- `GET /usage?days=1|7|30` returns public totals and breakdowns, including zero-filled
-  UTC days, active milliseconds, timing-enabled page loads and the time-per-load
-  ratio. It needs a D1 binding, not a Cloudflare GraphQL API token. No binding
-  returns 503; failed reads/writes return 502. Neither is a successful empty report.
+- `GET /usage?days=1|7|30|all` returns public totals and breakdowns, including active
+  milliseconds, timing-enabled page loads and the time-per-load ratio. Numeric
+  ranges return a zero-filled `daily` series of UTC dates. `days=all` combines all
+  available daily and archived monthly counters, with a zero-filled `monthly`
+  series (`YYYY-MM`) from the earliest recorded activity through this month.
+  The API still defaults to seven days when `days` is omitted; the privacy page
+  explicitly requests All Time by default and retains today, seven-day and
+  thirty-day options. It needs a D1 binding, not a Cloudflare GraphQL API token.
+  No binding returns 503; failed reads/writes return 502. Neither is a successful
+  empty report.
 - The root endpoint still returns Cloudflare requests and visits for 24 hours.
   Those are network estimates, not page views or unique visitors. Existing
   GraphQL credentials remain in Worker secrets and are never sent to the browser.
-- Reports cache for five minutes. POST responses are never cached. A daily cron
-  deletes counters older than the most recent 90 UTC dates.
+- Reports cache for five minutes, with separate normalized keys for each range.
+  POST responses are never cached. A daily cron combines counters older than the
+  most recent 90 UTC dates into `monthly_metrics`, then deletes those daily rows
+  in the same atomic D1 batch. Monthly aggregates have no automatic expiry, so
+  All Time totals and breakdowns survive daily cleanup. Reports combine both
+  tables in one query so concurrent archival cannot duplicate or lose counts.
 
 Sections count once per page load. Clicks cover project, article, CV, email,
 social and notebook links, skill details and theme choices. These measure clicks,
@@ -155,6 +172,27 @@ the public report remains readable. Do not claim historical usage before service
 activation. If setup is missing, the dashboard intentionally displays an error
 instead of invented values.
 
+### All Time update (12 November 2026, local changes)
+
+The All Time extension adds `0002-monthly-usage-history.sql`; it has not been
+applied to the live database by this change. After separate owner authorization,
+apply pending migrations to the existing database, deploy the analytics Worker,
+then publish the static website:
+
+```powershell
+npx wrangler d1 migrations apply ANALYTICS_DB --remote --config cloudflare/wrangler.analytics.jsonc
+npx wrangler deploy --config cloudflare/wrangler.analytics.jsonc
+```
+
+The migration creates an empty aggregate table without rewriting existing
+counters. All Time immediately includes retained daily history; the daily cron
+archives it as it ages. Already deleted history and browsing before activation
+cannot be recovered. If the new table is missing, All Time reports fail visibly
+and archival fails before deleting daily data. The existing shorter reports and
+collector still work without the new table. Verify `/usage?days=all`, `/usage?days=7`
+and `/usage?days=30`, then check the privacy page's default and range switching.
+All Time shows monthly chart bars; shorter ranges continue to show daily bars.
+
 ## Cloudflare Free plan and the right sidebar
 
 The right sidebar is owned by `assets/js/visitor-panel.js`, independently of the
@@ -181,9 +219,10 @@ addition to browser caching. This reduces GraphQL calls and D1 reads; cache hits
 still count as Worker requests. Successful reports only are cached, and query
 noise cannot create unlimited distinct report keys. Collection and errors are
 not cached. Daily counters use a primary key without extra secondary indexes,
-and the daily retention job limits historical rows. Each timing batch writes
-one page-time counter plus its section-time counters; it is not one database row
-per individual visitor event. Actual usage depends on traffic and navigation.
+and the daily retention job compacts older rows into monthly aggregates. Each
+timing batch writes one page-time counter plus its section-time counters; it is
+not one database row per individual visitor event. Actual usage depends on traffic
+and navigation.
 Breakdown totals are grouped in SQL so longer report periods do not send every
 daily row back to the Worker for JavaScript aggregation.
 
@@ -201,8 +240,8 @@ For timing, use two browser windows: spend about 20 seconds on the Work section,
 switch to another window, then return and scroll to Contact. Only the foreground
 intervals should appear in the section-time totals. Leave the page untouched for
 over a minute and confirm that its time counters stop until activity resumes.
-The existing `daily_metrics` table also stores these counters; no second table,
-Firebase rules change or additional migration is needed for time measurements.
+Time measurements use the same daily and monthly aggregate tables as the other
+metrics. They need no individual event table or Firebase rules change.
 
 ## Verification
 
@@ -243,6 +282,15 @@ from the actual browser verification visit. No sample or fabricated activity
 was inserted into production. The first public report can remain empty until
 its five-minute cache expires. New usage history begins at activation; earlier
 Cloudflare traffic is available separately as network estimates.
+
+The local All Time extension passed all 186 Node tests on 12 November 2026.
+SQLite checks covered migration-backed history, the 90-day cutoff, 7/30-day
+boundaries, zero-filled months across year boundaries, unchanged totals after
+archival, retry safety and rollback when either archival or deletion fails.
+Headless Chrome with isolated API fixtures verified the All Time default,
+all four ranges, monthly/daily chart switching, both themes, 1440/390/320-pixel
+layouts and visible errors clearing stale usage while traffic remains available.
+These checks did not migrate or deploy the live service.
 
 Implementation references:
 

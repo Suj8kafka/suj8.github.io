@@ -6,8 +6,8 @@ export async function cacheAnalytics(request, ctx, produce, cache = globalThis.c
     || (url.pathname !== '/' && url.pathname !== '/usage')) return produce();
   if (url.pathname === '/usage') {
     const days = url.searchParams.get('days') || '7';
-    if (!['1', '7', '30'].includes(days)) return produce();
-    url.search = `?days=${days}&version=20261110-sidebar`;
+    if (!['1', '7', '30', 'all'].includes(days)) return produce();
+    url.search = `?days=${days}&version=20261112-all-time`;
   } else url.search = '?version=20261110-sidebar';
   const key = new Request(url.href);
   try { const response = await cache.match(key); if (response) return response; } catch {}

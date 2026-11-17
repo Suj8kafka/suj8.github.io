@@ -18,13 +18,15 @@ Desktop navigation is Work, About, Writing and CV, with a separate Get in touch 
 
 The homepage remains buildless HTML, CSS and browser JavaScript. The larger Aama illustration has an updated responsive `sizes` hint, and the portrait preload and image hints match the smaller mobile portrait. The stylesheet cache version is updated in both enhanced and no-JavaScript links.
 
-The project and hiring paths open separate prefilled email drafts; neither sends a message automatically. A visible native email link is available when visitors prefer their own message. Existing aggregate usage tracking remains in place without service changes; see [project-actions.md](project-actions.md).
+Contact uses one centered “I have a project” card, with supporting text welcoming projects, product challenges and opportunities on a team. Its native email draft prompts for the project or opportunity, design help and timeline; it does not send a message automatically. A visible native email link is available when visitors prefer their own message. Existing aggregate usage tracking remains in place without service changes; see [project-actions.md](project-actions.md).
 
 A keyboard skip link focuses the main content. Section scroll margins account for the desktop header and mobile layout. The former continuous focus marquee is static, and mobile skill cards use shorter text-led layouts while retaining their native dialog buttons. Reduced-motion overrides cover the revised project-card interaction. Existing loader artwork, service modules, database rules and vendor libraries were not edited.
 
 The critical-style generator now compacts whitespace outside quoted values to retain the existing 16 KB budget. Its regression coverage preserves escaped quoted text, descendant selectors and spaces required by `calc()` arithmetic.
 
 ## Validation
+
+Single-card follow-up: all 228 Node tests pass, including the shared contact draft and the existing display-preference, critical-style and loader checks. The browser harness stopped before collecting results, so visual verification of this follow-up remains incomplete. The browser checks below were recorded before the contact cards were combined.
 
 - `node --test tests/*.test.mjs`: 189 tests passed, including the changed action hierarchy, separate draft subjects/prompts, real navigation destinations, mobile ordering, critical CSS, availability and existing loader/artwork checks.
 - Rendered local Brave/Chromium checks: 320, 390, 800, 900, 1100 and 1440 CSS pixels, each in light and dark themes. No horizontal overflow, clipped inspected headings/content, or broken loaded images. Checked the three featured cards and single/two-column contact layout.

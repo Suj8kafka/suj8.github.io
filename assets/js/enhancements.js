@@ -1,3 +1,4 @@
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 function script(document, src) {
   return new Promise((resolve, reject) => {
     const element = document.createElement('script');
@@ -11,11 +12,11 @@ function script(document, src) {
 async function loadMotion(document, window) {
   if (!window.gsap) await script(document, 'assets/vendor/gsap/gsap.min.js');
   if (!window.ScrollTrigger) await script(document, 'assets/vendor/gsap/ScrollTrigger.min.js');
-  return import('./motion.js?v=20261109-mobile-lcp');
+  return import('./motion.js?v=20261115-display');
 }
 
 export async function loadServices(document, {
-  presence = () => import('./firebase-presence.js?v=20261112-presence'),
+  presence = () => import('./firebase-presence.js?v=20261115-display'),
   availability = () => import('./availability-client.js')
 } = {}) {
   const results = await Promise.allSettled([Promise.resolve().then(presence), Promise.resolve().then(availability)]);
@@ -32,7 +33,7 @@ export async function loadServices(document, {
 }
 
 export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
-  portrait = () => import('./portrait-network.js?v=20261109-mobile-lcp'),
+  portrait = () => import('./portrait-network.js?v=20261115-display'),
   services = () => loadServices(document) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
   let imageReady = false, decoding = false, motionStarted = false;
@@ -45,7 +46,7 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
     queued = false;
     if (destroyed || started || document.hidden || document.documentElement.classList.contains('loader-running')) return;
     started = true;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = motionIsReduced(document.documentElement, window.matchMedia('(prefers-reduced-motion: reduce)'));
     const compact = window.matchMedia('(max-width: 800px)').matches;
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const constrained = window.navigator.connection?.saveData
@@ -54,10 +55,11 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
     const launch = task => Promise.resolve().then(task).catch(error => console.warn('Optional portfolio enhancement unavailable.', error));
     launch(services);
     const startMotion = () => {
-      if (destroyed || motionStarted || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (destroyed || motionStarted || document.hidden || motionIsReduced(document.documentElement, window.matchMedia('(prefers-reduced-motion: reduce)'))) return;
       motionStarted = true;
       launch(motion);
     };
+    listen(document, 'display-preferences:change', startMotion);
     if (!reduced) {
       if (compact) {
         // The ribbon/parallax is useful once the reader scrolls, not while the hero paints.
@@ -66,7 +68,15 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
       } else startMotion();
     }
     // Mobile/reduced-motion visitors keep the lightweight colour image, without 1,643 inline paths.
-    if (!reduced && !compact && fine && !constrained) launch(portrait);
+    let portraitStarted = false;
+    const startPortrait = () => {
+      if (destroyed || portraitStarted || compact || !fine || constrained
+        || motionIsReduced(document.documentElement, window.matchMedia('(prefers-reduced-motion: reduce)'))) return;
+      portraitStarted = true;
+      launch(portrait);
+    };
+    listen(document, 'display-preferences:change', startPortrait);
+    startPortrait();
   }
   function queue() {
     if (destroyed || started || queued || document.readyState !== 'complete' || document.hidden

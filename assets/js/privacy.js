@@ -1,5 +1,5 @@
 import { analyticsEndpoint, pageLabels, sectionLabels, interactionLabels, depthLabels } from './analytics-config.js?v=20261110-engagement';
-import { validateUsage, formatDuration } from "./analytics-report.js?v=20261110-sidebar";
+import { validateUsage, formatDuration } from "./analytics-report.js?v=20261112-all-time";
 export { validateUsage, formatDuration };
 
 const metrics = ['pages', 'referrers', 'countries', 'browsers', 'devices', 'interactions', 'sections', 'pageTime', 'sectionTime', 'scrollDepth'];
@@ -69,9 +69,30 @@ export function createPrivacyDashboard({ document, window, fetch = window.fetch.
   async function loadUsage(signal, current) {
     clearUsage();
     status(usageStatus, 'Loading public usage data…', 'loading');
-    const days = Number(period.value);
+    let days = period.value === 'all' ? 'all' : Number(period.value);
+    let usedRecentPeriod = false;
+    function renderPeriod() {
+      const allTime = days === 'all';
+      document.querySelector('[data-chart-period]').textContent = allTime ? 'Monthly · UTC' : 'Daily · UTC';
+      chart.dataset.interval = allTime ? 'month' : 'day';
+      chart.setAttribute('aria-label', allTime ? 'Monthly page views, all time' : 'Daily page views');
+    }
+    renderPeriod();
     try {
-      const response = await fetch(`${analyticsEndpoint}/usage?days=${days}`, { signal, credentials: 'omit' });
+      let response = await fetch(`${analyticsEndpoint}/usage?days=${days}`, { signal, credentials: 'omit' });
+      // Older deployed Workers explicitly reject All Time while serving recent reports.
+      // Only that known response permits a fallback; service failures stay visible.
+      if (days === 'all' && response.status === 400) {
+        const problem = await response.json();
+        if (destroyed || current !== version || signal.aborted) return;
+        if (problem?.error === 'Choose 1, 7 or 30 days') {
+          days = 7;
+          usedRecentPeriod = true;
+          period.value = '7';
+          renderPeriod();
+          response = await fetch(`${analyticsEndpoint}/usage?days=7`, { signal, credentials: 'omit' });
+        }
+      }
       if (response.status === 503 || response.status === 404) throw new Error('setup');
       if (!response.ok) throw new Error('unavailable');
       const data = validateUsage(await response.json(), days);
@@ -81,20 +102,23 @@ export function createPrivacyDashboard({ document, window, fetch = window.fetch.
       document.querySelector('[data-usage-stat="activeTimeMs"]').textContent = data.activeTimeMs || data.timingPageViews ? formatDuration(data.activeTimeMs) : '—';
       document.querySelector('[data-usage-stat="averageActiveTimeMs"]').textContent = data.averageActiveTimeMs === null ? '—' : formatDuration(data.averageActiveTimeMs);
       metrics.forEach(metric => list(metric, data.breakdowns[metric]));
-      const maximum = Math.max(...data.daily.map(item => item.value), 1);
-      data.daily.forEach(item => {
+      const allTime = days === 'all';
+      const series = allTime ? data.monthly : data.daily;
+      const maximum = Math.max(...series.map(item => item.value), 1);
+      series.forEach(item => {
         const bar = document.createElement('li');
         const count = document.createElement('strong');
         const date = document.createElement('span');
         bar.style.setProperty('--bar-size', `${Math.round(item.value / maximum * 100)}%`);
         count.textContent = number(item.value);
-        date.textContent = item.date.slice(5);
+        date.textContent = allTime ? item.date : item.date.slice(5);
         bar.setAttribute('aria-label', `${item.date}: ${number(item.value)} page views`);
         bar.append(count, date);
         chart.append(bar);
       });
       const updated = new Date(data.updatedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
-      status(usageStatus, `${data.pageViews ? 'Updated' : 'No page views recorded yet. Updated'} ${updated}. Days use UTC.`, 'ready');
+      const rangeNotice = usedRecentPeriod ? 'All Time is not available from the analytics service yet. Showing the last 7 days. ' : '';
+      status(usageStatus, `${rangeNotice}${data.pageViews ? 'Updated' : 'No page views recorded yet. Updated'} ${updated}. ${allTime ? 'All recorded usage. Months' : 'Days'} use UTC.`, 'ready');
     } catch (error) {
       if (destroyed || current !== version || signal.aborted) return;
       clearUsage();

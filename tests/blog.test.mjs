@@ -123,6 +123,7 @@ test('all migrated pages are static, indexable, linked locally and share the por
     assert.doesNotMatch(html, /blog\.sujeetkhadka|tailwindcss|googletagmanager/i);
     for (const [, attributes, content] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (/\bsrc=/.test(attributes)) continue;
+      if (/\bid="display-bootstrap"/.test(attributes)) continue; // Synchronized pre-paint preferences; CSP hash is tested separately.
       assert.match(attributes, /\btype="application\/ld\+json"/, 'Only inert structured data may be inline');
       assert.doesNotThrow(() => JSON.parse(content));
     }

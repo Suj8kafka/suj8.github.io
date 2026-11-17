@@ -1,5 +1,6 @@
 // Apply at the Cloudflare edge in front of the existing GitHub Pages origin.
 import { applyAssetCache } from './asset-cache.mjs';
+import { displayBootstrapCsp } from './display-bootstrap-csp.mjs';
 export const securityHeaders = {
   "Content-Security-Policy": [
     "default-src 'self'",
@@ -7,7 +8,7 @@ export const securityHeaders = {
     "object-src 'none'",
     "frame-ancestors 'none'",
     "form-action 'self'",
-    "script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js",
+    `script-src 'self' ${displayBootstrapCsp} https://www.gstatic.com https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js`,
     // Inline styles are used by animations, particles.js and the noscript loader fallback.
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",

@@ -28,3 +28,21 @@ test('never caches collection requests, errors or invalid report ranges', async 
   await cacheAnalytics(new Request('https://analytics.example/'), ctx, async () => Response.json({ error: 'unavailable' }, { status: 503 }), cache);
   assert.equal(writes, 0);
 });
+
+test('all-time reports use a normalized cache key separate from rolling ranges', async () => {
+  const entries = new Map(), pending = [];
+  const cache = { match: async key => entries.get(key.url)?.clone(), put: async (key, response) => { entries.set(key.url, response); } };
+  const ctx = { waitUntil: promise => pending.push(promise) };
+  const queries = [];
+  for (const days of ['all&noise=1', 'all&noise=2', '7', '30']) {
+    const response = await cacheAnalytics(new Request(`https://analytics.example/usage?days=${days}`), ctx, async () => {
+      const period = days.split('&')[0];
+      queries.push(period);
+      return Response.json({ days: period }, { headers: { 'cache-control': 'public, max-age=300' } });
+    }, cache);
+    await Promise.all(pending);
+    assert.equal((await response.json()).days, days.split('&')[0]);
+  }
+  assert.deepEqual(queries, ['all', '7', '30']);
+  assert.equal(entries.size, 3);
+});

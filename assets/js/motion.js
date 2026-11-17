@@ -1,5 +1,6 @@
 import { createParallax } from './parallax.js?v=20261108-gsap';
 import { createScrollTrail } from './scroll-trail.js?v=20261109-ribbon';
+import { motionIsReduced } from './display-state.js?v=20261115-display';
 
 export function createPortfolioMotion({ document, window, gsap = window.gsap, ScrollTrigger = window.ScrollTrigger }) {
   const root = document.documentElement;
@@ -16,7 +17,8 @@ export function createPortfolioMotion({ document, window, gsap = window.gsap, Sc
     gsap.registerPlugin(ScrollTrigger);
     media = gsap.matchMedia();
     media.add({ all: 'all', reduced: '(prefers-reduced-motion: reduce)', compact: '(max-width: 800px)', fine: '(pointer: fine)' }, context => {
-      const { reduced, compact, fine } = context.conditions;
+      const { compact, fine } = context.conditions;
+      const reduced = motionIsReduced(root, { matches: context.conditions.reduced });
       const constrained = (window.navigator.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
         || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4)
         || window.navigator.connection?.saveData;
@@ -34,6 +36,17 @@ export function createPortfolioMotion({ document, window, gsap = window.gsap, Sc
   listen(document, 'loader:done', start);
   listen(document, 'visibilitychange', start);
   listen(window, 'load', start);
+  let preference = `${root.dataset.motion}/${root.dataset.layout}`;
+  listen(document, 'display-preferences:change', () => {
+    const next = `${root.dataset.motion}/${root.dataset.layout}`;
+    if (next !== preference) {
+      preference = next;
+      media?.revert();
+      media = null; started = false;
+      start();
+    }
+    ScrollTrigger?.refresh?.();
+  });
   if (root.dataset.loaderDone === 'true' || !root.classList.contains('loader-running')) start();
   return { destroy() {
     destroyed = true; media?.revert(); listeners.forEach(remove => remove());

@@ -14,6 +14,7 @@
   if (!word || !language || !fill || !skip) return;
   clearTimeout(window.loaderBootTimeout);
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const reduced = () => root.dataset.layout === 'reader' || (root.dataset.motion ? root.dataset.motion === 'reduced' : motion.matches);
   const seenKey = 'portfolio-intro-seen';
   const exitDuration = 180;
   const firstVisitDuration = compact ? 5000 : 6000; // Includes Namaste and the exit fade.
@@ -79,6 +80,7 @@
     window.removeEventListener('touchmove', onScrollIntent);
     window.removeEventListener('pagehide', onPageHide);
     motion.removeEventListener('change', onMotionChange);
+    document.removeEventListener('display-preferences:change', onMotionChange);
     skip.removeEventListener('click', onSkip);
     if (moveFocus || focusWasInside) {
       const heading = document.getElementById('hero-title');
@@ -90,7 +92,9 @@
   function onKey(event) { if (navigationKeys.has(event.key)) complete(); }
   function onSkip() { complete(true); }
   function onScrollIntent() { complete(); }
-  function onMotionChange(event) { if (event.matches) complete(); }
+  function onMotionChange(event) {
+    if (root.dataset.layout === 'reader' || (root.dataset.motion ? root.dataset.motion === 'reduced' : event.matches ?? motion.matches)) complete();
+  }
   function onPageHide() { complete(); }
   function onVisibility() { if (document.hidden) complete(); }
 
@@ -154,6 +158,7 @@
     window.addEventListener('touchmove', onScrollIntent, { passive: true });
     window.addEventListener('pagehide', onPageHide);
     motion.addEventListener('change', onMotionChange);
+    document.addEventListener('display-preferences:change', onMotionChange);
     startedAt = performance.now();
     try {
       showGreeting(0);
@@ -166,7 +171,7 @@
 
   skip.addEventListener('click', onSkip);
   // Keep accessibility, data-saving and direct section navigation immediate.
-  if (window.navigator?.connection?.saveData || motion.matches || window.location.hash || document.hidden) { complete(); return; }
+  if (window.navigator?.connection?.saveData || reduced() || window.location.hash || document.hidden) { complete(); return; }
   const loaded = document.readyState === 'complete' ? Promise.resolve()
     : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
   const image = document.querySelector('.portrait-base');

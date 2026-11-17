@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 import { initializeAuth, inMemoryPersistence, signInAnonymously } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import { createLiveCursors, cursorColor } from "./live-cursors.js?v=20261112-presence";
+import { createLiveCursors, cursorColor } from "./live-cursors.js?v=20261115-display";
 import { firebaseConfig } from "./firebase-config.js";
 import {
   getDatabase,

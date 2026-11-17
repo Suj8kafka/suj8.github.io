@@ -13,6 +13,7 @@
     if (restoreFocus) btn.focus({ preventScroll: true });
   }
   btn.addEventListener('click', async event => {
+    vid.muted = document.documentElement?.dataset.sound === 'off';
     btn.disabled = true;
     vid.controls = true;
     try {
