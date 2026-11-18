@@ -150,7 +150,7 @@ export function createPrivacyDashboard({ document, window, fetch = window.fetch.
     const controller = new AbortController();
     active = controller;
     const current = ++version;
-    const timer = window.setTimeout(() => controller.abort(), 10000);
+    const timer = window.setTimeout(() => controller.abort(), 12000);
     refresh.disabled = true;
     await Promise.allSettled([loadUsage(controller.signal, current), loadEdge(controller.signal, current)]);
     window.clearTimeout(timer);

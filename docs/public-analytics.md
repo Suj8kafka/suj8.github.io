@@ -188,26 +188,26 @@ the public report remains readable. Do not claim historical usage before service
 activation. If setup is missing, the dashboard intentionally displays an error
 instead of invented values.
 
-### All Time update (12 November 2026, local changes)
+### All Time update (activated 18 November 2026)
 
-The All Time extension adds `0002-monthly-usage-history.sql`; it has not been
-applied to the live database by this change. After separate owner authorization,
-apply pending migrations to the existing database, deploy the analytics Worker,
-then publish the static website:
+The All Time extension adds `0002-monthly-usage-history.sql`. Owner authorization
+was received on 18 November 2026; the migration was applied to the existing
+database and the analytics Worker was deployed without replacing the database.
+The deployment commands were:
 
 ```powershell
 npx wrangler d1 migrations apply ANALYTICS_DB --remote --config cloudflare/wrangler.analytics.jsonc
 npx wrangler deploy --config cloudflare/wrangler.analytics.jsonc
 ```
 
-The migration creates an empty aggregate table without rewriting existing
-counters. All Time immediately includes retained daily history; the daily cron
-archives it as it ages. Already deleted history and browsing before activation
-cannot be recovered. If the new table is missing, All Time reports fail visibly
-and archival fails before deleting daily data. The existing shorter reports and
-collector still work without the new table. Verify `/usage?days=all`, `/usage?days=7`
-and `/usage?days=30`, then check the privacy page's default and range switching.
-All Time shows monthly chart bars; shorter ranges continue to show daily bars.
+The migration created an empty aggregate table without rewriting existing
+counters. All Time immediately included all retained daily history; the daily
+cron archives it as it ages. Already deleted history and browsing before the
+original collector activation cannot be recovered. If the new table is missing,
+All Time reports fail visibly and archival fails before deleting daily data.
+After deployment, `/usage?days=all`, `/usage?days=7` and the separate traffic
+endpoint returned HTTP 200. All Time shows monthly chart bars; shorter ranges
+continue to show daily bars.
 
 ## Cloudflare Free plan and the right sidebar
 

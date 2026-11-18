@@ -36,7 +36,7 @@ function harness(fetch, period = '7') {
   const timers = new Map();
   const media = { ...element(), matches: false };
   const window = { ...element(), matchMedia: () => media,
-    setTimeout(callback) { const id = timers.size + 1; timers.set(id, callback); return id; },
+    setTimeout(callback, delay) { const id = timers.size + 1; timers.set(id, { callback, delay }); return id; },
     clearTimeout(id) { timers.delete(id); }, localStorage: { getItem: () => 'dark', setItem() {} } };
   const dashboard = createPrivacyDashboard({ document, window, fetch });
   return { get, nodes, choices, document, window, timers, dashboard };
@@ -252,7 +252,9 @@ test('aborted requests produce a visible timeout and refresh remains usable', as
   const h = harness((_url, { signal }) => new Promise((_resolve, reject) => {
     signal.addEventListener('abort', () => reject(new Error('aborted')));
   }));
-  [...h.timers.values()][0]();
+  const timer = [...h.timers.values()][0];
+  assert.equal(timer.delay, 12000);
+  timer.callback();
   await flush();
   assert.match(h.get('[data-usage-status]').textContent, /timed out/);
   assert.match(h.get('[data-edge-status]').textContent, /timed out/);

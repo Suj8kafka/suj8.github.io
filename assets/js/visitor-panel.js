@@ -94,7 +94,7 @@ export function createVisitorPanel({ document, window, fetch = window.fetch.bind
     controller = new AbortController();
     const active = controller, version = ++requestVersion;
     refreshButton.disabled = true;
-    const timer = window.setTimeout(() => active.abort(), 9000);
+    const timer = window.setTimeout(() => active.abort(), 12000);
     try {
       const results = await Promise.allSettled([traffic(active.signal, version), usage(active.signal, version)]);
       if (destroyed || version !== requestVersion) return;

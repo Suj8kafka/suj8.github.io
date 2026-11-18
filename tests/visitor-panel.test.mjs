@@ -38,7 +38,7 @@ function harness(fetch) {
   }
   const document = { ...node(), querySelector: get, createElement: node };
   const timers = new Map();
-  const window = { ...node(), setTimeout(callback) { const id = timers.size + 1; timers.set(id, callback); return id; }, clearTimeout: id => timers.delete(id) };
+  const window = { ...node(), setTimeout(callback, delay) { const id = timers.size + 1; timers.set(id, { callback, delay }); return id; }, clearTimeout: id => timers.delete(id) };
   let now = 0;
   const controller = createVisitorPanel({ document, window, fetch, now: () => now });
   return { get, document, window, controller, trafficStats, usageStats, lists, timers, setTime(value) { now = value; } };
@@ -91,7 +91,9 @@ test('timeouts show errors and page departure aborts requests and removes listen
     signal.addEventListener('abort', () => reject(new Error('aborted')));
   }));
   const loading = h.controller.load();
-  [...h.timers.values()][0](); await loading;
+  const timer = [...h.timers.values()][0];
+  assert.equal(timer.delay, 12000);
+  timer.callback(); await loading;
   assert.match(h.get('.cloudflare-analytics .cloudflare-analytics-status').textContent, /timed out/);
   assert.match(h.get('[data-sidebar-usage-status]').textContent, /timed out/);
   assert.equal(h.get('[data-cloudflare-refresh]').disabled, false);

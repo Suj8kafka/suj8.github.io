@@ -1,9 +1,13 @@
-Current activation (10 November 2026): the analytics Worker is deployed with
-the `portfolio-usage` D1 binding and its counter-table migration applied. The
-traffic endpoint and `/usage?days=7` both returned HTTP 200. The zone is on the
-Free Website plan; no account-plan upgrade was performed. The owner configured
-`CLOUDFLARE_API_TOKEN` as a Worker Secret, and the zone ID is in Wrangler variables.
-No secret value is stored in the repository.
+Current activation (18 November 2026): the analytics Worker is deployed with
+the `portfolio-usage` D1 binding and both migrations applied. Daily counters
+older than the most recent 90 UTC dates are archived into permanent monthly
+aggregates instead of being discarded. The traffic endpoint, `/usage?days=7`
+and `/usage?days=all` returned HTTP 200 after deployment. The traffic query has
+a ten-second upstream budget because the Cloudflare GraphQL response exceeded
+the previous six-second limit. The zone is on the Free Website plan; no
+account-plan upgrade was performed. The owner configured `CLOUDFLARE_API_TOKEN`
+as a Worker Secret, and the zone ID is in Wrangler variables. No secret value
+is stored in the repository.
 
 The right-hand visitor panel fetches aggregate metrics from:
 https://nameless-truth-99f0.sujeetkhadka00001.workers.dev

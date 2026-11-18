@@ -76,7 +76,7 @@ async function fetchAnalytics(request, env) {
     try {
       const response = await fetch(GRAPHQL_ENDPOINT, {
         method: "POST",
-        signal: AbortSignal.timeout(6000),
+        signal: AbortSignal.timeout(10000),
         headers: {
           authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
           "content-type": "application/json"

@@ -14,6 +14,12 @@ test('unconfigured analytics returns a non-cacheable error rather than zero metr
 
 test('queries hostname-scoped adaptive groups and maps counts, visits, paths and countries', async () => {
   const original = globalThis.fetch;
+  const originalTimeout = AbortSignal.timeout;
+  let timeout;
+  AbortSignal.timeout = milliseconds => {
+    timeout = milliseconds;
+    return new AbortController().signal;
+  };
   globalThis.fetch = async (url, options) => {
     assert.equal(url, 'https://api.cloudflare.com/client/v4/graphql');
     const body = JSON.parse(options.body);
@@ -37,7 +43,11 @@ test('queries hostname-scoped adaptive groups and maps counts, visits, paths and
     assert.deepEqual(data.paths, [{ name: '/work', value: 40 }]);
     assert.deepEqual(data.countries, [{ name: 'NP', value: 150 }]);
     assert.ok(!JSON.stringify(data).includes('test-token'));
-  } finally { globalThis.fetch = original; }
+    assert.equal(timeout, 10000);
+  } finally {
+    globalThis.fetch = original;
+    AbortSignal.timeout = originalTimeout;
+  }
 });
 
 test('upstream errors, empty zones, and network failures return 502', async () => {
