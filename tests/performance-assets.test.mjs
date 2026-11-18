@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url));
 const html = read('index.html').toString();
+const blogHtml = read('blog/index.html').toString();
 const attributes = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map(match => [match[1], match[2]]));
 
 test('selected-work imagery offers smaller responsive WebP sources without changing aspect ratios', () => {
@@ -19,6 +20,19 @@ test('selected-work imagery offers smaller responsive WebP sources without chang
   assert.match(html, /<source srcset="assets\/images\/selected-work\/nakka-screen-0-compact\.webp\?v=/);
   assert.ok(read('assets/images/selected-work/nakka-screen-0-compact.webp').length
     < read('assets/images/selected-work/nakka-screen-0.webp').length * .7);
+});
+
+test('notebook cards use compact thumbnails while archival originals remain available', () => {
+  const names = ['carrom-karrom', 'bus-reservation-system', 'nakka', '2048', 'connectum', 'nepali-festive-counter'];
+  for (const name of names) {
+    const path = `assets/images/blog/${name}-icon-192.png`;
+    const bytes = read(path);
+    const version = createHash('sha256').update(bytes).digest('hex').slice(0, 12);
+    assert.ok(bytes.length < 100000, `${path} should stay below 100 KB`);
+    assert.match(blogHtml, new RegExp(`${name}-icon-192\\.png\\?v=${version}`));
+  }
+  assert.equal([...blogHtml.matchAll(/-icon-192\.png\?v=/g)].length, names.length);
+  assert.equal([...blogHtml.matchAll(/-icon-192\.png\?v=[^"\s]+" width="192" height="192"/g)].length, names.length);
 });
 
 test('public image and font cache versions match their file contents', () => {

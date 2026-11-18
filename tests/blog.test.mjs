@@ -11,6 +11,11 @@ import { securityHeaders } from '../cloudflare/security-headers.mjs';
 const origin = 'https://www.sujeetkhadka.com.np';
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const pages = ['blog/index.html', 'blog/archive/index.html', ...Object.values(legacyArticles).map(slug => `blog/${slug}/index.html`)];
+const googleTagInline = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+`;
 const decodeHtml = source => source.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, (_, entity) => {
   if (entity[0] === '#') return String.fromCodePoint(entity[1].toLowerCase() === 'x' ? parseInt(entity.slice(2), 16) : Number(entity.slice(1)));
   return { amp:'&', lt:'<', gt:'>', quot:'"', apos:"'", nbsp:' ' }[entity.toLowerCase()];
@@ -120,10 +125,11 @@ test('all migrated pages are static, indexable, linked locally and share the por
     assert.match(html, /href="#blog-main">Skip to content/);
     assert.match(html, /\/assets\/css\/site\.css\?v=/);
     assert.match(html, /\/assets\/css\/blog\.css\?v=/);
-    assert.doesNotMatch(html, /blog\.sujeetkhadka|tailwindcss|googletagmanager/i);
+    assert.doesNotMatch(html, /blog\.sujeetkhadka|tailwindcss/i);
     for (const [, attributes, content] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (/\bsrc=/.test(attributes)) continue;
       if (/\bid="display-bootstrap"/.test(attributes)) continue; // Synchronized pre-paint preferences; CSP hash is tested separately.
+      if (content.replaceAll('\r\n', '\n') === googleTagInline) continue;
       assert.match(attributes, /\btype="application\/ld\+json"/, 'Only inert structured data may be inline');
       assert.doesNotThrow(() => JSON.parse(content));
     }
@@ -232,7 +238,7 @@ test('complete original article text and all imported files are retained', () =>
   }
   const index = read('blog/index.html');
   for (const name of ['carrom-karrom', 'nakka', '2048', 'bus-reservation-system', 'connectum', 'nepali-festive-counter']) {
-    assert.ok(index.includes(`/assets/images/blog/${name}-icon.png`), name);
+    assert.ok(index.includes(`/assets/images/blog/${name}-icon-192.png`), name);
   }
   assert.match(index, /About Sujeet Khadka/);
   assert.match(index, /Current Focus:/);
@@ -297,7 +303,7 @@ test('original photo and document URLs resolve to real local files after the dom
   }
   assert.match(read('blog/nepali-festive-counter/index.html'), /<iframe[^>]+src="https:\/\/nepalifestivecount\.netlify\.app"[^>]+loading="lazy"[^>]+sandbox="allow-scripts allow-same-origin"/);
   const framePolicy = securityHeaders['Content-Security-Policy'].split('; ').find(rule => rule.startsWith('frame-src '));
-  assert.equal(framePolicy, 'frame-src https://sujeet-portfolio.firebaseapp.com https://nepalifestivecount.netlify.app');
+  assert.equal(framePolicy, 'frame-src https://sujeet-portfolio.firebaseapp.com https://nepalifestivecount.netlify.app https://www.googletagmanager.com');
 });
 
 test('the blog footer uses the homepage theme control styles without size or typography overrides', () => {

@@ -34,10 +34,12 @@ script under the CSP. Deploy that change before activating the Worker.
 
 The CSP permits the site's current external fonts, particles script, Firebase
 modules/auth/database connections, IP country lookup, opt-in reverse geocoding,
-and analytics endpoint. Inline executable scripts and embedding are blocked.
-JSON-LD remains a non-executable metadata block. Archived pages use older scripts
-that are deliberately outside this allowlist; their interactive effects may be
-blocked. Inline styles remain allowed for the current animation implementation.
+the custom analytics endpoint, and the Google tag's Analytics-only endpoints.
+Only the exact display-preference and Google-tag inline bootstraps are allowed by
+hash; arbitrary inline executable scripts remain blocked. JSON-LD remains a
+non-executable metadata block. Archived pages use older scripts that are
+deliberately outside this allowlist; their interactive effects may be blocked.
+Inline styles remain allowed for the current animation implementation.
 
 HSTS lasts one year and intentionally does not opt independent subdomains into
 HSTS or request preload. Geolocation remains restricted to this origin so the

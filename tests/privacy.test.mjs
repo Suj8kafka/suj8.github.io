@@ -271,6 +271,10 @@ test('footer opens a standalone dashboard before the readable policy and never o
   assert.match(privacy, /ipwho\.is/);
   assert.match(privacy, /BigDataCloud/);
   assert.match(privacy, /Global Privacy Control/);
+  assert.match(privacy, /Google Analytics may use first-party cookies/);
+  assert.match(privacy, /<code>_ga<\/code>/);
+  assert.match(privacy, /Google Analytics data safeguards/);
+  assert.match(privacy, /datetime="2026-11-18">18 November 2026/);
   assert.match(privacy, /<option value="all" selected>All Time<\/option>/);
   assert.match(privacy, /<option value="7">Last 7 days<\/option>/);
   assert.match(privacy, /<option value="30">Last 30 days<\/option>/);

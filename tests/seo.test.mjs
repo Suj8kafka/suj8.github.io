@@ -135,3 +135,24 @@ test('every sitemap entry is a real canonical indexable page and private or dupl
   assert.match(read('robots.txt'), /Sitemap: https:\/\/www\.sujeetkhadka\.com\.np\/sitemap\.xml/);
   assert.match(read('login/index.html'), /name="robots" content="noindex, nofollow"/);
 });
+
+test('privacy sharing metadata is complete and the custom 404 offers crawlable recovery links', () => {
+  const privacy = read('privacy/index.html');
+  const description = meta(privacy, 'description');
+  assert.match(meta(privacy, 'robots'), /max-image-preview:large/);
+  for (const name of ['og:site_name', 'og:title', 'og:description', 'og:url', 'og:image', 'og:image:alt',
+    'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:image:alt']) {
+    assert.ok(meta(privacy, name), `Missing ${name}`);
+  }
+  assert.equal(meta(privacy, 'og:description'), description);
+  assert.equal(meta(privacy, 'twitter:description'), description);
+
+  const missing = read('404.html');
+  assert.equal([...missing.matchAll(/<h1\b/g)].length, 1);
+  assert.equal(meta(missing, 'robots'), 'noindex, follow');
+  assert.ok(meta(missing, 'description').length >= 100);
+  for (const destination of ['/', '/#work', '/blog/', '/#contact']) {
+    assert.match(missing, new RegExp(`href="${destination.replace('/', '\\/')}"`));
+  }
+  assert.ok(existsSync(new URL('../assets/css/error.css', import.meta.url)));
+});

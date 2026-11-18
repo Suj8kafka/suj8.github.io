@@ -58,23 +58,32 @@ test('CSP blocks embedding and inline executable scripts while allowing site dep
   assert.ok(!scripts.includes("'unsafe-inline'"));
   assert.ok(!scripts.includes("'unsafe-eval'"));
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  assert.equal(/<script\s*>/i.test(html), false);
+  const bareInlineScripts = [...html.matchAll(/<script\s*>([\s\S]*?)<\/script>/gi)];
+  assert.equal(bareInlineScripts.length, 1);
+  assert.match(bareInlineScripts[0][1], /window\.dataLayer/);
   assert.match(html, /src="assets\/js\/intro-video\.js(?:\?[^"\s]+)?"/);
   assert.ok(csp.includes('wss://*.asia-southeast1.firebasedatabase.app'));
+  assert.ok(csp.includes('https://www.googletagmanager.com'));
+  assert.ok(csp.includes('https://*.google-analytics.com'));
   assert.ok(securityHeaders['Permissions-Policy'].includes('geolocation=(self)'));
 });
 
-test('preserved source websites and downloads are noindex while the portfolio and stories remain indexable', async () => {
+test('preserved source websites download as non-crawlable text while other downloads remain noindex', async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response('preserved content', { headers:{ 'Content-Type':'text/html' } });
   try {
     for (const path of ['/Blogpage', '/Blogpage/Blogpage/index.html', '/%42logpage/index.html', '/archive/legacy-homepage.html',
-      '/assets/documents/blog/source-pages/index.html', '/assets/documents/blog/original-blog-source.zip']) {
+      '/assets/documents/blog/source-pages/index.html']) {
       const response = await worker.fetch(new Request(`https://www.sujeetkhadka.com.np${path}`));
-      assert.equal(response.headers.get('X-Robots-Tag'), 'noindex, follow', path);
+      assert.equal(response.headers.get('X-Robots-Tag'), 'noindex, nofollow', path);
+      assert.equal(response.headers.get('Content-Type'), 'text/plain; charset=utf-8', path);
+      assert.equal(response.headers.get('Content-Disposition'), 'attachment', path);
       assert.equal(await response.text(), 'preserved content');
       assert.equal(response.status, 200);
     }
+    const download = await worker.fetch(new Request('https://www.sujeetkhadka.com.np/assets/documents/blog/original-blog-source.zip'));
+    assert.equal(download.headers.get('X-Robots-Tag'), 'noindex, follow');
+    assert.equal(download.headers.get('Content-Disposition'), null);
     for (const path of ['/', '/blog/', '/blog/carrom-karrom/', '/blog/archive/', '/docs/sujeet-khadka-cv-2026.pdf', '/archive-work/']) {
       const response = await worker.fetch(new Request(`https://www.sujeetkhadka.com.np${path}`));
       assert.equal(response.headers.get('X-Robots-Tag'), null, path);

@@ -25,6 +25,22 @@ The database stores historical totals after activation; visitors do not need to
 be online for their earlier activity to remain in those totals. It stores no
 individual visitor histories. The report is readable without Firebase sign-in.
 
+## Separate Google Analytics tag
+
+The maintained HTML pages also include Google tag `G-0000C91B56` immediately
+after `<head>`. This is separate from the public Cloudflare/D1 counters and does
+not feed the `/privacy/` dashboard. Google Analytics may use first-party cookies
+and a pseudonymous client identifier; its reports are private to the property
+owner. The public privacy policy describes this separate processing. Preserved
+source copies, archive downloads and markup fragments are not rewritten with the
+new tag.
+
+The security Worker permits the exact inline bootstrap by SHA-256 hash and only
+the Google Tag Manager and Analytics endpoints required for Analytics without
+advertising features. It does not enable arbitrary inline scripts or
+`unsafe-eval`. As with the other response-header rules, this CSP update is not
+active until the security Worker is separately deployed.
+
 The dashboard includes page loads, referral categories, countries, browser/device
 families, clicks, sections reached, active time per page and section, and scroll
 milestones. These are activity counts, not unique people or returning visitors.
