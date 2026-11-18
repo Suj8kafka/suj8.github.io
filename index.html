@@ -319,6 +319,7 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
   }
   </script>
   <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261115-contact">
+  <link rel="stylesheet" href="/assets/css/portfolio-assistant.css?v=20261118-assistant">
   <script type="module" src="/assets/js/display-preferences.js?v=20261115-display"></script>
 </head>
 
@@ -939,6 +940,48 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
     </section>
   </main>
 
+  <aside class="portfolio-assistant" data-portfolio-assistant
+    data-endpoint="https://portfolio-assistant.sujeetkhadka00001.workers.dev/api/chat">
+    <button class="assistant-launcher" type="button" aria-expanded="false" aria-controls="portfolio-assistant-panel"
+      data-assistant-launcher>
+      <span class="assistant-launcher-icon" aria-hidden="true">✦</span>
+      <span class="assistant-launcher-label">Ask about Sujeet</span>
+    </button>
+    <section class="assistant-panel" id="portfolio-assistant-panel" role="dialog" aria-modal="false"
+      aria-labelledby="portfolio-assistant-title" data-assistant-panel hidden>
+      <header class="assistant-header">
+        <span class="assistant-avatar" aria-hidden="true">SK</span>
+        <div class="assistant-identity">
+          <strong id="portfolio-assistant-title">Sujeet’s portfolio assistant</strong>
+          <span><i class="assistant-status-dot" aria-hidden="true"></i> Answers from verified portfolio notes</span>
+        </div>
+        <button class="assistant-close" type="button" aria-label="Close portfolio assistant" data-assistant-close>×</button>
+      </header>
+      <div class="assistant-conversation" data-assistant-conversation>
+        <div class="assistant-messages" aria-live="polite" aria-relevant="additions" data-assistant-messages>
+          <article class="assistant-message" data-role="assistant">
+            <p>Hi! I’m Sujeet’s AI portfolio assistant. Ask me about his background, skills, projects, experience, or how to get in touch.</p>
+          </article>
+        </div>
+        <div class="assistant-suggestions" role="group" aria-label="Suggested questions" data-assistant-suggestions>
+          <button class="assistant-suggestion" type="button" data-assistant-question="Who is this developer?">Who is this developer?</button>
+          <button class="assistant-suggestion" type="button" data-assistant-question="What technologies does he work with?">What technologies does he use?</button>
+          <button class="assistant-suggestion" type="button" data-assistant-question="Tell me about his projects.">Tell me about his projects</button>
+          <button class="assistant-suggestion" type="button" data-assistant-question="What is his professional experience?">Professional experience</button>
+          <button class="assistant-suggestion" type="button" data-assistant-question="How can I contact him?">How can I contact him?</button>
+        </div>
+      </div>
+      <form class="assistant-form" data-assistant-form>
+        <div class="assistant-input-row">
+          <textarea rows="1" maxlength="500" aria-label="Ask a question about Sujeet’s portfolio"
+            placeholder="Ask about skills, projects, or experience…" data-assistant-input required></textarea>
+          <button class="assistant-send" type="submit" aria-label="Send question" data-assistant-send>↑</button>
+        </div>
+        <p class="assistant-note">Each question is handled independently; conversations are not stored.</p>
+      </form>
+    </section>
+  </aside>
+
   <section class="footer-toolkit" aria-label="Tools and disciplines">
     <div class="footer-toolkit-dump" role="img"
       aria-label="Illustrated design toolkit: Figma, Photoshop, HTML, CSS, JavaScript, VS Code, GitHub and Godot">
@@ -989,6 +1032,7 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
   <script type="module" src="assets/js/visitor-panel.js?v=20261118-analytics-timeout"></script>
   <script type="module" src="assets/js/enhancements.js?v=20261115-display"></script>
   <script type="module" src="assets/js/usage-tracker.js?v=20261110-engagement"></script>
+  <script type="module" src="assets/js/portfolio-assistant.js?v=20261118-assistant"></script>
 </body>
 
 </html>

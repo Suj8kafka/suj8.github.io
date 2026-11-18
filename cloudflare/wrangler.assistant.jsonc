@@ -1,0 +1,40 @@
+{
+  "name": "portfolio-assistant",
+  "main": "portfolio-assistant.js",
+  "compatibility_date": "2026-11-18",
+  "workers_dev": true,
+  "vars": {
+    "SITE_HOSTNAME": "www.sujeetkhadka.com.np",
+    "AI_MODEL": "@cf/google/gemma-4-26b-a4b-it",
+    "ENVIRONMENT": "production"
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "d1_databases": [
+    {
+      "binding": "PORTFOLIO_DB",
+      "database_name": "portfolio-usage",
+      "database_id": "78e7a931-5b1b-471a-8a0c-05f1d000ac12",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "CHAT_RATE_LIMITER",
+      "namespace_id": "2001",
+      "simple": {
+        "limit": 12,
+        "period": 60
+      }
+    }
+  ],
+  "account_id": "5fddc9310f61d78dd833ea9ee0768875",
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
+  }
+}
