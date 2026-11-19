@@ -394,6 +394,7 @@ h2 { margin-bottom: 1.125rem; font: 600 clamp(2.25rem, 4vw, 3.5rem)/1.05 var(--d
 .experience-card:hover { transform: translateY(-6px) rotate(-1deg) scale(1.01); color: #222938; border-color: var(--ink); filter: saturate(1); box-shadow: 14px 14px 0 var(--shadow); }
 .experience-card.is-hovered { transform: translateY(-6px) rotate(-1deg) scale(1.01); color: #222938; border-color: var(--ink); filter: saturate(1); box-shadow: 14px 14px 0 var(--shadow); }
 .experience-card.is-hovered.card-orange { background: var(--orange) !important; }.experience-card.is-hovered.card-blue { background: var(--blue) !important; }.experience-card.is-hovered.card-lime { background: var(--lime) !important; }.experience-card.is-hovered.card-pink { background: var(--pink) !important; }
+[data-theme="mono"] :is(.experience-node:hover .card-orange, .experience-card.card-orange:hover, .experience-card.is-hovered.card-orange) { background: #eeeeee !important; }
 .map-hint { margin: 2.125rem 0 0; color: var(--muted); text-align: center; font: .75rem "DM Mono", monospace; text-transform: uppercase; }.map-hint span { color: var(--orange); padding: 0 .5rem; }
 .experience-notes { display: block; width: fit-content; margin: 3.875rem auto 0; padding-bottom: .4375rem; border-bottom: 1px solid var(--ink); font-size: .75rem; }.experience-notes span { color: var(--orange); margin-left: .5rem; }.experience-notes-secondary { margin-top: 1.125rem; }
 .skills { padding-top: 6.875rem; overflow: hidden; }

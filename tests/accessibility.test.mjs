@@ -121,6 +121,15 @@ test('monochrome skill cards use light grayscale surfaces with dark readable tex
   assert.ok(ratio('#111111', '#d9d9d9') >= 4.5);
 });
 
+test('monochrome experience cards keep a light readable surface on hover', () => {
+  const [, selectors, declarations] = css.match(/\[data-theme="mono"\] :is\(([^)]+)\)\s*\{([^}]+)\}/);
+  assert.match(selectors, /\.experience-node:hover \.card-orange/);
+  assert.match(selectors, /\.experience-card\.card-orange:hover/);
+  assert.match(selectors, /\.experience-card\.is-hovered\.card-orange/);
+  assert.match(declarations, /background:\s*#eeeeee !important/);
+  assert.ok(ratio('#222938', '#eeeeee') >= 4.5);
+});
+
 test('public footers use natural lowercase labels without decorative arrows', () => {
   const footerRule = css.match(/\.site-footer\s*\{([^}]+)\}/)[1];
   assert.doesNotMatch(footerRule, /text-transform:\s*uppercase/);
