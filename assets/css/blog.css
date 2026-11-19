@@ -49,7 +49,7 @@
 .design-prototype-button text { fill: var(--paper); font: 500 .625rem var(--body); }
 .design-note { transform: rotate(-5deg); transform-box: fill-box; transform-origin: center; }
 .design-note rect { fill: var(--lime); }
-.design-note text { fill: #18211e; font: .6875rem var(--body); }
+.design-note text { fill: #222938; font: .6875rem var(--body); }
 .design-cursor { transform: translate(152px, 147px); }
 .design-cursor path { fill: var(--accent-text); stroke: var(--paper); stroke-width: 1.5; stroke-linejoin: round; }
 .design-cursor rect { fill: var(--accent-text); }
@@ -232,6 +232,52 @@
   .story-toc li { break-inside: avoid; }
   .story-body { font-size: 1rem; }
   .story-next { margin-bottom: 3.125rem; }
+}
+
+/* Editorial type scale: 17px reading copy, 14px UI and 13px metadata. */
+.blog-nav,
+.notebook-search,
+.notebook-topics button,
+.notebook-card .notebook-card-link,
+.notebook-topic-grid a,
+.notebook-socials a,
+.story-breadcrumb,
+.story-next,
+.story-related a { font-size: var(--type-label); }
+
+:is(.notebook-count, .notebook-card .eyebrow, .notebook-section-note, .story-meta,
+  .story-facts dt, .story-toc h2, .story-toc a, .story-body figcaption,
+  .story-origin-note, .story-credit, .design-loop-footer) {
+  font-size: var(--type-caption);
+}
+
+:is(.notebook-feature-copy > p:not(.eyebrow), .notebook-card > p:not(.eyebrow),
+  .notebook-elsewhere p, .notebook-topic-grid p, .notebook-project p,
+  .notebook-about p, .notebook-about li, .notebook-document-list a,
+  .story-facts dd) {
+  font-size: var(--type-body);
+}
+
+.notebook-intro-with-design .notebook-intro-copy,
+.notebook-intro > p,
+.notebook-intro-copy { font-size: var(--type-body-large); }
+.notebook-search input { font-size: var(--type-body); }
+.story-body { font-size: var(--type-body-large); }
+
+/* These labels live inside the explanatory design diagram, so they stay secondary but legible. */
+.design-small-text,
+.design-process-labels,
+.design-selection text,
+.design-ui-copy,
+.design-prototype-button text,
+.design-note text,
+.design-cursor text { font-size: .75rem; }
+
+@media (max-width: 800px) {
+  .blog-nav { font-size: var(--type-label); }
+  .notebook-intro > p,
+  .notebook-intro-copy { font-size: var(--type-body); }
+  .story-body { font-size: var(--type-body-large); }
 }
 @media (max-width: 520px) {
   .notebook-grid { grid-template-columns: 1fr; }

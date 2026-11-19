@@ -9,12 +9,12 @@
   font-display: swap;
 }
 :root {
-  color-scheme: light dark;
-  --paper: #f5f3ee;
-  --ink: #171714;
-  --muted: #65645e;
-  --line: #cfcbc1;
-  --accent: #d84a2b;
+  color-scheme: light;
+  --paper: #ffffff;
+  --ink: #111111;
+  --muted: #5b5b5b;
+  --line: #d4d4d4;
+  --accent: #202020;
 }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
@@ -72,10 +72,7 @@ h1 em { color: var(--accent); font-style: normal; }
 }
 .error-actions a:hover, .error-actions a:focus-visible { border-color: var(--ink); }
 .error-actions .error-primary { color: var(--paper); background: var(--ink); border-color: var(--ink); }
-.error-footnote { margin: 0; color: var(--muted); font-size: .75rem; }
-@media (prefers-color-scheme: dark) {
-  :root { --paper: #141412; --ink: #f2efe7; --muted: #aaa69d; --line: #3d3b36; --accent: #ff7a59; }
-}
+.error-footnote { margin: 0; color: var(--muted); font-size: .8125rem; }
 @media (max-width: 520px) {
   .error-page { width: calc(100% - 32px); padding: 22px 0; }
   .error-card { padding: 3.5rem 0; }

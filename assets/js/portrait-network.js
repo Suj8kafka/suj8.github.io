@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261115-display';
+import { motionIsReduced } from './display-state.js?v=20261119-palette-cycles';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export function monochromeFill(fill) {
@@ -27,6 +27,38 @@ export function portraitWave(parts, origin, viewBox) {
     return { delay: Math.max(0, Math.min(1120, Math.round(phase * 1100 + variation))),
       duration: 650, fillLead: 100, outlineDuration: 850 };
   });
+}
+
+export function portraitWaveDuration(wave) {
+  return wave.reduce((longest, timing) => Math.max(longest,
+    timing.delay + timing.fillLead + timing.duration), 0);
+}
+
+export function createPortraitPaletteGate(dispatch, limit = 2) {
+  let completed = 0, previewing = false, revealed = false;
+  return {
+    start(detail = {}) {
+      if (completed >= limit || previewing || revealed) return false;
+      previewing = true;
+      dispatch('preview', { ...detail, completed, limit });
+      return true;
+    },
+    complete() {
+      if (!previewing || completed >= limit) return false;
+      previewing = false; revealed = true; completed++;
+      dispatch('reveal', { completed, limit });
+      return true;
+    },
+    reset() {
+      if (!previewing && !revealed) return false;
+      const wasRevealed = revealed;
+      previewing = revealed = false;
+      dispatch('reset', { completed, limit, wasRevealed });
+      return true;
+    },
+    get completed() { return completed; },
+    get available() { return completed < limit; }
+  };
 }
 
 function importArtwork(document, window, source) {
@@ -69,7 +101,11 @@ export function createPortraitNetwork({ document, window }) {
   const hover = window.matchMedia('(hover: hover) and (pointer: fine)');
   const abort = new window.AbortController();
   const listeners = [];
-  let svg, parts = [], viewBox, origin;
+  const paletteGate = createPortraitPaletteGate((phase, detail) => {
+    frame.dataset.paletteCycles = String(detail.completed);
+    document.dispatchEvent(new window.CustomEvent(`portrait:palette-${phase}`, { detail }));
+  });
+  let svg, parts = [], viewBox, origin, previewOrigin, revealTimer = 0;
   let active = false, hovering = false, focused = false, interactive = false, destroyed = false;
 
   function listen(target, event, callback) {
@@ -82,6 +118,12 @@ export function createPortraitNetwork({ document, window }) {
     const point = svg.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
     origin = point.matrixTransform(matrix.inverse());
   }
+  function pointerInsideFrame(event) {
+    const bounds = frame.getBoundingClientRect();
+    return Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+      && event.clientX >= bounds.left && event.clientX <= bounds.right
+      && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+  }
   function paint(colour, immediate = false) {
     const wave = colour && interactive && !immediate ? portraitWave(parts, origin, viewBox) : null;
     frame.dataset.pieceTransition = immediate ? 'none' : colour ? 'colour' : 'mono';
@@ -93,17 +135,27 @@ export function createPortraitNetwork({ document, window }) {
       part.element.style.transitionDuration = `${immediate ? 0 : timing?.duration || 420}ms`;
       part.element.style.fill = colour ? part.colour : part.monochrome;
     });
+    return wave ? portraitWaveDuration(wave) : 0;
   }
   function show(value, immediate = false) {
     if (!interactive) value = true;
     if (active === value) return;
+    if (!value) paletteGate.reset();
     active = value;
-    paint(active, immediate || !interactive);
+    window.clearTimeout?.(revealTimer);
+    const duration = paint(active, immediate || !interactive);
     frame.dataset.networkActive = String(active);
     control.setAttribute('aria-pressed', String(active));
     control.setAttribute('aria-label', active ? 'Show the vector portrait in monochrome' : 'Show the vector portrait in colour');
+    if (active && duration && paletteGate.start(previewOrigin)) {
+      revealTimer = window.setTimeout(() => {
+        if (destroyed || !active) return;
+        paletteGate.complete();
+      }, duration);
+    }
   }
   function configure() {
+    paletteGate.reset();
     interactive = !motionIsReduced(document.documentElement, motion) && hover.matches;
     frame.dataset.networkMode = interactive ? 'interactive' : 'static';
     control.hidden = !interactive;
@@ -139,10 +191,19 @@ export function createPortraitNetwork({ document, window }) {
     });
     listen(frame, 'pointerenter', event => {
       if (!interactive || event.pointerType !== 'mouse') return;
-      pointFromEvent(event); hovering = true; show(true);
+      pointFromEvent(event); previewOrigin = { x: event.clientX, y: event.clientY }; hovering = true; show(true);
     });
     listen(frame, 'pointermove', event => { if (interactive && event.pointerType === 'mouse') pointFromEvent(event); });
-    listen(frame, 'pointerleave', () => { hovering = false; if (!focused) show(false); });
+    listen(frame, 'pointerleave', event => {
+      if (pointerInsideFrame(event)) return;
+      hovering = false;
+      if (!focused) show(false);
+    });
+    listen(document, 'pointermove', event => {
+      if (!hovering || event.pointerType !== 'mouse' || pointerInsideFrame(event)) return;
+      hovering = false;
+      if (!focused) show(false);
+    });
     listen(control, 'focus', () => { focused = true; show(true); });
     listen(control, 'blur', () => { focused = false; if (!hovering) show(false); });
     listen(control, 'click', () => show(!active));
@@ -159,11 +220,14 @@ export function createPortraitNetwork({ document, window }) {
   });
 
   return { ready, destroy() {
+    paletteGate.reset();
     destroyed = true;
     abort.abort();
+    window.clearTimeout?.(revealTimer);
     listeners.forEach(remove => remove());
     svg?.remove();
-    delete frame.dataset.networkMode; delete frame.dataset.networkActive; delete frame.dataset.vectorReady; delete frame.dataset.pieceTransition;
+    delete frame.dataset.networkMode; delete frame.dataset.networkActive; delete frame.dataset.paletteCycles;
+    delete frame.dataset.vectorReady; delete frame.dataset.pieceTransition;
     control.hidden = true;
   } };
 }

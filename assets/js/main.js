@@ -7,11 +7,6 @@ const skillDialogTitle = document.getElementById("skill-dialog-title");
 const skillDialogDescription = document.querySelector(".skill-dialog-description");
 const skillStack = document.querySelector(".skill-stack");
 const skillDialogClose = document.querySelector(".skill-dialog-close");
-let storedTheme;
-try { storedTheme = localStorage.getItem("portfolio-theme"); } catch {}
-const themeChoices = document.querySelectorAll("[data-theme-choice]");
-const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
-let themePreference = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "auto";
 let activeSkillCard = null;
 let skillFocusFrame = 0;
 
@@ -117,29 +112,6 @@ function openSkillModal(card) {
   });
 }
 
-function applyTheme(preference) {
-  themePreference = preference;
-  root.dataset.theme = preference === "auto" ? (systemTheme.matches ? "dark" : "light") : preference;
-  try { localStorage.setItem("portfolio-theme", preference); } catch {}
-  updateThemeControl();
-}
-
-function updateThemeControl() {
-  themeChoices.forEach((choice) => {
-    choice.setAttribute("aria-pressed", String(choice.dataset.themeChoice === themePreference));
-  });
-}
-
-themeChoices.forEach((choice) => {
-  choice.addEventListener("click", () => applyTheme(choice.dataset.themeChoice));
-});
-
-systemTheme.addEventListener("change", () => {
-  if (themePreference === "auto") applyTheme("auto");
-});
-
-applyTheme(themePreference);
-updateThemeControl();
 document.getElementById("year").textContent = new Date().getFullYear();
 
 document.querySelectorAll(".company-logo").forEach((logo) => {

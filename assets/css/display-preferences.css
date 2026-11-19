@@ -67,7 +67,7 @@ html[data-text-scale="130"] { font-size: 130%; }
 .display-popover fieldset { min-inline-size: 0; margin: 0 0 1rem; padding: 0; border: 0; }
 .display-popover legend { padding: 0; margin-block-end: .4rem; font-weight: 600; }
 .display-options { display: flex; flex-wrap: wrap; gap: .4rem; }
-.display-options label { position: relative; flex: 1 1 auto; display: flex; cursor: pointer; }
+.display-options label { position: relative; flex: 1 1 auto; display: flex; min-inline-size: 4.5rem; cursor: pointer; }
 .display-options input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
 .display-options span { display: flex; flex: 1; align-items: center; justify-content: center; min-block-size: 2.75rem; padding: .45rem .6rem; border: 1px solid var(--muted); border-radius: .5rem; text-align: center; }
 .display-options input:checked + span { color: var(--paper); background: var(--ink); border-color: var(--ink); font-weight: 600; }
@@ -209,3 +209,10 @@ html[data-contrast="high"] :focus-visible { outline: 3px solid var(--accent-text
     max-block-size: calc(100dvh - 1rem);
   }
 }
+
+/* Display controls must remain readable even at the default text scale. */
+.display-trigger,
+.display-popover,
+#display-description,
+.display-note,
+.display-status { font-size: var(--type-label); }

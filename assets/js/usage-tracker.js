@@ -62,7 +62,7 @@ export function createUsageTracker({ document, window, fetch = window.fetch.bind
     const control = event.target.closest?.('a[href], button');
     if (!control) return;
     let name;
-    if (control.matches('[data-theme-choice]')) name = 'theme-change';
+    if (control.matches('[data-display-pref="theme"]')) name = 'theme-change';
     else if (control.matches('.skill-card-trigger')) name = 'skill-open';
     else if (control.matches('a[href]')) {
       const url = new URL(control.href, window.location.href);

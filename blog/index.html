@@ -13,11 +13,13 @@
   <script id="display-bootstrap">window.skDisplayPreferences = (function hydrateDisplayPreferences({ document, window }) {
   const key = 'sk-a11y-prefs';
   const allowed = {
+    theme: ['mono', 'original', 'dark', 'auto'],
     layout: ['crafted', 'reader'], motion: ['full', 'reduced'], sound: ['on', 'off'],
     contrast: ['standard', 'high'], textScale: ['100', '115', '130'], dyslexiaSpacing: ['off', 'on']
   };
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const contrast = window.matchMedia('(prefers-contrast: more)');
+  const colourScheme = window.matchMedia('(prefers-color-scheme: dark)');
   function normalize(value) {
     const clean = {};
     if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -28,18 +30,25 @@
     return clean;
   }
   function read() {
-    try { return normalize(JSON.parse(window.localStorage.getItem(key))); } catch { return {}; }
+    try {
+      const stored = normalize(JSON.parse(window.localStorage.getItem(key)));
+      return stored;
+    } catch { return {}; }
   }
   function resolve(overrides) {
     overrides = normalize(overrides);
-    const prefs = { layout: 'crafted', motion: motion.matches ? 'reduced' : 'full',
+    const prefs = { theme: 'mono', layout: 'crafted', motion: motion.matches ? 'reduced' : 'full',
       contrast: contrast.matches ? 'high' : 'standard', textScale: '100', dyslexiaSpacing: 'off', ...overrides };
     prefs.sound = overrides.sound || (prefs.motion === 'reduced' ? 'off' : 'on');
     return prefs;
   }
   function apply(overrides) {
     const prefs = resolve(overrides);
-    Object.keys(allowed).forEach(name => { document.documentElement.dataset[name] = prefs[name]; });
+    Object.keys(allowed).forEach(name => {
+      if (name !== 'theme') document.documentElement.dataset[name] = prefs[name];
+    });
+    document.documentElement.dataset.theme = prefs.theme === 'auto'
+      ? (colourScheme.matches ? 'dark' : 'original') : prefs.theme;
     return prefs;
   }
   const overrides = read();
@@ -49,17 +58,17 @@
   if (document.documentElement.hasAttribute?.('data-page-styles')
     && (initial.layout === 'reader' || initial.textScale !== '100' || initial.dyslexiaSpacing === 'on')) {
     const sheet = document.createElement('link');
-    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261115-display';
+    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261119-footer-labels';
     sheet.setAttribute('blocking', 'render');
     document.head.append(sheet);
   }
-  return { key, allowed, motion, contrast, normalize, read, resolve, apply, overrides };
+  return { key, allowed, motion, contrast, colourScheme, normalize, read, resolve, apply, overrides };
 })({ document, window });</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="UI/UX design case studies by Sujeet Khadka, a product designer in Nepal. Explore Figma workflows, mobile game interfaces, and responsive web projects.">
   <meta name="author" content="Sujeet Khadka">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#f5f3ee">
+  <meta name="theme-color" content="#ffffff">
   <title>Sujeet Khadka | UI/UX Design Blog &amp; Case Studies</title>
   <link rel="canonical" href="https://www.sujeetkhadka.com.np/blog/">
   <script type="application/ld+json">
@@ -193,12 +202,12 @@
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/selected-work/carrom-karrom-screen.webp?v=e60cb85f1d1e">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
   <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
-  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-display">
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261119-footer-labels">
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
-  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-display">
-  <script type="module" src="/assets/js/blog.js?v=20261115-display"></script>
-  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261115-display-contrast">
-  <script type="module" src="/assets/js/display-preferences.js?v=20261115-display"></script>
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261119-type-scale">
+  <script type="module" src="/assets/js/blog.js?v=20261119-palette-cycles"></script>
+  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261119-palette-cycles">
+  <script type="module" src="/assets/js/display-preferences.js?v=20261119-footer-labels"></script>
 </head>
 <body class="blog-page">
   <a class="skip-link" href="#blog-main">Skip to content</a>
@@ -308,14 +317,9 @@
     <aside class="notebook-elsewhere" aria-labelledby="elsewhere-title"><h2 id="elsewhere-title">A few more corners of the work.</h2><p><a href="https://www.figma.com/design/vTd8UGasRB1fnhrO4hqUcI/Connectum?node-id=0-1" target="_blank" rel="noopener noreferrer">Connectum: game UI &amp; assets in Figma <span aria-hidden="true">↗</span></a> is another visual experiment. For essays on interaction and visual design, <a href="https://sujeetkhadka.medium.com" target="_blank" rel="noopener noreferrer">find my writing on Medium <span aria-hidden="true">↗</span></a>. You can also <a href="/blog/archive/">explore earlier pages and drafts</a> or <a href="/#contact">get in touch</a>.</p></aside>
   </main>
   <footer class="site-footer blog-footer">
-    <span>© 2026 Sujeet Khadka · Notes from the work.</span>
-    <div class="footer-theme" role="group" aria-label="Colour theme" data-blog-theme hidden>
-      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
-      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
-      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
-    </div>
-    <a href="/privacy/">Privacy &amp; public analytics</a>
-    <a href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+    <span>© 2026 Sujeet Khadka · notes from the work.</span>
+    <a href="/privacy/">privacy &amp; public analytics</a>
+    <a href="/">back to portfolio</a>
   </footer>
 </body>
 </html>

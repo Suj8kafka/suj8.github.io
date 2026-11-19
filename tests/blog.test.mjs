@@ -82,28 +82,9 @@ test('notebook filters combine topic with all search words and recover from empt
   assert.equal(prevented, true);
 });
 
-test('notebook themes share the portfolio preference and follow system changes only in Auto', () => {
-  const page = harness({ stored: 'dark' });
-  assert.equal(page.document.documentElement.dataset.theme, 'dark');
-  assert.equal(page.choices[1].attributes['aria-pressed'], 'true');
-  page.system.emit('change');
-  assert.equal(page.document.documentElement.dataset.theme, 'dark');
-  page.choices[0].emit('click');
-  assert.equal(page.document.documentElement.dataset.theme, 'light');
-  assert.deepEqual(page.saved.at(-1), ['portfolio-theme', 'light']);
-  page.choices[2].emit('click');
-  page.system.matches = true;
-  page.system.emit('change');
-  assert.equal(page.document.documentElement.dataset.theme, 'dark');
-  assert.equal(page.choices[2].attributes['aria-pressed'], 'true');
-  assert.deepEqual(page.saved.at(-1), ['portfolio-theme', 'auto']);
-});
-
-test('article themes work with blocked storage and cleanup releases all owned listeners', () => {
-  const article = harness({ blockedStorage: true, dark: true, article: true });
-  assert.equal(article.document.documentElement.dataset.theme, 'dark');
-  article.choices[0].emit('click');
-  assert.equal(article.document.documentElement.dataset.theme, 'light');
+test('blog filtering leaves themes to Display preferences and cleanup releases owned listeners', () => {
+  const article = harness({ article: true });
+  assert.equal(article.document.documentElement.dataset.theme, undefined);
   article.controller.destroy();
   assert.equal(article.system.listenerCount(), 0);
   assert.ok(article.choices.every(choice => choice.listenerCount() === 0));
@@ -306,13 +287,13 @@ test('original photo and document URLs resolve to real local files after the dom
   assert.equal(framePolicy, 'frame-src https://sujeet-portfolio.firebaseapp.com https://nepalifestivecount.netlify.app https://www.googletagmanager.com');
 });
 
-test('the blog footer uses the homepage theme control styles without size or typography overrides', () => {
+test('the blog footer stays clean after theme controls move into Display preferences', () => {
   const stylesheet = read('assets/css/blog.css');
   assert.doesNotMatch(stylesheet, /\.footer-theme\b/);
   for (const path of pages) {
     const html = read(path);
     assert.match(html, /<footer class="site-footer blog-footer">/);
-    assert.equal([...html.matchAll(/data-theme-choice="(?:light|dark|auto)"/g)].length, 3);
+    assert.doesNotMatch(html, /data-theme-choice|data-blog-theme/);
   }
 });
 

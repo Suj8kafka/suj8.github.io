@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Explore public website analytics and learn how Sujeet Khadka's portfolio handles usage data, live presence and your privacy.">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#f5f3ee">
+  <meta name="theme-color" content="#ffffff">
   <title>Analytics & Privacy — Sujeet Khadka</title>
   <link rel="canonical" href="https://www.sujeetkhadka.com.np/privacy/">
   <meta property="og:type" content="website">
@@ -29,13 +29,14 @@
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/sujeet-at-exhibition.jpeg?v=8449d193e9e6">
   <meta name="twitter:image:alt" content="Sujeet Khadka viewing artwork at an exhibition">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
-  <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
-  <link rel="stylesheet" href="/assets/css/site.css?v=20261112-refinements">
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261119-footer-labels">
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
-  <link rel="stylesheet" href="/assets/css/privacy.css?v=20261117-illustration-draft">
-  <script type="module" src="/assets/js/privacy.js?v=20261118-analytics-timeout"></script>
+  <link rel="stylesheet" href="/assets/css/privacy.css?v=20261119-type-scale">
+  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261119-palette-cycles">
+  <script type="module" src="/assets/js/display-preferences.js?v=20261119-footer-labels"></script>
+  <script type="module" src="/assets/js/privacy.js?v=20261119-palette"></script>
   <script type="module" src="/assets/js/privacy-illustration.js?v=20261117-draft"></script>
-  <script type="module" src="/assets/js/usage-tracker.js?v=20261110-engagement"></script>
+  <script type="module" src="/assets/js/usage-tracker.js?v=20261119-palette"></script>
 </head>
 <body class="privacy-page">
   <a class="privacy-skip" href="#privacy-main">Skip to content</a>
@@ -193,7 +194,7 @@
           </section>
           <section id="policy-storage" aria-labelledby="storage-title">
             <h3 id="storage-title">What stays in your browser</h3>
-            <p>Your colour theme is saved locally so the site can remember Light, Dark or Auto. The welcome animation stores a seen flag in local and session storage so it does not repeat unnecessarily. The portfolio assistant stores a random rate-limit identifier. These browser values are separate from public analytics and can be removed by clearing this site’s browser data.</p>
+            <p>Your display preferences are saved locally so the site can remember Monochrome, Original, Dark or System themes alongside reading and motion choices. The welcome animation stores a seen flag in local and session storage so it does not repeat unnecessarily. The portfolio assistant stores a random rate-limit identifier. These browser values are separate from public analytics and can be removed by clearing this site’s browser data.</p>
             <p>The owner’s login page uses Firebase authentication to manage availability. Login credentials and owner access are not part of this public analytics dashboard.</p>
           </section>
           <section id="policy-services" aria-labelledby="services-title">
@@ -214,8 +215,7 @@
   </main>
   <footer class="site-footer">
     <span>© <span data-year>2026</span> Sujeet Khadka</span>
-    <div class="footer-theme" role="group" aria-label="Colour theme"><button type="button" data-theme-choice="light">Light</button><button type="button" data-theme-choice="dark">Dark</button><button type="button" data-theme-choice="auto">Auto</button></div>
-    <div class="footer-links"><a href="/">Portfolio ↗</a><a href="#analytics-title">Analytics ↑</a><a href="#privacy-policy">Privacy & policy</a></div>
+    <div class="footer-links"><a href="/">portfolio</a><a href="#analytics-title">analytics</a><a href="#privacy-policy">privacy & policy</a></div>
   </footer>
 </body>
 </html>

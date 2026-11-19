@@ -46,3 +46,23 @@
 .preview-caption { margin: 28px 0 8px; color: var(--muted); font-size: 12px; }
 .preview-details { font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; white-space: pre-wrap; }
 @media (max-width: 700px) { .admin-header { padding: 22px 20px; }.admin-main { padding: 36px 20px; }.login-card { padding: 26px 22px; }.editor-grid { grid-template-columns: 1fr; }.settings-card, .preview-card { padding: 22px; }.editor-heading { align-items: flex-start; } }
+
+/* Owner tools use the same legible UI scale as the public site. */
+.admin-back,
+.admin-page label,
+.work-type-options legend,
+.admin-text-button,
+.admin-primary,
+.admin-secondary,
+.admin-message,
+.account-access,
+.signed-in,
+.field-optional,
+.field-help,
+.preview-card .availability-badge,
+.preview-caption { font-size: var(--type-label); }
+.admin-intro,
+.preview-details { font-size: var(--type-body); }
+.admin-page input:not([type="checkbox"]),
+.admin-page select,
+.admin-page textarea { font-size: var(--type-body); }

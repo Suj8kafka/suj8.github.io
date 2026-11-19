@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { monochromeFill, portraitWave, createPortraitNetwork } from '../assets/js/portrait-network.js';
+import { monochromeFill, portraitWave, portraitWaveDuration, createPortraitPaletteGate,
+  createPortraitNetwork } from '../assets/js/portrait-network.js';
 
 test('the supplied vector2 portrait contains its original painted paths, without an embedded photo', () => {
   const svg = readFileSync(new URL('../assets/images/sujeet-hero-%20vector2.svg', import.meta.url), 'utf8');
@@ -38,6 +39,8 @@ test('the slower color wave outlines each part before filling and finishes withi
     assert.ok(part.outlineDuration >= part.fillLead + part.duration);
     assert.ok(part.delay + part.outlineDuration <= 2000);
   }
+  assert.ok(portraitWaveDuration(wave) <= 2000);
+  assert.equal(portraitWaveDuration([]), 0);
   const reverse = portraitWave(parts, { x: viewBox.width, y: viewBox.height }, viewBox);
   assert.ok(reverse.at(-1).delay < reverse[0].delay, 'Entering from another edge reverses the wave');
 });
@@ -48,6 +51,31 @@ test('large backgrounds tint slowly and out-of-frame hover positions are clamped
   assert.ok(wave[0].delay > 0 && wave[0].duration >= 1400, 'Large wall colors do not flash on immediately');
   assert.deepEqual(portraitWave(parts, { x: -100, y: -100 }, viewBox), portraitWave(parts, { x: 0, y: 0 }, viewBox));
   assert.deepEqual(portraitWave([], { x: 0, y: 0 }, viewBox), []);
+});
+
+test('only the first two completed portrait hovers can reveal the website palette', () => {
+  const events = [];
+  const gate = createPortraitPaletteGate((phase, detail) => events.push([phase, detail]));
+  for (let cycle = 1; cycle <= 2; cycle++) {
+    assert.equal(gate.start({ x: cycle * 10, y: cycle * 20 }), true);
+    assert.equal(gate.complete(), true);
+    assert.equal(gate.completed, cycle);
+    assert.equal(gate.reset(), true);
+  }
+  assert.equal(gate.available, false);
+  assert.equal(gate.start({ x: 30, y: 60 }), false, 'Third hover remains portrait-only');
+  assert.deepEqual(events.map(([phase]) => phase), ['preview', 'reveal', 'reset', 'preview', 'reveal', 'reset']);
+  assert.equal(events.at(-1)[1].wasRevealed, true);
+});
+
+test('leaving before the portrait finishes cancels the website preview without using a cycle', () => {
+  const events = [];
+  const gate = createPortraitPaletteGate((phase, detail) => events.push([phase, detail]));
+  assert.equal(gate.start(), true);
+  assert.equal(gate.reset(), true);
+  assert.equal(gate.completed, 0);
+  assert.equal(events.at(-1)[1].wasRevealed, false);
+  assert.equal(gate.start(), true);
 });
 
 function pendingPortrait(fetch, vectorSrc) {

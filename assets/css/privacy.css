@@ -136,3 +136,42 @@
   .privacy-page { transition: none; }
   .privacy-page *, .privacy-page *::before, .privacy-page *::after { scroll-behavior: auto; transition: none; animation: none; }
 }
+
+/* Privacy and analytics controls follow the shared readable UI scale. */
+.privacy-back,
+.privacy-page .eyebrow,
+.privacy-jump,
+.privacy-illustration-footer,
+.analytics-controls label,
+.analytics-controls :is(select, button),
+.analytics-note,
+.analytics-footnote,
+.analytics-status,
+.usage-stat > span,
+.usage-stats small,
+.analytics-card-heading > span,
+.analytics-list li,
+.analytics-list strong,
+.analytics-empty,
+.analytics-list li.analytics-empty,
+.analytics-card-note,
+.edge-stats dt,
+.policy-heading > p:last-child,
+.policy-nav,
+.policy-copy .policy-service-links { font-size: var(--type-label); }
+
+.policy-copy p { font-size: var(--type-body); }
+.privacy-intro-copy > p:not(.eyebrow) { font-size: var(--type-body-large); }
+
+/* Diagram copy is supporting information, but remains readable at normal zoom. */
+.privacy-mono,
+.privacy-card-caption,
+.privacy-process-label,
+.privacy-signal text { font-size: 12px; }
+.privacy-worker-title,
+.privacy-database-title { font-size: 13px; }
+.daily-chart li:not(.analytics-empty) { font-size: 12px; }
+
+@media (max-width: 800px) {
+  .privacy-intro-copy > p:not(.eyebrow) { font-size: var(--type-body); }
+}

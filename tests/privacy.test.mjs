@@ -182,7 +182,7 @@ test('a late unsupported-range response cannot change a newer selected period', 
   h.dashboard.destroy();
 });
 
-test('renders real counts with text nodes, preserves theme and clears stale data after failure', async () => {
+test('renders real counts with text nodes and clears stale data after failure', async () => {
   let fail = false;
   const h = harness(async url => {
     if (fail) return new Response('', { status: 503 });
@@ -193,7 +193,6 @@ test('renders real counts with text nodes, preserves theme and clears stale data
   assert.equal(h.get('[data-edge-stat="requests"]').textContent, '42');
   assert.equal(h.get('[data-usage-stat="activeTimeMs"]').textContent, '1m 0s');
   assert.equal(h.get('[data-usage-stat="averageActiveTimeMs"]').textContent, '12s');
-  assert.equal(h.document.documentElement.dataset.theme, 'dark');
   const country = h.get('[data-usage-list="countries"]').children[0];
   assert.equal(country.children[0].textContent, '<script>untrusted</script>');
   assert.equal(h.get('[data-daily-chart]').children.length, 7);

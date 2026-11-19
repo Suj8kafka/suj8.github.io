@@ -58,7 +58,8 @@ export function criticalStyles(source) {
       if (selector === '@font-face') return /Space Grotesk/.test(body) ? [`${selector}{${body.trim()}}`] : [];
       if (selector.startsWith('@')) return [];
       // These states cannot occur before the full sheet and enhancements are ready.
-      if (/\.is-detached|parallax|\.scroll-trail|\.live-presence-list|\.live-presence-item|\.availability-tooltip/.test(selector)) return [];
+      if (/\.is-detached|parallax|palette-(?:transition|preview)|\.scroll-trail|\.live-presence-list|\.live-presence-item|\.availability-tooltip/.test(selector)) return [];
+      if (selector === 'body::before') return [];
       if (/^\.(?:art-note|note-one|note-two)\b/.test(selector)) return [];
       if (/\.portrait-(?:vector|path|reveal|hint|color)/.test(selector) && !/\.portrait-base/.test(selector)) return [];
       if (selector.includes(':hover') && !selector.includes('h1 em')) return [];

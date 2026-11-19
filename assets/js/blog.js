@@ -7,28 +7,6 @@ export function createBlogController({ document, window }) {
     target.addEventListener(name, callback);
     listeners.push(() => target.removeEventListener(name, callback));
   };
-  const root = document.documentElement;
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-  const choices = [...document.querySelectorAll('[data-theme-choice]')];
-  let preference = 'auto';
-  try {
-    const stored = window.localStorage.getItem('portfolio-theme');
-    if (stored === 'light' || stored === 'dark') preference = stored;
-  } catch {}
-  function renderTheme() {
-    root.dataset.theme = preference === 'auto' ? (systemTheme.matches ? 'dark' : 'light') : preference;
-    choices.forEach(choice => choice.setAttribute('aria-pressed', String(choice.dataset.themeChoice === preference)));
-  }
-  choices.forEach(choice => listen(choice, 'click', () => {
-    preference = choice.dataset.themeChoice;
-    try { window.localStorage.setItem('portfolio-theme', preference); } catch {}
-    renderTheme();
-  }));
-  listen(systemTheme, 'change', renderTheme);
-  renderTheme();
-  const themeControls = document.querySelector('[data-blog-theme]');
-  if (themeControls) themeControls.hidden = false;
-
   const filters = document.querySelector('[data-notebook-filters]');
   const search = document.querySelector('[data-notebook-search]');
   const topics = [...document.querySelectorAll('[data-notebook-topic]')];
@@ -67,7 +45,6 @@ export function createBlogController({ document, window }) {
       cards.forEach(card => { card.hidden = false; });
       if (filters) filters.hidden = true;
       if (empty) empty.hidden = true;
-      if (themeControls) themeControls.hidden = true;
       if (count) count.textContent = `${cards.length} ${cards.length === 1 ? 'story' : 'stories'}`;
     }
   };

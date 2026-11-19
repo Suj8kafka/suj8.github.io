@@ -2,7 +2,11 @@
 
 ## Architecture
 
-The assistant is an optional enhancement to the static homepage:
+The assistant is an optional enhancement embedded in the homepage hero. A small
+WALL·E strolls along the portrait’s top edge, turns at each side, and pauses to
+greet pointer and keyboard users. Activating the character flips the portrait to
+reveal the assistant on its back; closing
+the assistant restores the portrait without covering the rest of the page:
 
 1. `assets/js/portfolio-assistant.js` sends one question at a time to a dedicated
    Cloudflare Worker. It does not send previous messages.
@@ -33,7 +37,7 @@ Workers AI allocation; quota exhaustion is shown as a temporary service error.
 - `cloudflare/portfolio-assistant.js`: request validation, retrieval, guardrails,
   model call and error handling.
 - `assets/css/portfolio-assistant.css` and `assets/js/portfolio-assistant.js`:
-  responsive, keyboard-accessible chat interface.
+  responsive, keyboard-accessible portrait flip, WALL·E launcher and assistant.
 - `tests/portfolio-assistant-worker.test.mjs` and
   `tests/portfolio-assistant.test.mjs`: backend and integration regressions.
 

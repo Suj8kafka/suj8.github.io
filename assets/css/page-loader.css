@@ -6,8 +6,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ink, #18211e);
-  background: var(--paper, #f5f3ee);
+  color: var(--ink, #222938);
+  background: var(--paper, #f7f2ec);
   transition: opacity .28s ease, visibility .28s ease;
   /* Also dismiss if JavaScript or a CDN dependency fails entirely. */
   animation: loader-failsafe 0s 5s forwards;
@@ -69,7 +69,7 @@
   cursor: pointer;
 }
 .loader-skip span { margin-left: 8px; }
-.loader-skip:hover { color: var(--ink, #18211e); }
+.loader-skip:hover { color: var(--ink, #222938); }
 .loader-skip:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 @keyframes loader-write {
   from { clip-path: inset(0 100% 0 0); opacity: .2; }

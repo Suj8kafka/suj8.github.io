@@ -140,7 +140,7 @@ html.loader-docked .ld-stage { width: 100%; padding: 28px 12px 12px; transform: 
 html.loader-docked .ld-top, html.loader-docked .ld-kicker { display: none; }
 html.loader-docked .ld-graphic { display: none; }
 html.loader-docked .ld-word { height: 42px; font-size: 30px; }
-html.loader-docked .ld-language { margin-top: 4px; font-size: 11px; }
+html.loader-docked .ld-language { margin-top: 4px; font-size: 13px; }
 html.loader-docked .ld-bar { width: 100px; height: 2px; margin-top: 10px; }
 html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; font: 22px/1 sans-serif; }
 @keyframes loader-panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -149,7 +149,7 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
   .ld-top { margin-bottom: 8px; font-size: 28px; }
   .ld-kicker { display: none; }
   .ld-word { height: 85px; font-size: 48px; }
-  .ld-language { margin-top: 4px; font-size: 12px; }
+  .ld-language { margin-top: 4px; font-size: 13px; }
   .ld-bar { margin-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {

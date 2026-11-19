@@ -43,10 +43,12 @@ export function createPortfolioAssistant({ document, window, fetchFn = window.fe
   const form = root.querySelector('[data-assistant-form]');
   const input = root.querySelector('[data-assistant-input]');
   const sendButton = root.querySelector('[data-assistant-send]');
+  const front = root.querySelector('[data-assistant-front]');
   const endpoint = root.dataset.endpoint || defaultEndpoint;
   const id = visitorId(window);
   let pendingController = null;
   let focusFrame = 0;
+  let closeTimer = 0;
 
   function scrollToLatest() {
     window.cancelAnimationFrame(focusFrame);
@@ -56,16 +58,26 @@ export function createPortfolioAssistant({ document, window, fetchFn = window.fe
   }
 
   function openPanel() {
+    window.clearTimeout(closeTimer);
     panel.hidden = false;
+    panel.setAttribute('aria-hidden', 'false');
+    front?.setAttribute('aria-hidden', 'true');
+    front?.setAttribute('inert', '');
     launcher.setAttribute('aria-expanded', 'true');
+    root.setAttribute('data-open', '');
     window.cancelAnimationFrame(focusFrame);
     focusFrame = window.requestAnimationFrame(() => input.focus({ preventScroll: true }));
   }
 
   function closePanel() {
-    panel.hidden = true;
+    root.removeAttribute('data-open');
+    panel.setAttribute('aria-hidden', 'true');
+    front?.removeAttribute('aria-hidden');
+    front?.removeAttribute('inert');
     launcher.setAttribute('aria-expanded', 'false');
     launcher.focus({ preventScroll: true });
+    window.clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(() => { panel.hidden = true; }, 560);
   }
 
   function appendMessage(role, text, options = {}) {
@@ -188,7 +200,14 @@ export function createPortfolioAssistant({ document, window, fetchFn = window.fe
   return {
     destroy() {
       pendingController?.abort();
+      window.clearTimeout(closeTimer);
       window.cancelAnimationFrame(focusFrame);
+      root.removeAttribute('data-open');
+      panel.hidden = true;
+      panel.setAttribute('aria-hidden', 'true');
+      front?.removeAttribute('aria-hidden');
+      front?.removeAttribute('inert');
+      launcher.setAttribute('aria-expanded', 'false');
       launcher.removeEventListener('click', openPanel);
       closeButton.removeEventListener('click', closePanel);
       form.removeEventListener('submit', submit);

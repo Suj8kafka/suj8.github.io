@@ -1,6 +1,7 @@
-import { hydrateDisplayPreferences } from './display-state.js?v=20261115-display';
+import { hydrateDisplayPreferences } from './display-state.js?v=20261119-footer-labels';
 
 const groups = [
+  ['theme', 'Theme', [['mono', 'Monochrome'], ['original', 'Original'], ['dark', 'Dark'], ['auto', 'System']]],
   ['layout', 'Layout', [['crafted', 'Crafted'], ['reader', 'Reader / Minimal']]],
   ['motion', 'Motion', [['full', 'Full'], ['reduced', 'Reduced']]],
   ['sound', 'Video sound', [['on', 'On'], ['off', 'Off']]],
@@ -10,10 +11,11 @@ const groups = [
 ];
 
 export function createDisplayPreferences({ document, window }) {
-  const host = document.querySelector('.header-tools, .blog-header');
+  const host = document.querySelector('.header-tools, .blog-header, .privacy-header');
   if (!host) return { destroy() {} };
   const state = window.skDisplayPreferences || hydrateDisplayPreferences({ document, window });
-  let overrides = state.overrides, destroyed = false, legacyOpen = false;
+  let overrides = state.overrides, destroyed = false, legacyOpen = false, paletteTimer = 0;
+  let portraitPaletteActive = false;
   const listeners = [];
   const listen = (target, name, callback, options) => {
     target.addEventListener(name, callback, options);
@@ -39,7 +41,7 @@ export function createDisplayPreferences({ document, window }) {
     ${groups.map(([name, legend, choices]) => `<fieldset><legend>${legend}</legend><div class="display-options">${choices.map(([value, label]) =>
       `<label><input type="radio" name="display-${name}" data-display-pref="${name}" value="${value}"><span>${label}</span></label>`).join('')}</div></fieldset>`).join('')}
     <p class="display-note">Reduced motion mutes video unless you choose Sound on. Playback always starts with you. Extra spacing increases letter, word and line spacing.</p>
-    <button type="button" class="display-reset">Reset to System Defaults</button>
+    <button type="button" class="display-reset">Reset display preferences</button>
     <p class="display-status" role="status" aria-live="polite" aria-atomic="true"></p>`;
   host.append(trigger);
   document.body.append(panel);
@@ -52,27 +54,63 @@ export function createDisplayPreferences({ document, window }) {
     if (message) status.textContent = message;
     document.dispatchEvent(new window.CustomEvent('display-preferences:change', { detail: { ...preferences } }));
   }
+  function finishPaletteTransition() {
+    window.clearTimeout(paletteTimer);
+    delete document.documentElement.dataset.paletteTransition;
+  }
+  function transitionPalette(apply) {
+    const root = document.documentElement;
+    window.clearTimeout(paletteTimer);
+    root.dataset.paletteTransition = 'active';
+    apply();
+    paletteTimer = window.setTimeout(finishPaletteTransition, 220);
+  }
+  function cancelPortraitPalette() {
+    portraitPaletteActive = false;
+    finishPaletteTransition();
+  }
   function persist(reset = false) {
     try {
-      if (reset) window.localStorage.removeItem(state.key);
-      else window.localStorage.setItem(state.key, JSON.stringify(overrides));
-      return reset ? 'System defaults restored.' : 'Preferences saved on this browser.';
+      if (reset) {
+        window.localStorage.removeItem(state.key);
+        window.localStorage.removeItem('portfolio-theme');
+      } else {
+        window.localStorage.setItem(state.key, JSON.stringify(overrides));
+        const legacyTheme = { original: 'light', dark: 'dark', auto: 'auto' }[overrides.theme];
+        if (legacyTheme) window.localStorage.setItem('portfolio-theme', legacyTheme);
+        else window.localStorage.removeItem('portfolio-theme');
+      }
+      return reset ? 'Display defaults restored.' : 'Preferences saved on this browser.';
     } catch { return 'Applied for this visit. Browser storage is unavailable.'; }
   }
   listen(panel, 'change', event => {
     const { displayPref: name } = event.target.dataset || {};
     if (!state.allowed[name]?.includes(event.target.value)) return;
+    cancelPortraitPalette();
     overrides = { ...overrides, [name]: event.target.value };
     render(persist());
   });
   listen(panel.querySelector('.display-reset'), 'click', () => {
+    cancelPortraitPalette();
     overrides = {};
     render(persist(true));
   });
   listen(state.motion, 'change', () => render());
   listen(state.contrast, 'change', () => render());
+  listen(state.colourScheme, 'change', () => { if (state.resolve(overrides).theme === 'auto') render(); });
+  listen(document, 'portrait:palette-reveal', () => {
+    if (state.resolve(overrides).theme !== 'mono') return;
+    portraitPaletteActive = true;
+    transitionPalette(() => { document.documentElement.dataset.theme = 'original'; });
+  });
+  listen(document, 'portrait:palette-reset', event => {
+    if (!portraitPaletteActive || !event.detail?.wasRevealed) return;
+    portraitPaletteActive = false;
+    transitionPalette(() => state.apply(overrides));
+  });
   listen(window, 'storage', event => {
     if (event.key !== null && event.key !== state.key) return;
+    cancelPortraitPalette();
     overrides = state.read();
     render('Preferences updated.');
   });
@@ -122,6 +160,8 @@ export function createDisplayPreferences({ document, window }) {
   return { destroy() {
     if (destroyed) return;
     destroyed = true;
+    cancelPortraitPalette();
+    window.clearTimeout(paletteTimer);
     listeners.forEach(remove => remove());
     trigger.remove(); panel.remove();
   } };

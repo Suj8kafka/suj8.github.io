@@ -21,9 +21,13 @@ for (const path of pages) {
     ? html.replace(/<script id="display-bootstrap">[\s\S]*?<\/script>/, bootstrap)
     : html.replace(/(<meta charset="[^"]+">)/i, `$1\n  ${bootstrap}`);
   if (!html.includes('/assets/css/display-preferences.css')) {
-    html = html.replace('</head>', '  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261115-display-contrast">\n  <script type="module" src="/assets/js/display-preferences.js?v=20261115-display"></script>\n</head>');
+    html = html.replace('</head>', '  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261119-palette-cycles">\n  <script type="module" src="/assets/js/display-preferences.js?v=20261119-footer-labels"></script>\n</head>');
   }
-  html = html.replace(/(\/assets\/css\/display-preferences\.css\?v=)[^"\s]+/, (_, prefix) => `${prefix}20261115-display-contrast`);
+  html = html.replace(/(\/assets\/css\/display-preferences\.css\?v=)[^"\s]+/, (_, prefix) => `${prefix}20261119-palette-cycles`)
+    .replace(/(\/assets\/js\/display-preferences\.js\?v=)[^"\s]+/, (_, prefix) => `${prefix}20261119-footer-labels`)
+    .replace(/((?:href|data-href)="\/assets\/css\/site\.css\?v=)[^"\s]+/, (_, prefix) => `${prefix}20261119-footer-labels`)
+    .replace(/(src="\/assets\/js\/blog\.js\?v=)[^"\s]+/, (_, prefix) => `${prefix}20261119-palette-cycles`)
+    .replace(/(<meta name="theme-color" content=")[^"]+/, '$1#ffffff');
   writeFileSync(path, html);
   updated++;
 }

@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261115-display';
+import { motionIsReduced } from './display-state.js?v=20261119-palette-cycles';
 function script(document, src) {
   return new Promise((resolve, reject) => {
     const element = document.createElement('script');
@@ -33,7 +33,7 @@ export async function loadServices(document, {
 }
 
 export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
-  portrait = () => import('./portrait-network.js?v=20261115-display'),
+  portrait = () => import('./portrait-network.js?v=20261119-palette-cycles'),
   services = () => loadServices(document) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
   let imageReady = false, decoding = false, motionStarted = false;

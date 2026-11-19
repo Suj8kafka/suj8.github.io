@@ -162,24 +162,6 @@ export function createPrivacyDashboard({ document, window, fetch = window.fetch.
     }
     refresh.disabled = false;
   }
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-  let themePreference = 'auto';
-  try { themePreference = window.localStorage.getItem('portfolio-theme') || 'auto'; } catch {}
-  function theme(value) {
-    themePreference = ['light', 'dark'].includes(value) ? value : 'auto';
-    document.documentElement.dataset.theme = themePreference === 'auto' ? (systemTheme.matches ? 'dark' : 'light') : themePreference;
-    document.querySelectorAll('[data-theme-choice]').forEach(button => {
-      button.setAttribute('aria-pressed', String(button.dataset.themeChoice === themePreference));
-    });
-  }
-  document.querySelectorAll('[data-theme-choice]').forEach(button => {
-    listen(button, 'click', () => {
-      theme(button.dataset.themeChoice);
-      try { window.localStorage.setItem('portfolio-theme', themePreference); } catch {}
-    });
-  });
-  listen(systemTheme, 'change', () => { if (themePreference === 'auto') theme('auto'); });
-  theme(themePreference);
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
   listen(period, 'change', load);
   listen(refresh, 'click', load);

@@ -85,3 +85,58 @@ test('small accent text, primary-button hover and play-button colours meet AA co
     assert.ok(ratio('#ffffff', theme['--intro-button-bg']) >= 4.5);
   }
 });
+
+test('every maintained page starts on a white monochrome canvas', () => {
+  const pages = ['../index.html', '../privacy/index.html', '../login/index.html', '../404.html',
+    '../blog/index.html', '../blog/archive/index.html', '../blog/carrom-karrom/index.html',
+    '../blog/2048-ux-case-study/index.html', '../blog/nakka/index.html', '../blog/2048-dark-mode/index.html',
+    '../blog/nepali-festive-counter/index.html', '../blog/the-progress-bar-np/index.html',
+    '../blog/bus-reservation-system/index.html'];
+  for (const page of pages) {
+    const source = readFileSync(new URL(page, import.meta.url), 'utf8');
+    assert.match(source, /<meta name="theme-color" content="#ffffff">/, page);
+  }
+  const error = readFileSync(new URL('../assets/css/error.css', import.meta.url), 'utf8');
+  assert.match(error.match(/:root\s*\{([^}]+)\}/)[1], /--paper: #ffffff[\s\S]*--ink: #111111/);
+  assert.doesNotMatch(error, /prefers-color-scheme:\s*dark/);
+  const admin = readFileSync(new URL('../assets/js/admin-bootstrap.js', import.meta.url), 'utf8');
+  assert.match(admin, /let preference = 'mono'/);
+});
+
+test('portrait palette changes avoid viewport snapshots and blended overlays', () => {
+  const preferences = readFileSync(new URL('../assets/js/display-preferences.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(preferences, /startViewTransition/);
+  assert.doesNotMatch(css, /::view-transition|mix-blend-mode:\s*color|data-palette-preview/);
+  assert.match(css, /body\s*\{[^}]*transition:\s*color \.18s ease-out, background-color \.18s ease-out/);
+});
+
+test('monochrome skill cards use light grayscale surfaces with dark readable text', () => {
+  const base = css.match(/\[data-theme="mono"\] \.skills \.skill-card\s*\{([^}]+)\}/)[1];
+  const dark = css.match(/\[data-theme="mono"\] \.skills \.skill-card\.skill-dark\s*\{([^}]+)\}/)[1];
+  assert.match(base, /--skill-fill:\s*#eeeeee/);
+  assert.match(base, /--skill-text:\s*#111111/);
+  assert.ok(ratio('#111111', '#eeeeee') >= 4.5);
+  assert.match(dark, /--skill-fill:\s*#d9d9d9/);
+  assert.match(dark, /--skill-text:\s*#111111/);
+  assert.ok(ratio('#111111', '#d9d9d9') >= 4.5);
+});
+
+test('public footers use natural lowercase labels without decorative arrows', () => {
+  const footerRule = css.match(/\.site-footer\s*\{([^}]+)\}/)[1];
+  assert.doesNotMatch(footerRule, /text-transform:\s*uppercase/);
+  const pages = ['../index.html', '../privacy/index.html', '../blog/index.html',
+    '../blog/archive/index.html', '../blog/carrom-karrom/index.html',
+    '../blog/2048-ux-case-study/index.html', '../blog/nakka/index.html',
+    '../blog/2048-dark-mode/index.html', '../blog/nepali-festive-counter/index.html',
+    '../blog/the-progress-bar-np/index.html', '../blog/bus-reservation-system/index.html'];
+  for (const page of pages) {
+    const source = readFileSync(new URL(page, import.meta.url), 'utf8');
+    const footer = source.match(/<footer\b[\s\S]*?<\/footer>/)?.[0];
+    assert.ok(footer, `Missing footer: ${page}`);
+    assert.doesNotMatch(footer, /icon-arrow|[↗↑↓→←]/, page);
+  }
+  assert.match(html, />designed & built with intention</);
+  assert.match(html, />privacy & policy</);
+  assert.match(html, />projects & roles</);
+  assert.match(html, />back to top</);
+});

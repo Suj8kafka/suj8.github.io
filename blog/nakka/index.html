@@ -13,11 +13,13 @@
   <script id="display-bootstrap">window.skDisplayPreferences = (function hydrateDisplayPreferences({ document, window }) {
   const key = 'sk-a11y-prefs';
   const allowed = {
+    theme: ['mono', 'original', 'dark', 'auto'],
     layout: ['crafted', 'reader'], motion: ['full', 'reduced'], sound: ['on', 'off'],
     contrast: ['standard', 'high'], textScale: ['100', '115', '130'], dyslexiaSpacing: ['off', 'on']
   };
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const contrast = window.matchMedia('(prefers-contrast: more)');
+  const colourScheme = window.matchMedia('(prefers-color-scheme: dark)');
   function normalize(value) {
     const clean = {};
     if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -28,18 +30,25 @@
     return clean;
   }
   function read() {
-    try { return normalize(JSON.parse(window.localStorage.getItem(key))); } catch { return {}; }
+    try {
+      const stored = normalize(JSON.parse(window.localStorage.getItem(key)));
+      return stored;
+    } catch { return {}; }
   }
   function resolve(overrides) {
     overrides = normalize(overrides);
-    const prefs = { layout: 'crafted', motion: motion.matches ? 'reduced' : 'full',
+    const prefs = { theme: 'mono', layout: 'crafted', motion: motion.matches ? 'reduced' : 'full',
       contrast: contrast.matches ? 'high' : 'standard', textScale: '100', dyslexiaSpacing: 'off', ...overrides };
     prefs.sound = overrides.sound || (prefs.motion === 'reduced' ? 'off' : 'on');
     return prefs;
   }
   function apply(overrides) {
     const prefs = resolve(overrides);
-    Object.keys(allowed).forEach(name => { document.documentElement.dataset[name] = prefs[name]; });
+    Object.keys(allowed).forEach(name => {
+      if (name !== 'theme') document.documentElement.dataset[name] = prefs[name];
+    });
+    document.documentElement.dataset.theme = prefs.theme === 'auto'
+      ? (colourScheme.matches ? 'dark' : 'original') : prefs.theme;
     return prefs;
   }
   const overrides = read();
@@ -49,17 +58,17 @@
   if (document.documentElement.hasAttribute?.('data-page-styles')
     && (initial.layout === 'reader' || initial.textScale !== '100' || initial.dyslexiaSpacing === 'on')) {
     const sheet = document.createElement('link');
-    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261115-display';
+    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261119-footer-labels';
     sheet.setAttribute('blocking', 'render');
     document.head.append(sheet);
   }
-  return { key, allowed, motion, contrast, normalize, read, resolve, apply, overrides };
+  return { key, allowed, motion, contrast, colourScheme, normalize, read, resolve, apply, overrides };
 })({ document, window });</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Explore Nakka, a traditional Nepali board game adapted for offline mobile play, with project notes on Figma, Godot, and UI design by Sujeet Khadka.">
   <meta name="author" content="Sujeet Khadka">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#f5f3ee">
+  <meta name="theme-color" content="#ffffff">
   <title>Nakka: Nepali Board Game UI Design | Sujeet Khadka</title>
   <link rel="canonical" href="https://www.sujeetkhadka.com.np/blog/nakka/">
   <script type="application/ld+json">
@@ -154,12 +163,12 @@
   <meta name="twitter:image" content="https://www.sujeetkhadka.com.np/assets/images/selected-work/nakka-screen-0-compact.webp?v=73bc4c4f90ea">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=901f120fb48e">
   <script src="/assets/js/privacy-bootstrap.js?v=20261110-privacy"></script>
-  <link rel="stylesheet" href="/assets/css/site.css?v=20261115-display">
+  <link rel="stylesheet" href="/assets/css/site.css?v=20261119-footer-labels">
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
-  <link rel="stylesheet" href="/assets/css/blog.css?v=20261115-display">
-  <script type="module" src="/assets/js/blog.js?v=20261115-display"></script>
-  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261115-display-contrast">
-  <script type="module" src="/assets/js/display-preferences.js?v=20261115-display"></script>
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261119-type-scale">
+  <script type="module" src="/assets/js/blog.js?v=20261119-palette-cycles"></script>
+  <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261119-palette-cycles">
+  <script type="module" src="/assets/js/display-preferences.js?v=20261119-footer-labels"></script>
 </head>
 <body class="blog-page">
   <a class="skip-link" href="#blog-main">Skip to content</a>
@@ -198,14 +207,9 @@
     <nav class="story-next" aria-label="More from the notebook"><a href="/blog/">← All stories</a><a href="/blog/2048-dark-mode/">Next: 2048 – Dark Mode Puzzle Game →</a></nav>
   </main>
   <footer class="site-footer blog-footer">
-    <span>© 2026 Sujeet Khadka · Notes from the work.</span>
-    <div class="footer-theme" role="group" aria-label="Colour theme" data-blog-theme hidden>
-      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
-      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
-      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
-    </div>
-    <a href="/privacy/">Privacy &amp; public analytics</a>
-    <a href="/">Back to portfolio <span aria-hidden="true">↗</span></a>
+    <span>© 2026 Sujeet Khadka · notes from the work.</span>
+    <a href="/privacy/">privacy &amp; public analytics</a>
+    <a href="/">back to portfolio</a>
   </footer>
 </body>
 </html>

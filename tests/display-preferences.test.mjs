@@ -7,19 +7,22 @@ import { hydrateDisplayPreferences, motionIsReduced } from '../assets/js/display
 import { displayBootstrapCsp } from '../cloudflare/display-bootstrap-csp.mjs';
 import { securityHeaders } from '../cloudflare/security-headers.mjs';
 
-function preview({ stored = null, reduced = false, high = false, blocked = false } = {}) {
+function preview({ stored = null, legacy = null, reduced = false, high = false, blocked = false } = {}) {
   const root = { dataset: {} };
   const motion = { matches: reduced }, contrast = { matches: high };
   const document = { documentElement: root };
-  const window = { localStorage: { getItem() { if (blocked) throw Error('Denied'); return stored; } },
+  const window = { localStorage: { getItem(key) {
+    if (blocked) throw Error('Denied');
+    return key === 'portfolio-theme' ? legacy : stored;
+  } },
     matchMedia: query => query.includes('reduced-motion') ? motion : contrast };
   return { root, document, window, motion, contrast, state: hydrateDisplayPreferences({ document, window }) };
 }
 
-test('first visit applies system motion/contrast and all six safe defaults before enhancements', () => {
+test('first visit applies the monochrome theme plus system motion/contrast before enhancements', () => {
   const page = preview({ reduced: true, high: true });
   assert.deepEqual(page.root.dataset, { layout: 'crafted', motion: 'reduced', sound: 'off',
-    contrast: 'high', textScale: '100', dyslexiaSpacing: 'off' });
+    contrast: 'high', textScale: '100', dyslexiaSpacing: 'off', theme: 'mono' });
   assert.deepEqual(page.state.overrides, {});
 });
 
@@ -27,10 +30,38 @@ test('validated explicit overrides take precedence over OS preferences without a
   const page = preview({ reduced: true, high: true, stored: JSON.stringify({ layout: 'reader', motion: 'full', sound: 'on',
     contrast: 'standard', textScale: '130', dyslexiaSpacing: 'on', theme: 'injected' }) });
   assert.deepEqual(page.root.dataset, { layout: 'reader', motion: 'full', sound: 'on',
-    contrast: 'standard', textScale: '130', dyslexiaSpacing: 'on' });
+    contrast: 'standard', textScale: '130', dyslexiaSpacing: 'on', theme: 'mono' });
   assert.equal(page.state.overrides.theme, undefined);
   assert.equal(motionIsReduced(page.root, page.motion), true, 'Reader suspends decorative JS even with full motion');
   assert.equal(motionIsReduced({ dataset: { motion: 'full' } }, page.motion), false);
+});
+
+test('theme choices resolve original, dark and system palettes without accepting arbitrary values', () => {
+  const page = preview();
+  assert.equal(page.state.apply({ theme: 'original' }).theme, 'original');
+  assert.equal(page.root.dataset.theme, 'original');
+  assert.equal(page.state.apply({ theme: 'dark' }).theme, 'dark');
+  assert.equal(page.root.dataset.theme, 'dark');
+  page.state.colourScheme.matches = true;
+  assert.equal(page.state.apply({ theme: 'auto' }).theme, 'auto');
+  assert.equal(page.root.dataset.theme, 'dark');
+  page.state.apply({ theme: 'unknown' });
+  assert.equal(page.root.dataset.theme, 'mono');
+});
+
+test('retired footer theme storage cannot override the new monochrome default', () => {
+  for (const legacy of ['light', 'dark', 'auto']) {
+    const page = preview({ legacy });
+    assert.equal(page.root.dataset.theme, 'mono');
+    assert.deepEqual(page.state.overrides, {});
+  }
+});
+
+test('theme controls live in the display panel instead of the homepage footer', () => {
+  const preferences = readFileSync(new URL('../assets/js/display-preferences.js', import.meta.url), 'utf8');
+  const home = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  assert.match(preferences, /\['theme', 'Theme'.*'Monochrome'.*'Original'.*'Dark'.*'System'/);
+  assert.doesNotMatch(home, /data-theme-choice|class="footer-theme"/);
 });
 
 test('malformed, unavailable and unsupported storage cannot prevent a readable startup', () => {
