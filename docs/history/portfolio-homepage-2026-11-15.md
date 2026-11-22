@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Portfolio homepage — 15 November 2026
 
 ## Visitor path
@@ -18,7 +20,7 @@ Desktop navigation is Work, About, Writing and CV, with a separate Get in touch 
 
 The homepage remains buildless HTML, CSS and browser JavaScript. The larger Aama illustration has an updated responsive `sizes` hint, and the portrait preload and image hints match the smaller mobile portrait. The stylesheet cache version is updated in both enhanced and no-JavaScript links.
 
-Contact uses one centered “I have a project” card, with supporting text welcoming projects, product challenges and opportunities on a team. Its native email draft prompts for the project or opportunity, design help and timeline; it does not send a message automatically. A visible native email link is available when visitors prefer their own message. Existing aggregate usage tracking remains in place without service changes; see [project-actions.md](project-actions.md).
+Contact uses one centered “I have a project” card, with supporting text welcoming projects, product challenges and opportunities on a team. Its native email draft prompts for the project or opportunity, design help and timeline; it does not send a message automatically. A visible native email link is available when visitors prefer their own message. Existing aggregate usage tracking remains in place without service changes; see [project-actions.md](project-actions-2026-11-15.md).
 
 A keyboard skip link focuses the main content. Section scroll margins account for the desktop header and mobile layout. The former continuous focus marquee is static, and mobile skill cards use shorter text-led layouts while retaining their native dialog buttons. Reduced-motion overrides cover the revised project-card interaction. Existing loader artwork, service modules, database rules and vendor libraries were not edited.
 

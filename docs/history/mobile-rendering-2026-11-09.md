@@ -1,8 +1,10 @@
-Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](loading-screen.md).
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
+Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](../features/motion.md).
 
 # Mobile rendering follow-up — 2026-11-09
 
-The existing hero remains visible without entrance fades. The main change removes the full stylesheet, secondary fonts and phone GSAP downloads from the portrait's initial loading path. These measurements were recorded with the automatic intro disabled. The later requested [five-second mobile welcome](loading-screen.md) now covers the page on phones; these historical timings do not describe that new first-view experience. Desktop preview remains at `/?intro=1`. See [the security and performance release notes](security-performance.md) for the prior release's checks.
+The existing hero remains visible without entrance fades. The main change removes the full stylesheet, secondary fonts and phone GSAP downloads from the portrait's initial loading path. These measurements were recorded with the automatic intro disabled. The later requested [five-second mobile welcome](../features/motion.md) now covers the page on phones; these historical timings do not describe that new first-view experience. Desktop preview remains at `/?intro=1`. See [the security and performance release notes](security-performance-2026-11-09.md) for the prior release's checks.
 
 ## Measured result
 
@@ -16,7 +18,7 @@ Actual Lighthouse 13.6.0 mobile performance and accessibility audits against loc
 | Accessibility | 100 | 100, 100, 100 |
 | Layout shift | 0.0013 | 0, 0, 0 |
 
-The median improved by about 37%. One final run still exceeds 2.5 seconds; the result does not establish that every phone visit meets the target. Lighthouse continued to identify the portrait as LCP and chose the new 640px WebP. Initial rendering had no Lighthouse-flagged blocking stylesheet and requested only the heading font. Summarized evidence is in [the measurement report](performance/mobile-rendering-2026-11-09.json).
+The median improved by about 37%. One final run still exceeds 2.5 seconds; the result does not establish that every phone visit meets the target. Lighthouse continued to identify the portrait as LCP and chose the new 640px WebP. Initial rendering had no Lighthouse-flagged blocking stylesheet and requested only the heading font. Summarized evidence is in [the measurement report](../performance/mobile-rendering-2026-11-09.json).
 
 Conditions: Lighthouse's default simulated mobile throttling, headless Brave/Chromium 156, fresh audit navigation, local Python HTTP server, Firebase/analytics blocked consistently to avoid visitor records. Scores and lab timings vary. The trace's unthrottled render-delay phases and simulated headline LCP are separate measurements. Local HTTP does not reproduce the production CDN, geography or service requests. These are not deployed results or an update to the reported 3.1s real-user LCP. The earlier `mobile-performance.md` report used a different PerformanceObserver method.
 

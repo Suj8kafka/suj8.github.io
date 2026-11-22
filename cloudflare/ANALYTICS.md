@@ -1,86 +1,45 @@
-Current activation (18 November 2026): the analytics Worker is deployed with
-the `portfolio-usage` D1 binding and both migrations applied. Daily counters
-older than the most recent 90 UTC dates are archived into permanent monthly
-aggregates instead of being discarded. The traffic endpoint, `/usage?days=7`
-and `/usage?days=all` returned HTTP 200 after deployment. The traffic query has
-a ten-second upstream budget because the Cloudflare GraphQL response exceeded
-the previous six-second limit. The zone is on the Free Website plan; no
-account-plan upgrade was performed. The owner configured `CLOUDFLARE_API_TOKEN`
-as a Worker Secret, and the zone ID is in Wrangler variables. No secret value
-is stored in the repository.
+# Analytics service runbook
 
-The right-hand visitor panel fetches aggregate metrics from:
-https://nameless-truth-99f0.sujeetkhadka00001.workers.dev
+Read for Cloudflare traffic credentials, D1 migrations, deployment or retention. [Behavior and metric definitions](../docs/features/analytics.md) · [Recorded status](../docs/status.md)
 
-The public `/privacy/` page also reads these traffic estimates. Detailed usage
-counts use the same Worker's separate `/collect` and `/usage` routes with an
-optional `ANALYTICS_DB` D1 binding. See [public analytics setup](../docs/public-analytics.md)
-for the migration, retention schedule and activation steps. The service failures
-reported below are historical observations, not a fresh production verification.
+## Source and configuration
 
-Historical setup notes: the endpoint previously returned HTTP 503. The Worker source returns
-this status when its API token or zone ID is missing. Set both in the Cloudflare
-dashboard under Workers & Pages > nameless-truth-99f0 > Settings > Variables and
-Secrets:
+`wrangler.analytics.jsonc` selects `analytics-worker.js`, the hostname-scoped traffic query, `ANALYTICS_DB` binding and daily `15 0 * * *` cron. Usage routes are implemented in `usage-analytics.js`; successful reports cache through `analytics-cache.js`.
 
-- `CLOUDFLARE_API_TOKEN`: an encrypted secret with Zone > Analytics > Read,
-  restricted to the `sujeetkhadka.com.np` zone.
-- `CLOUDFLARE_ZONE_TAG`: that zone's ID, available on its Overview page.
-- `SITE_HOSTNAME`: `www.sujeetkhadka.com.np` (already in the Wrangler config).
+The browser endpoint is configured in `assets/js/analytics-config.js`. Inspect the config before changing its URL; never copy a private token into browser code. Traffic GraphQL uses:
 
-Keep the API token in Worker secrets. The public site needs only the endpoint URL.
+- `CLOUDFLARE_API_TOKEN`: encrypted Worker Secret, Zone → Analytics → Read, restricted to this site's zone.
+- `CLOUDFLARE_ZONE_TAG`: zone identifier in Worker variables.
+- `SITE_HOSTNAME`: canonical www hostname in Worker variables.
 
-Deploy the updated analytics Worker using an authenticated Cloudflare account:
+Only the token is a credential. D1 usage collection/reporting is independent of that GraphQL token. Traffic misconfiguration must not be reported as zero activity or hide successful usage data.
+
+## Existing database and migrations
+
+Reuse the configured `portfolio-usage` D1 database; do not create a replacement as part of an update. Analytics uses binding `ANALYTICS_DB`; the assistant uses `PORTFOLIO_DB` for the same database. Both configs share the `migrations/` directory, so inspect all pending migrations and remote state before applying them.
+
+- `migrations/0001-usage-analytics.sql` creates the daily usage counters.
+- `migrations/0002-monthly-usage-history.sql` adds monthly aggregates; missing storage must fail before any archival deletes.
+- `migrations/0003-portfolio-assistant.sql` adds assistant knowledge. Applying shared pending migrations may change that schema/data too; scope approval accordingly.
+
+For this installation, use the actual migration filenames listed in the repository. After explicit authorization for the pending remote changes and Worker deployment:
 
 ```powershell
+npx wrangler d1 migrations apply ANALYTICS_DB --remote --config cloudflare/wrangler.analytics.jsonc
 npx wrangler deploy --config cloudflare/wrangler.analytics.jsonc
 ```
 
-This is separate from the security-header Worker. It returns requests, visits,
-top paths, top countries and a timestamp for the last 24 hours. Queries are
-restricted to the configured hostname. Visits are not unique visitors and are
-separate from Firebase's current anonymous connections. Cloudflare may sample
-these metrics; the sidebar labels them as traffic estimates.
+Static publication and the security Worker remain separate. Preserve existing variables, database binding, Worker name and cron. Do not overwrite the existing database or change Firebase rules to enable analytics.
 
-The sidebar fetches when opened, offers Refresh analytics, and caches successful
-responses for five minutes. Configuration and network errors remain visible
-instead of displaying misleading zero counts. A refreshed panel may use the
-Worker's five-minute cache.
+## Verify the activated service
 
-Firebase live presence is independent of this endpoint. Each page uses a separate
-anonymous in-memory identity, queues its own disconnect cleanup, and sends cursor
-positions at most ten times per second. Cursor coordinates are relative to page
-sections; fields and precise screen positions from inputs are not shared.
-Reduced-motion users do not send or see cursors. The checkbox in the sidebar
-also disables sending and displaying cursors. Tabs keep their visitor record
-when hidden, while their cursors disappear. Only a page's own record is deleted
-on exit; stale peers are filtered locally. Browsers may suspend background tabs,
-so presence is approximate rather than a guarantee that someone is looking.
-Remote cursors fade to 30% opacity after three seconds without movement and are
-hidden after five seconds. Movement restores full opacity; heartbeats do not
-reset the idle timer.
+1. Check the traffic endpoint, `/usage?days=7` and `/usage?days=all` independently. Expect meaningful 200 reports when configured; distinguish real empty periods from 502/503 failures. GraphQL has its own upstream timeout budget.
+2. Verify a normal authorized production interaction appears after the five-minute report cache expires. Avoid generating live visitor records during routine local tests.
+3. Confirm DNT/GPC produces no custom collection while public reports remain readable. Check focus/idle timing behavior using the [analytics guide](../docs/features/analytics.md).
+4. Confirm the retention cron: keep the most recent 90 UTC dates in daily storage, atomically archive older counts into monthly totals, and retain monthly totals. Never discard daily rows on a failed archive. All Time cannot recover history deleted before this implementation.
+5. Review actual account usage/quotas in Cloudflare before capacity changes. Historical Free-plan limits are dated evidence, not a current entitlement or guarantee against abuse.
+6. Record date, service/version, migrations applied, checked endpoints and limits in [status](../docs/status.md).
 
-Live verification found that Firebase anonymous sign-in succeeds but presence
-writes return HTTP 401. The two temporary test accounts and records were cleaned
-up. Publishing the JavaScript alone cannot resolve a database permission failure.
-The local database rules in `database.rules.json` allow authenticated reads and
-only owner writes under `presence`, including the new cursor fields. They also
-correct the initial increment of country visit counters. Review these against
-the deployed rules, then deploy with an authenticated Firebase account:
+Run `analytics-worker`, `analytics-cache`, `usage-analytics`, `usage-tracker`, `engagement-tracker`, `visitor-panel` and `privacy` tests as relevant. These do not establish live configuration or trusted human activity. Origin validation is not authentication against non-browser clients; review the dated [abuse findings](../docs/history/security-review-2026-11-11.md) before related work.
 
-```powershell
-npx firebase-tools deploy --only database --project sujeet-portfolio
-```
-
-The saved Firebase CLI login failed authentication during this session. Run
-`npx firebase-tools login --reauth` first if needed, or authorize the Firebase
-plugin. Never change the database to public unauthenticated read/write access.
-
-Check the site in two visible browser windows on the same page after publishing.
-Move one mouse over a main section: the other window should show its labeled
-cursor. Check tab switching, page exit, scroll alignment, the cursor checkbox,
-reduced motion and keyboard navigation of the sidebar.
-
-References:
-https://firebase.google.com/docs/database/web/offline-capabilities
-https://developers.cloudflare.com/analytics/graphql-api/tutorials/end-customer-analytics/
+Firebase presence is a separate service: use [availability/presence](../docs/features/availability.md) and the [Firebase runbook](../docs/operations/firebase.md). Earlier presence permission failures do not describe this Worker's current health.

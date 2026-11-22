@@ -1,3 +1,7 @@
+# Historical record: project-actions
+
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 ## Current action hierarchy — 15 November 2026
 
 The homepage now leads with **Explore selected work → Selected work**, followed by **Get in touch → Contact**. The header uses Work, About, Writing and the existing CV PDF, with a separate Get in touch action. Mobile navigation uses Home, Work, About, Writing and Contact. The project notebook remains a secondary About/footer resource.
@@ -6,7 +10,7 @@ Contact has one centered **I have a project** card, with supporting text that al
 
 Existing measurement IDs are retained with `data-cta-version="portfolio-home-v2"`, including `nav-cv` and the single `contact-email` action. The separate `contact-hiring` action was removed when the contact cards were combined. These attributes identify the design version; the current aggregate usage tracker groups native email clicks as `contact-email`, PDF clicks as `resume-download`, and project-card clicks as `project-open`. It does not collect CTA IDs, copy versions, delivered emails or completed downloads. No per-intent reporting or conversion improvement is claimed.
 
-The local implementation and validation are recorded in [portfolio-homepage.md](portfolio-homepage.md). The sections below preserve the earlier design and its verification history; their client-first hierarchy and future-tracking plan describe the previous version.
+The local implementation and validation are recorded in [portfolio-homepage.md](portfolio-homepage-2026-11-15.md). The sections below preserve the earlier design and its verification history; their client-first hierarchy and future-tracking plan describe the previous version.
 
 ## Previous action hierarchy — 9 November 2026
 

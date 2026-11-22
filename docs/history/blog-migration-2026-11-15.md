@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Blog migration to the main portfolio
 
 Prepared locally on 15 November 2026. Publication, the old-host redirect, and DNS changes have not been performed.
@@ -67,7 +69,7 @@ The old-host Worker is source preparation only. Adding HTML aliases on the main 
 
 ## Search visibility follow-up
 
-The public HTTP audit on 15 November 2026 found `/blog/` and `/blog/carrom-karrom/` still returning 404, the live sitemap listing only the homepage/privacy URLs, and old-host articles still being served without redirects to the new main-domain paths. The local migration must be published before its SEO improvements can affect those URLs. See [search-visibility.md](search-visibility.md) for the evidence, prepared author/article metadata, search-intent map, ordered publication checks, and step-by-step Google Search Console setup and diagnosis.
+The public HTTP audit on 15 November 2026 found `/blog/` and `/blog/carrom-karrom/` still returning 404, the live sitemap listing only the homepage/privacy URLs, and old-host articles still being served without redirects to the new main-domain paths. The local migration must be published before its SEO improvements can affect those URLs. See [search-visibility.md](search-visibility-2026-11-22.md) for the evidence, prepared author/article metadata, search-intent map, ordered publication checks, and step-by-step Google Search Console setup and diagnosis.
 
 The redirect Worker now returns 404 for unknown paths instead of redirecting them to an unrelated notebook homepage. Its `robots.txt` permits crawling during the move, and its sitemap redirects to the canonical main-domain sitemap. The prepared security Worker excludes preserved raw source websites and downloads from indexing through scoped response headers; archived HTML is served as a plain-text attachment so crawlers do not audit its intentionally stale dependencies. The active notebook, archive overview, current CV and portfolio stay indexable. These policies require their separate reviewed Worker publication.
 

@@ -1,6 +1,10 @@
-Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](loading-screen.md).
+# Historical record: mobile-performance
 
-Follow-up: [mobile rendering improvements](mobile-rendering.md) records the subsequent actual Lighthouse baseline of 3.614s and three final runs with a 2.260s median. [Security and performance release notes](security-performance.md) describe removal of the automatic desktop intro, whose preview requires `/?intro=1`. Phones now have a separately requested [five-second welcome](loading-screen.md). The measurements and change inventory below describe the earlier PerformanceObserver experiment, which used a different method and did not include that mobile overlay.
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
+Current welcome behavior supersedes the intro descriptions below: first desktop visits run for six seconds ending with animated Namaste; returning desktop visits show Namaste only. Phones retain their five-second sequence. See [loading-screen behavior](../features/motion.md).
+
+Follow-up: [mobile rendering improvements](mobile-rendering-2026-11-09.md) records the subsequent actual Lighthouse baseline of 3.614s and three final runs with a 2.260s median. [Security and performance release notes](security-performance-2026-11-09.md) describe removal of the automatic desktop intro, whose preview requires `/?intro=1`. Phones now have a separately requested [five-second welcome](../features/motion.md). The measurements and change inventory below describe the earlier PerformanceObserver experiment, which used a different method and did not include that mobile overlay.
 
 ## Result
 

@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Summary
 As inspected on 2026-11-08, this is a static personal portfolio with an owner availability editor, Firebase anonymous presence/live cursors, Cloudflare analytics and security Workers, and local GSAP motion. HEAD is `2d01fbe`; additional motion changes already existed in the working tree. The local Node suite passes, but this session did not verify deployed services, real owner sign-in or visual browser behavior. There is no root README, package manifest, lockfile, CI configuration, build pipeline or configured linter in the inspected repository.
 

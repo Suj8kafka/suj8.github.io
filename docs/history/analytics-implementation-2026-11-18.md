@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Public analytics and privacy
 
 The portfolio footer links to `/privacy/`: public usage analytics first, followed

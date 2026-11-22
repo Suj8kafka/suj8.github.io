@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Portfolio refinement — 2026-11-10
 
 The local refinement preserves the existing PageSpeed optimizations and analytics
@@ -28,7 +30,7 @@ writes. Actual third-party costs, production caching, compression and security
 headers are outside these measurements. PageSpeed Insights uses both Lighthouse
 lab data and separate real-user data; see [Google's explanation](https://developers.google.com/speed/docs/insights/v5/about).
 Compact audit and browser results are in
-[the measurement record](performance/refinement-2026-11-10.json).
+[the measurement record](../performance/refinement-2026-11-10.json).
 
 ## Changes
 

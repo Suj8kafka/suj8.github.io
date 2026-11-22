@@ -1,77 +1,46 @@
-The security Worker adds all six security headers to responses from the existing
-GitHub Pages origin, including errors and redirects. It also redirects HTTP to
-HTTPS. Deploy it separately from the analytics Worker; the analytics Worker does
-not handle requests to the portfolio itself.
+# Edge security and caching runbook
 
-Current deployment status (2026-11-09): live checks found all six headers missing
-on the apex redirect and the www homepage. The Worker and its tests are prepared
-locally, but the user has deferred Cloudflare work. **Pushing this repository does
-not deploy this Worker or activate response headers.** GitHub Pages publishes the
-static portfolio separately; there is no automatic Worker deployment workflow.
-Do not treat a successful Git push or local tests as evidence of live headers.
+Read for response headers, CSP, cache policy or preserved-source indexing. [Deployment boundaries](../docs/operations/deployment.md) · [Recorded live evidence](../docs/status.md)
 
-The prepared Worker also applies [versioned static-asset caching](../docs/asset-delivery.md).
-Only explicitly versioned public asset URLs receive `public, max-age=31536000,
-immutable`. HTML, login pages, mutable module URLs, failures and private responses
-retain the origin cache policy. This caching change also requires a separate
-Worker deployment; it is not activated by a Git push. Preserve query parameters
-in the Cloudflare cache key so different asset versions remain distinct.
+## Source and routing
 
-Both portfolio DNS records must be proxied through Cloudflare (orange cloud).
-Keep the existing GitHub Pages origin and use Cloudflare Full (strict) TLS.
+`cloudflare/wrangler.security.jsonc` routes `security-headers.mjs` on the apex and www portfolio hosts, in front of the existing GitHub Pages origin. It does not configure the independent old-blog host. Inspect existing routes, proxy status and TLS before live changes; preserve the origin and use the intended Full (strict) configuration.
 
-From the repository root, with Wrangler installed and authenticated to the zone:
+The Worker sets six headers on success, error and redirect responses: CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy and Permissions-Policy. It upgrades HTTP to HTTPS. HSTS is one year without subdomain inheritance/preload. Permissions-Policy retains same-origin opt-in geolocation while disabling unrelated capabilities. Use `securityHeaders` in source for exact policy values.
+
+Pushing GitHub Pages files does not deploy this Worker or activate its headers/cache/indexing policy. Historical reports of missing headers are in [status](../docs/status.md); recheck current responses before diagnosis.
+
+## CSP and preserved-source contracts
+
+Allow only the current required external script, media, frame, image and connection origins. Inline display hydration uses the generated `display-bootstrap-csp.mjs` hash; the Google tag has its specific hash. Arbitrary inline executable scripts remain blocked. JSON-LD is metadata. Inline styles remain allowed for the existing animation implementation.
+
+When changing inline bootstraps, endpoints, Firebase imports or the festival iframe, inspect all exact hashes/origins and browser violations. Match generated HTML and CSP using [display-preference steps](../docs/features/display-preferences.md). Do not assume a local test proves compatibility with scripts Cloudflare injects at the live edge. Coordinate matching site/Worker changes within the approved release.
+
+Prepared indexing rules preserve history without treating raw source copies as active websites:
+
+- `/Blogpage/`, `/archive/`, `/assets/documents/blog/source-pages/`: `X-Robots-Tag: noindex, nofollow`; HTML downloads as a plain-text attachment with original bytes preserved.
+- Other downloads under `/assets/documents/blog/`: `noindex, follow`.
+- Maintained `/blog/` pages, its archive overview and the current CV are excluded from these rules.
+
+Do not add robots disallows that stop crawlers fetching these noindex headers. These rules require actual Worker deployment.
+
+## Versioned browser caching
+
+`asset-cache.mjs` adds `public, max-age=31536000, immutable` only for eligible successful GET/HEAD public static responses under `/assets/` or `/loader/files/`, on the portfolio hosts, with an approved extension and nonempty `v` query version.
+
+Preserve origin policy for HTML, unversioned/mutable paths, login/dynamic data, redirects/errors, authorization/cookies and private/no-store/no-cache responses. Keep validators and query parameters in cache keys. The policy does not itself change edge cache eligibility or zone settings. Browser caches need changed version URLs for changed content; a CDN purge is insufficient. Use [development](../docs/development.md) for version generation.
+
+## Deploy and verify
+
+After authorization for this specific Worker and any required route/DNS changes:
 
 ```powershell
 npx wrangler deploy --config cloudflare/wrangler.security.jsonc
-```
-
-The route configuration attaches the Worker to both portfolio hostnames without
-changing the blog or other subdomains. GitHub Pages does not apply custom response
-headers from repository files, so these protections become active only after the
-Worker is deployed. Publishing the HTML change also loads the extracted video
-script under the CSP. Deploy that change before activating the Worker.
-
-The CSP permits the site's current external fonts, particles script, Firebase
-modules/auth/database connections, IP country lookup, opt-in reverse geocoding,
-the custom analytics endpoint, and the Google tag's Analytics-only endpoints.
-Only the exact display-preference and Google-tag inline bootstraps are allowed by
-hash; arbitrary inline executable scripts remain blocked. JSON-LD remains a
-non-executable metadata block. Archived pages use older scripts that are
-deliberately outside this allowlist; their interactive effects may be blocked.
-Inline styles remain allowed for the current animation implementation.
-
-HSTS lasts one year and intentionally does not opt independent subdomains into
-HSTS or request preload. Geolocation remains restricted to this origin so the
-existing opt-in visitor feature works; camera and microphone are disabled.
-
-After deployment, inspect the actual edge responses:
-
-```powershell
 node scripts/check-security-headers.mjs
 ```
 
-This dependency-free check compares all six headers with `security-headers.mjs`
-on HTTPS apex/www homepages, `/login/`, a missing-page response, and every manual
-redirect hop. It separately checks HTTP upgrades without requiring HSTS on an
-HTTP response. Missing or unexpected policy values, HTTPS downgrades, redirect
-loops and request failures produce a nonzero exit code. It prints statuses and
-header names, never response bodies or credentials. Optional URL arguments limit
-the targets. Run `node --test tests/security-header-check.test.mjs` for its mocked
-tests; those tests do not establish deployed protection.
+The read-only checker compares actual policies to source on HTTPS apex/www, login, missing-page responses and redirect hops; it checks HTTP upgrades separately. Missing policy, downgrade, loop or fetch failure exits nonzero. Optional URL arguments narrow its targets. It prints statuses/header names, not bodies or credentials.
 
-Individual response inspection remains available:
+Also inspect a versioned asset, unversioned module, login, missing asset and preserved download. Browser-check themes, welcome, dialogs, media, assistant, Firebase and analytics for CSP failures. Inspect legitimate crawler traffic and actual edge bot policies when diagnosing SEO; do not broadly bypass security based on a claimed user-agent string.
 
-```powershell
-curl.exe -I https://www.sujeetkhadka.com.np/
-curl.exe -I https://sujeetkhadka.com.np/
-curl.exe -I https://www.sujeetkhadka.com.np/missing-page
-curl.exe -I http://www.sujeetkhadka.com.np/
-```
-
-Verify all six headers on HTTPS responses and an HTTPS Location on HTTP responses.
-In a browser, check the console for CSP violations while opening skill dialogs,
-changing themes, playing the intro video, and viewing presence/analytics.
-
-Cloudflare's implementation guidance:
-https://developers.cloudflare.com/workers/examples/security-headers/
+Run `security-headers`, `security-header-check`, `asset-cache` and relevant bootstrap tests. Record deployment/version and actual response checks in [status](../docs/status.md). Local mocked headers are not deployed protection.

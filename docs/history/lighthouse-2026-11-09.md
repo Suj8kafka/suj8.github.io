@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Lighthouse follow-up — 2026-11-09
 
 The reported deprecated `unload` listener is inside Firebase Realtime Database's

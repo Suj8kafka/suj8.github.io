@@ -1,3 +1,7 @@
+# Historical record: accessibility
+
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 ## Result
 
 The local mobile Lighthouse accessibility audit improved from **92/100 to 100/100** with Lighthouse CLI 13.6.0 in Chromium/Brave on 2026-11-09. The before run reproduced all three reported rule categories: four prohibited logo labels, the play button's insufficient contrast, and its mismatched visible/accessible name. The blue case-study text's light-theme contrast was separately confirmed at 3.96:1 before the fix. All three rules pass after the change, and no automatic accessibility audits fail in the local after report.

@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Welcome performance — 2026-11-09
 
 The mobile welcome now reveals the portfolio 500 ms after the deferred loader starts. All six greetings still play over five seconds, ending with the original handwritten Namaste in a small dismissible panel. The bootstrap can appear before the deferred script arrives, so the time from navigation to reveal also includes HTML and script delivery. Desktop durations are unchanged.
@@ -21,4 +23,4 @@ The user-supplied production run scored 96 with a 4.8 s Speed Index, 2.0 s LCP, 
 
 Validation: all 137 Node tests passed. Chrome checks covered the complete greeting order and five-second duration, finished Namaste, light/dark themes, small phones and landscape, closing/focus, navigation while docked, direct links, reduced motion, save-data, no JavaScript, desktop greetings and script-failure recovery. A complete throttled mobile visit (4× CPU, 150 ms latency, 1.6 Mbps) observed all six greetings and zero layout shift. The inline welcome CSS, generated critical CSS and Namaste SVG copies are synchronized.
 
-Detailed measurement values are in [the local results](performance/welcome-performance-2026-11-09.json). Raw Lighthouse reports and browser screenshots remain in `.tmp/loader-performance-verified-*.json` and `.tmp/early-welcome-*.png`. The local gzip preview and browser checks used temporary scripts in `.tmp/`; no package installation or build step was added. No deployment, Worker, Firebase or DNS changes were made.
+Detailed measurement values are in [the local results](../performance/welcome-performance-2026-11-09.json). Raw Lighthouse reports and browser screenshots remain in `.tmp/loader-performance-verified-*.json` and `.tmp/early-welcome-*.png`. The local gzip preview and browser checks used temporary scripts in `.tmp/`; no package installation or build step was added. No deployment, Worker, Firebase or DNS changes were made.

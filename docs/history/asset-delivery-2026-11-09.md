@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Image delivery and browser caching — 2026-11-09
 
 The supplied production audit scored 99. Its remaining diagnostics identified
@@ -81,7 +83,7 @@ Overall local performance is 95: FCP 1.461 s, LCP 2.709 s, TBT 90 ms, Speed Inde
 2.461 s and CLS 0. This was simulated mobile on uncompressed Python HTTP with
 visitor service URLs blocked to avoid live writes. It is not a production
 99-to-100 comparison. The edge policy was not active during that local audit.
-[Measurement summary](performance/image-delivery-2026-11-09.json).
+[Measurement summary](../performance/image-delivery-2026-11-09.json).
 
 References: [Lighthouse scoring](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring/),
 [Cloudflare browser cache TTL](https://developers.cloudflare.com/cache/how-to/edge-browser-cache-ttl/),

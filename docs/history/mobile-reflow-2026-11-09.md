@@ -1,3 +1,5 @@
+> Historical record. Statements such as “current”, “local” and “not deployed” describe the recorded work, not today’s state. Use the [task index](../README.md) and [status](../status.md) for current guidance. Paths in code spans retain their original historical spelling.
+
 # Mobile Lighthouse follow-up — 2026-11-09
 
 The supplied production report scored 98 and attributed 44 ms of forced layout
@@ -37,7 +39,7 @@ The completed-code run removes the reported forced-reflow sources and reduces
 blocking, but does **not** demonstrate an improved overall score or achieve 100.
 Production must be measured separately after publication. The requested phone
 welcome remains five seconds; a Lighthouse score is not a measurement of when
-that overlay finishes. [Measurement summary](performance/mobile-reflow-2026-11-09.json).
+that overlay finishes. [Measurement summary](../performance/mobile-reflow-2026-11-09.json).
 
 The supplied cache warnings describe four-hour HTTP response lifetimes. Those
 require an edge/origin policy change; HTML cannot set them. The legacy
