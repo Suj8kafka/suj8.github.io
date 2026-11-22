@@ -47,6 +47,49 @@ test('the homepage and articles identify the same real person and profile withou
   }
 });
 
+test('the homepage clearly targets junior UI/UX designer searches in Nepal', () => {
+  const homepage = read('index.html');
+  const title = decode(homepage.match(/<title>([\s\S]*?)<\/title>/)[1]);
+  const entities = graph(homepage);
+  const person = entities.find(item => item['@type'] === 'Person');
+  const profile = entities.find(item => item['@type'] === 'ProfilePage');
+  assert.equal(title, 'Sujeet Khadka | Product & UI/UX Designer in Nepal');
+  assert.match(meta(homepage, 'description'), /junior UI\/UX designer in Lalitpur, Nepal/i);
+  assert.equal(text(homepage.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1]), 'Clearer mobile experiences,from idea to release.');
+  assert.match(text(homepage.match(/<p class="hero-intro">([\s\S]*?)<\/p>/)[1]), /Sujeet Khadka.*research.*interaction design/i);
+  assert.equal(person.jobTitle, 'Junior UI/UX and Product Designer');
+  assert.equal(profile.name, title);
+});
+
+test('the static homepage connects the designer, location and skills to readable case studies', () => {
+  const homepage = read('index.html');
+  const hero = text(homepage.match(/<p class="hero-intro">([\s\S]*?)<\/p>/)[1]);
+  const body = text(homepage.split('</head>')[1]);
+  const person = graph(homepage).find(item => item['@type'] === 'Person');
+  assert.match(hero, /Sujeet Khadka, a UI\/UX designer based in Lalitpur, Nepal/);
+  assert.ok(person.knowsAbout.length > 0);
+  for (const skill of person.knowsAbout) {
+    assert.ok(body.toLowerCase().includes(skill.toLowerCase()), `Skill must be visible without scripts: ${skill}`);
+  }
+  const evidence = homepage.match(/<div class="about-section-links" role="group" aria-label="Design case studies">([\s\S]*?)<\/div>/)[1];
+  const links = [...evidence.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)];
+  assert.equal(links.length, 2);
+  for (const [, path, label] of links) {
+    assert.ok(label.length > 20, 'Case-study links should describe their subject');
+    const article = read(path.slice(1) + 'index.html');
+    assert.equal(canonical(article), origin + path);
+    assert.equal(graph(article).find(item => item['@type'] === 'BlogPosting').author['@id'], person['@id']);
+  }
+});
+
+test('public crawling stays allowed for search engines and AI search without a separate bot restriction', () => {
+  const robots = read('robots.txt').replace(/#.*$/gm, '');
+  assert.deepEqual([...robots.matchAll(/^User-agent:\s*(.+)$/gmi)].map(match => match[1].trim()), ['*']);
+  assert.match(robots, /^Allow:\s*\/\s*$/m);
+  assert.doesNotMatch(robots, /^Disallow:\s*\S/m);
+  assert.doesNotMatch(meta(read('index.html'), 'robots'), /noindex|nosnippet/i);
+});
+
 test('search and share metadata agree on the identity, topic and canonical URL of every primary page', () => {
   const titles = new Set(), descriptions = new Set();
   for (const page of pages) {
