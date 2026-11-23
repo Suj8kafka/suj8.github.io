@@ -50,7 +50,7 @@ test('the play button name matches its visible label and controls the actual vid
 
 test('project images have useful descriptions while grouped toolkit decorations stay empty', () => {
   const projectImages = [...html.matchAll(/<img\b[^>]*src="assets\/images\/selected-work\/[^>]*>/g)];
-  assert.equal(projectImages.length, 4);
+  assert.equal(projectImages.length, 5);
   for (const [opening] of projectImages) assert.ok(attrs(opening).alt.length >= 30);
   assert.match(html, /alt="Aama Cure maternity-care illustration/);
   for (const [opening] of html.matchAll(/<img\b[^>]*src="assets\/images\/tool-icons\/[^>]*>/g)) assert.equal(attrs(opening).alt, '');

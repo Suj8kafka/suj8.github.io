@@ -15,3 +15,9 @@ money actions and payment groups. No interface elements were redrawn.
 
 The older `esewa-brand` files remain available, but the project card now uses
 the actual redesign. Other images in this directory predate this pass.
+
+`2048-dark-thumbnail.webp` is a 144 × 246 copy of the existing
+`../blog/2048-dark-settings.png` game screen, encoded as WebP at quality 0.8
+for the homepage's compact project preview. No interface elements were redrawn.
+The other additional-project previews reuse their existing artwork under
+`../blog/`; these are project marks, not interface screenshots.

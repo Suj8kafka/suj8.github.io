@@ -22,9 +22,12 @@ Use the confirmed identity and preferences in [status](../status.md). Keep role/
 
 Image provenance stays in [selected-work sources](../../assets/images/selected-work/README.md). Preserve truthful alternative text, reserved aspect ratios and responsive sources. The Aama image is maternity-care illustration; describe what is shown rather than calling it an app screenshot.
 
+All six cards in More projects & experiments share a compact preview beside the text. Nakka and 2048 use existing game screens; the other cards use their archived project artwork, contained without cropping.
+
 ## Accessibility and measurement contracts
 
 - Preserve the skip link, heading hierarchy, real anchors, visible keyboard focus, safe-area spacing and readable static fallback.
+- Social profile icons reveal their brand palettes on hover and keyboard focus, including Figma's five colors and LinkedIn/YouTube's white details. LinkedIn uses the Font Awesome square badge geometry, and Dribbble uses the unmodified mark geometry from its [official media kit](https://dribbble.com/media-kit), with pink (#ea4c89) on hover and keyboard focus in both themes. Social links retain their original 200ms transitions, 3px hover lift and shadow treatment, using CSS without JavaScript or extra requests. GitHub and Medium use light marks in dark mode.
 - Named generic containers need an appropriate role. Meaningful images have descriptive alternatives; decorative icons/images remain silent.
 - Skill dialogs contain Tab/Shift+Tab, close on Escape and restore the opener. Video keyboard activation moves focus to native controls after successful playback; rejection leaves a retry control. Completion must not steal focus from elsewhere.
 - Theme, contrast and Reader controls are owned by [display preferences](display-preferences.md). Keep reduced-motion branches and content visible during startup.
