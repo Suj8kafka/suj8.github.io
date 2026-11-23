@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261115-display';
+import { motionIsReduced } from './display-state.js?v=20261123-performance';
 // Let the browser own scroll positions; a viewport-sized blur fades with scroll speed.
 export function createScrollNavigation({ document, window }) {
   const root = document.documentElement;

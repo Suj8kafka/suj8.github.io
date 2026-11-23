@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261115-display';
+import { motionIsReduced } from './display-state.js?v=20261123-performance';
 export const CURSOR_COLORS = ['#5f7288', '#796783', '#56776c', '#916c59', '#79764f'];
 const LEGACY_COLORS = ['#356dff', '#b045b8', '#237c64', '#bc4d30', '#7161c4'];
 const IDLE_MS = 5000;

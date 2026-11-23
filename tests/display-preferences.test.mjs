@@ -26,6 +26,20 @@ test('first visit applies the monochrome theme plus system motion/contrast befor
   assert.deepEqual(page.state.overrides, {});
 });
 
+test('saved reading preferences use the same versioned stylesheet as deferred homepage styling', () => {
+  const links = [];
+  const root = { dataset: { stylesHref: '/assets/css/site.min.css?v=current' }, hasAttribute: name => name === 'data-page-styles' };
+  const document = { documentElement: root, createElement: () => ({ setAttribute(name, value) { this[name] = value; } }),
+    head: { append: link => links.push(link) } };
+  const window = { localStorage: { getItem: () => JSON.stringify({ layout: 'reader', textScale: '130' }) },
+    matchMedia: () => ({ matches: false }) };
+  hydrateDisplayPreferences({ document, window });
+  assert.equal(links.length, 1);
+  assert.equal(links[0].id, 'reading-styles');
+  assert.equal(links[0].href, root.dataset.stylesHref);
+  assert.equal(links[0].blocking, 'render');
+});
+
 test('validated explicit overrides take precedence over OS preferences without accepting arbitrary attributes', () => {
   const page = preview({ reduced: true, high: true, stored: JSON.stringify({ layout: 'reader', motion: 'full', sound: 'on',
     contrast: 'standard', textScale: '130', dyslexiaSpacing: 'on', theme: 'injected' }) });

@@ -1,5 +1,5 @@
-import { analyticsEndpoint, sectionLabels } from './analytics-config.js?v=20261110-sidebar';
-import { validateTraffic, validateUsage, formatDuration } from './analytics-report.js?v=20261110-sidebar';
+import { analyticsEndpoint, sectionLabels } from './analytics-config.js?v=20261123-performance';
+import { validateTraffic, validateUsage, formatDuration } from './analytics-report.js?v=20261123-performance';
 
 export function createVisitorPanel({ document, window, fetch = window.fetch.bind(window), now = () => Date.now() }) {
   const panel = document.querySelector('.presence-panel');
@@ -149,5 +149,3 @@ export function createVisitorPanel({ document, window, fetch = window.fetch.bind
   trigger.dataset.analyticsReady = 'true';
   return { destroy, load };
 }
-
-if (typeof document !== 'undefined' && typeof window !== 'undefined') createVisitorPanel({ document, window });

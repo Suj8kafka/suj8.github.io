@@ -6,7 +6,7 @@ export const sectionLabels = {
   skills: 'Skills', writing: 'Writing', about: 'About', contact: 'Contact'
 };
 export const interactionLabels = {
-  'project-open': 'Project opened', 'resume-download': 'CV link clicked',
+  'project-open': 'Project opened', 'resume-download': 'Resume link clicked',
   'contact-email': 'Email link clicked', 'social-link': 'Social link clicked',
   'blog-open': 'Notebook link clicked', 'article-open': 'Article opened',
   'skill-open': 'Skill explored', 'theme-change': 'Theme selected'

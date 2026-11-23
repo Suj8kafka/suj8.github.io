@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import worker, { securityHeaders } from '../cloudflare/security-headers.mjs';
 
-test('adds six security headers to success, error and redirect responses, preserving origin content', async () => {
+test('adds seven security headers to success, error and redirect responses, preserving origin content', async () => {
   const originalFetch = globalThis.fetch;
   try {
     for (const status of [200, 404, 500, 301]) {
@@ -15,7 +16,9 @@ test('adds six security headers to success, error and redirect responses, preser
       assert.equal(await response.text(), 'origin content');
       assert.equal(response.headers.get('Location'), '/destination');
       assert.equal(response.headers.get('Content-Type'), 'text/html');
-      assert.equal(Object.keys(securityHeaders).length, 6);
+      assert.equal(Object.keys(securityHeaders).length, 7);
+      assert.equal(response.headers.get('Strict-Transport-Security'), 'max-age=31536000; includeSubDomains');
+      assert.equal(response.headers.get('Cross-Origin-Opener-Policy'), 'same-origin');
       for (const [name, value] of Object.entries(securityHeaders)) assert.equal(response.headers.get(name), value);
     }
   } finally {
@@ -36,7 +39,7 @@ test('HTTP redirects directly to HTTPS preserving path and query without calling
   }
 });
 
-test('an origin connection failure still returns all six headers without exposing error details', async () => {
+test('an origin connection failure still returns all seven headers without exposing error details', async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => { throw new Error('private origin connection details'); };
   try {
@@ -61,7 +64,14 @@ test('CSP blocks embedding and inline executable scripts while allowing site dep
   const bareInlineScripts = [...html.matchAll(/<script\s*>([\s\S]*?)<\/script>/gi)];
   assert.equal(bareInlineScripts.length, 1);
   assert.match(bareInlineScripts[0][1], /window\.dataLayer/);
-  assert.match(html, /src="assets\/js\/intro-video\.js(?:\?[^"\s]+)?"/);
+  const inline = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+    .filter(([, attributes]) => !/\bsrc=|type="application\/ld\+json"/.test(attributes));
+  assert.equal(inline.length, 3);
+  for (const [, , script] of inline) {
+    const hash = createHash('sha256').update(script.replaceAll('\r\n', '\n')).digest('base64');
+    assert.ok(scripts.includes(`'sha256-${hash}'`), 'Every executable inline bootstrap needs its exact CSP hash');
+  }
+  assert.match(html, /src="assets\/js\/portfolio\.bundle\.js(?:\?[^"\s]+)?"/);
   assert.ok(csp.includes('wss://*.asia-southeast1.firebasedatabase.app'));
   assert.ok(csp.includes('https://www.googletagmanager.com'));
   assert.ok(csp.includes('https://*.google-analytics.com'));
@@ -84,7 +94,7 @@ test('preserved source websites download as non-crawlable text while other downl
     const download = await worker.fetch(new Request('https://www.sujeetkhadka.com.np/assets/documents/blog/original-blog-source.zip'));
     assert.equal(download.headers.get('X-Robots-Tag'), 'noindex, follow');
     assert.equal(download.headers.get('Content-Disposition'), null);
-    for (const path of ['/', '/blog/', '/blog/carrom-karrom/', '/blog/archive/', '/docs/sujeet-khadka-cv-2026.pdf', '/archive-work/']) {
+    for (const path of ['/', '/blog/', '/blog/carrom-karrom/', '/blog/archive/', '/docs/sujeet-khadka-cv-2026.pdf', '/docs/Sujeet_Khadka_Resume.pdf', '/archive-work/']) {
       const response = await worker.fetch(new Request(`https://www.sujeetkhadka.com.np${path}`));
       assert.equal(response.headers.get('X-Robots-Tag'), null, path);
     }

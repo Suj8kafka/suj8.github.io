@@ -6,13 +6,13 @@ Read for response headers, CSP, cache policy or preserved-source indexing. [Depl
 
 `cloudflare/wrangler.security.jsonc` routes `security-headers.mjs` on the apex and www portfolio hosts, in front of the existing GitHub Pages origin. It does not configure the independent old-blog host. Inspect existing routes, proxy status and TLS before live changes; preserve the origin and use the intended Full (strict) configuration.
 
-The Worker sets six headers on success, error and redirect responses: CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy and Permissions-Policy. It upgrades HTTP to HTTPS. HSTS is one year without subdomain inheritance/preload. Permissions-Policy retains same-origin opt-in geolocation while disabling unrelated capabilities. Use `securityHeaders` in source for exact policy values.
+The Worker sets seven headers on success, error and redirect responses: CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Cross-Origin-Opener-Policy, Referrer-Policy and Permissions-Policy. It upgrades HTTP to HTTPS. Prepared HSTS is `max-age=31536000; includeSubDomains`; COOP is `same-origin`. Permissions-Policy retains same-origin opt-in geolocation while disabling unrelated capabilities. Use `securityHeaders` in source for exact policy values. Before deploying the inherited HSTS policy, verify HTTPS on independently hosted subdomains as well as the apex/www routes. The owner editor uses email/password authentication; it does not depend on a cross-origin OAuth popup.
 
 Pushing GitHub Pages files does not deploy this Worker or activate its headers/cache/indexing policy. Historical reports of missing headers are in [status](../docs/status.md); recheck current responses before diagnosis.
 
 ## CSP and preserved-source contracts
 
-Allow only the current required external script, media, frame, image and connection origins. Inline display hydration uses the generated `display-bootstrap-csp.mjs` hash; the Google tag has its specific hash. Arbitrary inline executable scripts remain blocked. JSON-LD is metadata. Inline styles remain allowed for the existing animation implementation.
+Allow only the current required external script, media, frame, image and connection origins. Inline display hydration and welcome startup use the generated `display-bootstrap-csp.mjs` hashes; the Google data-layer bootstrap has its specific hash. Regenerate after changing either inline startup script with `node scripts/sync-display-preferences.mjs`. Arbitrary inline executable scripts remain blocked. JSON-LD is metadata. Inline styles remain allowed for the existing animation implementation.
 
 When changing inline bootstraps, endpoints, Firebase imports or the festival iframe, inspect all exact hashes/origins and browser violations. Match generated HTML and CSP using [display-preference steps](../docs/features/display-preferences.md). Do not assume a local test proves compatibility with scripts Cloudflare injects at the live edge. Coordinate matching site/Worker changes within the approved release.
 

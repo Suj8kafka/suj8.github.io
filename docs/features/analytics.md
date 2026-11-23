@@ -13,6 +13,8 @@ Read for public reports, event collection or metric definitions. [Task index](..
 
 `assets/js/analytics-config.js` owns endpoint and fixed labels. `usage-tracker.js` collects known events; `engagement-tracker.js` measures foreground time; `analytics-report.js`, `privacy.js` and `visitor-panel.js` present reports. Worker ownership: `cloudflare/analytics-worker.js`, `usage-analytics.js`, `analytics-cache.js`. The public page is `privacy/index.html`.
 
+Maintained pages keep the Google data-layer bootstrap in the head but schedule its network script through `deferred-analytics.js`. Load or first pointer/key/scroll interaction triggers two paint opportunities, then one initializer per idle callback (timer fallback). Google loads only on production hosts. The optional `analytics.bundle.js` is fetched afterward; its usage and visitor-panel factories initialize in separate idle tasks. Custom collection/engagement therefore starts after deferred startup, not at initial navigation. Local QA can initialize the panel but never submits Google/custom analytics.
+
 ## Collection and reporting contracts
 
 - Custom usage runs only on production home/privacy pages. Localhost, preview and `/login/` do not submit. DNT and GPC disable this tracker; they do not disable independent Firebase presence or infrastructure processing.
@@ -33,6 +35,6 @@ Cap measurement at one hour and 240 timing requests per load. Accept integer 1â€
 
 ## Verify
 
-Run `usage-analytics`, `usage-tracker`, `engagement-tracker`, `analytics-worker`, `analytics-cache`, `visitor-panel`, `privacy` and `google-tag` tests as relevant. Check service errors independently: one failed report must not hide another successful block.
+Run `deferred-analytics`, `usage-analytics`, `usage-tracker`, `engagement-tracker`, `analytics-worker`, `analytics-cache`, `visitor-panel`, `privacy` and `google-tag` tests as relevant. Check service errors independently: one failed report must not hide another successful block.
 
 Browser-check sidebar focus/Escape/resizing, public range changes, empty/failing reports and privacy signals. For authorized timing checks, switch focus, remain idle for over a minute and verify pauses/resumption. Account for report caching. No local test proves live collection, unique visitors or abuse-proof counts. Dated activation and limits belong in [history](../history/analytics-implementation-2026-11-18.md); current verification belongs in [status](../status.md).

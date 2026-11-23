@@ -234,7 +234,7 @@ test('the blog omits duplicate document links and retires its document gallery',
   assert.match(redirect, /data-blog-destination href="\/blog\/"/);
   assert.doesNotMatch(read('sitemap.xml'), /\/blog\/documents\//);
   assert.equal(blogDestination('https://blog.sujeetkhadka.com.np/Docs/cv.html'), `${origin}/blog/`);
-  assert.match(read('index.html'), /href="docs\/sujeet-khadka-cv-2026\.pdf"/);
+  assert.match(read('index.html'), /href="docs\/Sujeet_Khadka_Resume\.pdf"/);
 });
 
 test('all original homepage wording and its project context remain visible', () => {

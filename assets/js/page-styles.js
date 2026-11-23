@@ -1,5 +1,7 @@
 export function activatePageStyles({ document, window }) {
-  const sheet = document.getElementById('page-styles');
+  // Saved reading preferences can load the full sheet before this module runs.
+  // Reuse that link rather than issuing a second request from the deferred link.
+  const sheet = document.getElementById('reading-styles') || document.getElementById('page-styles');
   if (!sheet) return;
   const image = document.querySelector('.portrait-base');
   // Scroll events (including restored positions) signal intent without a geometry

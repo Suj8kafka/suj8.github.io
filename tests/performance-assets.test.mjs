@@ -17,9 +17,33 @@ test('selected-work imagery offers smaller responsive WebP sources without chang
     assert.ok(bytes.length < read('assets/images/selected-work/aama-cure-home.webp').length);
   }
   assert.match(source, /sizes="\(max-width: 800px\)/);
-  assert.match(html, /<source srcset="assets\/images\/selected-work\/nakka-screen-0-compact\.webp\?v=/);
+  assert.match(html, /<source srcset="assets\/images\/selected-work\/nakka-screen-96\.webp\?v=/);
   assert.ok(read('assets/images/selected-work/nakka-screen-0-compact.webp').length
     < read('assets/images/selected-work/nakka-screen-0.webp').length * .7);
+});
+
+test('small project previews and WALL-E use appropriately sized variants', () => {
+  const wallE = attributes(html.match(/<img\b[^>]*wall-e-270\.webp[^>]*>/)[0]);
+  assert.equal(wallE.fetchpriority, 'low');
+  assert.equal(wallE.decoding, 'async');
+  assert.ok(read('assets/images/wall-e-270.webp').length < read('assets/images/WallE.png').length * .1);
+  assert.ok(read('assets/images/selected-work/nakka-screen-96.webp').length < 8000);
+  assert.match(html, /nakka-screen-96\.webp\?v=[a-f0-9]+ 96w[^>]*sizes="44px"/);
+  const esewa = attributes(html.match(/<img\b[^>]*src="assets\/images\/selected-work\/esewa-redesign\.webp[^>]*>/)[0]);
+  assert.match(esewa.srcset, /esewa-redesign-240\.webp\?v=[a-f0-9]+ 240w/);
+  assert.match(esewa.srcset, /esewa-redesign-400\.webp\?v=[a-f0-9]+ 400w/);
+  assert.ok(esewa.sizes);
+  assert.equal(esewa.loading, 'lazy');
+});
+
+test('homepage uses one deferred app bundle and no eager tracking modules', () => {
+  const scripts = [...html.matchAll(/<script\b([^>]*\bsrc="([^"]+)"[^>]*)>/g)];
+  assert.equal(scripts.filter(([, , src]) => src.includes('portfolio.bundle.js')).length, 1);
+  assert.equal(scripts.some(([, , src]) => /usage-tracker|visitor-panel|googletagmanager/.test(src)), false);
+  for (const [, attributes] of scripts) assert.match(attributes, /type="module"|\bdefer\b/);
+  const paths = scripts.map(([, , src]) => src.split('?')[0]);
+  assert.equal(new Set(paths).size, paths.length);
+  assert.equal(html.match(/data-styles-href="\/?([^"]+)"/)[1], html.match(/data-href="([^"]+)"/)[1]);
 });
 
 test('notebook cards use compact thumbnails while archival originals remain available', () => {

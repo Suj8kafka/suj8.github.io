@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261119-palette-cycles';
+import { motionIsReduced } from './display-state.js?v=20261123-performance';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export function monochromeFill(fill) {

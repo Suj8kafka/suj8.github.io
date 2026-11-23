@@ -61,7 +61,7 @@ test('one project contact card also welcomes opportunities on a team', () => {
 
 test('supporting resource labels match their destinations and measurement hooks contain no visitor data', () => {
   const cv = actions.get('about-cv'), notes = actions.get('about-notes');
-  assert.match(cv.label, /CV \(PDF\)/);
+  assert.match(cv.label, /resume \(PDF\)/);
   assert.ok(existsSync(new URL(`../${cv.attrs.href}`, import.meta.url)));
   assert.equal(notes.label, 'Browse my project notebook');
   assert.equal(notes.attrs.href, '/blog/');

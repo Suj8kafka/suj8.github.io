@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261119-palette-cycles';
+import { motionIsReduced } from './display-state.js?v=20261123-performance';
 function script(document, src) {
   return new Promise((resolve, reject) => {
     const element = document.createElement('script');
@@ -12,11 +12,11 @@ function script(document, src) {
 async function loadMotion(document, window) {
   if (!window.gsap) await script(document, 'assets/vendor/gsap/gsap.min.js');
   if (!window.ScrollTrigger) await script(document, 'assets/vendor/gsap/ScrollTrigger.min.js');
-  return import('./motion.js?v=20261115-display');
+  return import('./motion.js?v=20261123-performance');
 }
 
 export async function loadServices(document, {
-  presence = () => import('./firebase-presence.js?v=20261115-display'),
+  presence = () => import('./firebase-presence.js?v=20261123-performance'),
   availability = () => import('./availability-client.js')
 } = {}) {
   const results = await Promise.allSettled([Promise.resolve().then(presence), Promise.resolve().then(availability)]);
@@ -33,7 +33,7 @@ export async function loadServices(document, {
 }
 
 export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
-  portrait = () => import('./portrait-network.js?v=20261119-palette-cycles'),
+  portrait = () => import('./portrait-network.js?v=20261123-performance'),
   services = () => loadServices(document) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
   let imageReady = false, decoding = false, motionStarted = false;

@@ -27,7 +27,7 @@ const globalSelector = /(?:^|,)\s*(?::root|\[data-theme|html\b|body\b|\*(?![\w-]
 
 // Compact generated CSS without changing quoted text or the spacing required
 // by selectors and calc() expressions. Keep the source stylesheet readable.
-function compactWhitespace(source) {
+export function compactWhitespace(source) {
   let result = '', quote = '', space = false;
   for (let index = 0; index < source.length; index++) {
     const char = source[index];
@@ -47,6 +47,10 @@ function compactWhitespace(source) {
   return result;
 }
 
+export function inlineStyles(source) {
+  return compactWhitespace(source.replace(/\/\*[\s\S]*?\*\//g, '')) + '\n';
+}
+
 export function criticalStyles(source) {
   const clean = source.replace(/\/\*[\s\S]*?\*\//g, '');
   function select(css) {
@@ -60,7 +64,6 @@ export function criticalStyles(source) {
       // These states cannot occur before the full sheet and enhancements are ready.
       if (/\.is-detached|parallax|palette-(?:transition|preview)|\.scroll-trail|\.live-presence-list|\.live-presence-item|\.availability-tooltip/.test(selector)) return [];
       if (selector === 'body::before') return [];
-      if (/^\.(?:art-note|note-one|note-two)\b/.test(selector)) return [];
       if (/\.portrait-(?:vector|path|reveal|hint|color)/.test(selector) && !/\.portrait-base/.test(selector)) return [];
       if (selector.includes(':hover') && !selector.includes('h1 em')) return [];
       if (selector.startsWith('[data-theme') && !criticalClass.test(selector) && selector !== '[data-theme="dark"]') return [];
@@ -77,7 +80,17 @@ export function criticalStyles(source) {
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   const css = readFileSync('assets/css/site.css', 'utf8');
-  const html = readFileSync('index.html', 'utf8');
+  let html = readFileSync('index.html', 'utf8');
+  for (const name of ['display-preferences', 'portfolio-assistant']) {
+    const embedded = `<style id="${name}-styles">\n${inlineStyles(readFileSync(`assets/css/${name}.css`, 'utf8'))}</style>`;
+    const pattern = new RegExp(`<style id="${name}-styles">[\\s\\S]*?<\\/style>|<link rel="stylesheet" href="/assets/css/${name}\\.css[^>]*>`);
+    if (process.argv.includes('--check')) {
+      if (html.match(pattern)?.[0] !== embedded) throw new Error(`${name} inline CSS is stale. Run node scripts/build-critical-styles.mjs.`);
+    } else {
+      if (!pattern.test(html)) throw new Error(`Could not find ${name} styles.`);
+      html = html.replace(pattern, embedded);
+    }
+  }
   const generated = `<style id="critical-styles">\n${criticalStyles(css)}</style>`;
   const existing = html.match(/<style id="critical-styles">[\s\S]*?<\/style>/);
   if (process.argv.includes('--check')) {

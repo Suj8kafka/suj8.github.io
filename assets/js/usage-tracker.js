@@ -1,5 +1,5 @@
-import { analyticsEndpoint, pageLabels, sectionLabels } from './analytics-config.js?v=20261110-engagement';
-import { createEngagementTracker } from './engagement-tracker.js?v=20261110-engagement';
+import { analyticsEndpoint, pageLabels, sectionLabels } from './analytics-config.js?v=20261123-performance';
+import { createEngagementTracker } from './engagement-tracker.js?v=20261123-performance';
 
 export function createUsageTracker({ document, window, fetch = window.fetch.bind(window) }) {
   const path = window.location.pathname === '/privacy' ? '/privacy/' : window.location.pathname;
@@ -95,5 +95,3 @@ export function createUsageTracker({ document, window, fetch = window.fetch.bind
   observe();
   return { destroy };
 }
-
-if (typeof document !== 'undefined' && typeof window !== 'undefined') createUsageTracker({ document, window });

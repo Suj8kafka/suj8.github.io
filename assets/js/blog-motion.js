@@ -1,4 +1,4 @@
-import { motionIsReduced } from './display-state.js?v=20261115-display';
+import { motionIsReduced } from './display-state.js?v=20261123-performance';
 const clamp = value => Math.max(0, Math.min(1, value));
 
 export function createBlogMotion({ document, window }) {

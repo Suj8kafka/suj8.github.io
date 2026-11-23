@@ -17,7 +17,7 @@ Read when changing startup, portrait behavior, GSAP or scrolling. [Task index](.
 
 The scheduler waits for page load, full styling, portrait decoding, welcome completion, two paint opportunities and idle time. It launches presence and availability independently; motion waits for first scroll on compact screens. Failed optional enhancements must not block the others. `loader:done` is a startup signal; motion also handles load, visibility and preference changes.
 
-First paint uses generated critical CSS and the responsive portrait. Full styling follows portrait decoding; interaction and direct section links prioritize it. Secondary fonts wait for first phone scroll. See [development](../development.md) for generation and cache-version steps.
+First paint uses generated critical CSS, inline preference/assistant styles and the responsive portrait. Decorative note positioning and landscape sizing are present before full styling, which follows portrait decoding; interaction and direct section links prioritize it. Secondary fonts wait for first phone scroll. Homepage controls load through the deferred `portfolio.bundle.js`; the welcome loader and optional enhancement scheduler keep their independent lifecycles. See [development](../development.md) for generation and cache-version steps.
 
 ## Welcome contract
 

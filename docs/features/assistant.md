@@ -14,6 +14,8 @@ Read for assistant UI, request handling or knowledge retrieval. [Task index](../
 
 The character walks along the portrait's top edge and supports pointer/keyboard activation. Opening flips the portrait to reveal the assistant; closing restores it without covering the rest of the page. Preserve focus, reduced motion and static portfolio content.
 
+The homepage inlines the assistant CSS and bundles its controller with other homepage controls. WALL·E uses a transparent 270×307 WebP derivative at low fetch priority; the original PNG remains preserved. The launcher can appear within the initial viewport, so it is not lazy-loaded. Project images remain lazy and use responsive sources. Rebuild inline CSS/bundles with the [development commands](../development.md).
+
 The browser sends one question at a time with no previous-message history. The Worker checks origin, method, content type, payload shape and a 500-character question limit, then applies its configured 12-per-minute native rate limiter. Obvious off-topic, unknown-personal and prompt/credential requests receive fixed responses without a model call.
 
 Portfolio questions retrieve active `portfolio_knowledge` records from the existing `portfolio-usage` D1 database via `PORTFOLIO_DB`. Category/title/keyword/content scoring selects at most six records. Workers AI is instructed to answer from that evidence. There are no embeddings, Vectorize index, agent loop or conversation table. Model selection belongs to the config; check it there instead of duplicating it in guides.

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <!-- Google tag -->
-<script async src="https://www.googletagmanager.com/gtm.js?id=G-0000C91B56"></script>
+<script type="module" src="/assets/js/deferred-analytics.js?v=20261123-performance"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -33,10 +33,9 @@
   <link rel="stylesheet" href="/assets/css/secondary-fonts.css">
   <link rel="stylesheet" href="/assets/css/privacy.css?v=20261119-type-scale">
   <link rel="stylesheet" href="/assets/css/display-preferences.css?v=20261119-palette-cycles">
-  <script type="module" src="/assets/js/display-preferences.js?v=20261119-footer-labels"></script>
-  <script type="module" src="/assets/js/privacy.js?v=20261119-palette"></script>
-  <script type="module" src="/assets/js/privacy-illustration.js?v=20261117-draft"></script>
-  <script type="module" src="/assets/js/usage-tracker.js?v=20261119-palette"></script>
+  <script type="module" src="/assets/js/display-preferences.js?v=20261123-performance"></script>
+  <script type="module" src="/assets/js/privacy.js?v=20261123-performance"></script>
+  <script type="module" src="/assets/js/privacy-illustration.js?v=20261123-performance"></script>
 </head>
 <body class="privacy-page">
   <a class="privacy-skip" href="#privacy-main">Skip to content</a>
@@ -133,7 +132,7 @@
       <noscript><p class="analytics-notice">Enable JavaScript to load the public dashboard. The full privacy policy is readable below.</p></noscript>
       <div class="usage-stats">
         <div class="usage-stat"><span>Page views</span><strong data-usage-stat="pageViews">—</strong><small>Recorded page loads</small></div>
-        <div class="usage-stat"><span>Interactions</span><strong data-usage-stat="interactions">—</strong><small>Project, CV, contact & other clicks</small></div>
+        <div class="usage-stat"><span>Interactions</span><strong data-usage-stat="interactions">—</strong><small>Project, resume, contact & other clicks</small></div>
         <div class="usage-stat"><span>Active time</span><strong data-usage-stat="activeTimeMs">—</strong><small>Estimated foreground activity</small></div>
         <div class="usage-stat"><span>Time per page load</span><strong data-usage-stat="averageActiveTimeMs">—</strong><small>Active time ÷ measured page loads</small></div>
       </div>
@@ -172,7 +171,7 @@
         <div class="policy-copy">
           <section id="policy-usage" aria-labelledby="usage-title">
             <h3 id="usage-title">Usage analytics, open to everyone</h3>
-            <p>This portfolio uses a small analytics service built on Cloudflare Workers and D1. When connected, it counts page loads, sections reached, and clicks on projects, articles, CV, email, social and notebook links, skill details and theme choices. A click count shows intent; it does not confirm that a download finished or an email was sent.</p>
+            <p>This portfolio uses a small analytics service built on Cloudflare Workers and D1. When connected, it counts page loads, sections reached, and clicks on projects, articles, resume, email, social and notebook links, skill details and theme choices. A click count shows intent; it does not confirm that a download finished or an email was sent.</p>
             <p>It also measures estimated active time per page and section, and whether the portfolio reached 25%, 50%, 75% or the bottom of its scrollable distance. Time is counted while the page is visible and focused, pauses after 60 seconds without input or scrolling, and skips long browser-suspension gaps. It starts after the welcome overlay closes. This estimates foreground activity rather than attention or actual reading.</p>
             <p>Time is sent in small batches, approximately every 15 seconds and on tab changes or departure, and added to daily counters. Only elapsed milliseconds and fixed section labels are included. Input events refresh an inactivity timer without recording keys, text or pointer coordinates in these analytics. One page load is limited to one hour of estimated active time and 240 timing reports. Closing a browser can prevent the last report from arriving.</p>
             <p>Page loads are grouped by public page, referral source, browser family, device type and approximate country. Referral sources are stored as broad categories such as Google or LinkedIn; unrecognised sites are grouped as “Other websites”. URL queries, campaign tags, fragments and referral paths are not stored.</p>

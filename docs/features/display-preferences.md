@@ -29,7 +29,7 @@ node scripts/build-critical-styles.mjs
 node --test tests/display-preferences.test.mjs tests/critical-styles.test.mjs
 ```
 
-The sync script injects the exact function before styles/welcome and regenerates `cloudflare/display-bootstrap-csp.mjs`. Match HTML and Worker changes for an authorized release; stale deployed CSP can block inline hydration even if the external module later applies settings. Saved Reader/enlarged-text choices request full CSS before paint; ordinary Crafted visits retain deferred styling.
+The sync script injects the exact function before styles/welcome and regenerates `cloudflare/display-bootstrap-csp.mjs`. Match HTML and Worker changes for an authorized release; stale deployed CSP can block inline hydration even if the external module later applies settings. Saved Reader/enlarged-text choices request full CSS before paint through the homepage's `data-styles-href`, matching the deferred stylesheet's URL; ordinary Crafted visits retain deferred styling. The homepage's preference CSS is generated inline from its readable source. See [asset generation](../development.md) for rebuilding the homepage bundle after source changes.
 
 ## Verify
 

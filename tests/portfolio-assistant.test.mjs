@@ -18,7 +18,7 @@ test('homepage includes the accessible assistant controls and all suggested ques
   assert.match(html, /maxlength="500"/);
   assert.match(html, /Ask about Sujeet/);
   assert.match(html, /WALL·E’s portfolio guide/);
-  assert.match(html, /assets\/images\/WallE\.png/);
+  assert.match(html, /assets\/images\/wall-e-270\.webp/);
   assert.match(html, /class="assistant-companion"/);
   assert.match(html, /class="assistant-greeting" aria-hidden="true">Hello!/);
   const hero = html.slice(html.indexOf('<section class="hero"'), html.indexOf('<section class="selected-work'));

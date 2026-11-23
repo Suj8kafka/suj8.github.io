@@ -1,5 +1,5 @@
-import { analyticsEndpoint, pageLabels, sectionLabels, interactionLabels, depthLabels } from './analytics-config.js?v=20261110-engagement';
-import { validateUsage, formatDuration } from "./analytics-report.js?v=20261112-all-time";
+import { analyticsEndpoint, pageLabels, sectionLabels, interactionLabels, depthLabels } from './analytics-config.js?v=20261123-performance';
+import { validateUsage, formatDuration } from "./analytics-report.js?v=20261123-performance";
 export { validateUsage, formatDuration };
 
 const metrics = ['pages', 'referrers', 'countries', 'browsers', 'devices', 'interactions', 'sections', 'pageTime', 'sectionTime', 'scrollDepth'];

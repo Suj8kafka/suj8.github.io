@@ -1,0 +1,176 @@
+{
+  "date": "2026-11-23",
+  "kind": "local-mobile-lighthouse",
+  "productionPageSpeed": false,
+  "environment": "Windows; Brave Chromium headless; Lighthouse default simulated mobile throttling; cold cache",
+  "serviceBlocking": [
+    "firebase",
+    "cloudflare",
+    "identitytoolkit",
+    "ipwho",
+    "bigdatacloud",
+    "nameless-truth"
+  ],
+  "caveats": [
+    "Not live PageSpeed Insights or CrUX evidence.",
+    "Initial and final scores differ in Google loading: production deferred tracking still requires live measurement.",
+    "Scores vary across runs.",
+    "Zero sampled non-composited animations does not prove every animation in every interaction is composited."
+  ],
+  "runs": [
+    {
+      "name": "baseline",
+      "measuredAt": "2026-11-23T09:21:26.059Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 84,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1358.9299,
+        "largest-contentful-paint": 1358.9299,
+        "cumulative-layout-shift": 0.3030070597154411,
+        "total-blocking-time": 70.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Existing eager Google tag included",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "hero-reservation",
+      "measuredAt": "2026-11-23T09:22:24.219Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1357.4386999999997,
+        "largest-contentful-paint": 1357.4386999999997,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 77.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Existing eager Google tag included",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "inline-styles",
+      "measuredAt": "2026-11-23T09:23:10.687Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1339.4811076414783,
+        "largest-contentful-paint": 1339.4811076414783,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 71.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Existing eager Google tag included",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "responsive-images",
+      "measuredAt": "2026-11-23T09:26:50.463Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1298.7744217630232,
+        "largest-contentful-paint": 1298.7744217630232,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 71.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Existing eager Google tag included",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "deferred-bundles",
+      "measuredAt": "2026-11-23T10:13:10.872Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1527.0539082897867,
+        "largest-contentful-paint": 1527.0539082897867,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 35.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Localhost excludes Google and custom collection",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "css-and-browser-cleanup",
+      "measuredAt": "2026-11-23T10:16:37.828Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 98,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1892.8474999999999,
+        "largest-contentful-paint": 1892.8474999999999,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 19
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Localhost excludes Google and custom collection",
+      "responseHeaders": "Plain local HTTP"
+    },
+    {
+      "name": "security-headers",
+      "measuredAt": "2026-11-23T10:30:33.818Z",
+      "lighthouseVersion": "13.6.0",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 1715.743733521469,
+        "largest-contentful-paint": 1715.743733521469,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 46.5
+      },
+      "consoleErrors": 0,
+      "inspectorIssues": 0,
+      "nonCompositedAnimations": 0,
+      "tracking": "Localhost excludes Google and custom collection",
+      "responseHeaders": "Prepared security policy applied locally"
+    }
+  ]
+}

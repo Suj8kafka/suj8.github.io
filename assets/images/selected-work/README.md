@@ -21,3 +21,9 @@ the actual redesign. Other images in this directory predate this pass.
 for the homepage's compact project preview. No interface elements were redrawn.
 The other additional-project previews reuse their existing artwork under
 `../blog/`; these are project marks, not interface screenshots.
+
+The 240px/400px `esewa-redesign` and 96px/192px `nakka-screen` WebP variants are
+resized derivatives of the existing local WebP artwork, encoded with sharp at
+quality 88. They retain the full screen and original card cropping; the source
+files remain available. `../wall-e-270.webp` is a transparent 270×307 derivative
+of the preserved `../WallE.png`, using quality 88 and alpha quality 100.

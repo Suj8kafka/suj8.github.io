@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { criticalStyles } from '../scripts/build-critical-styles.mjs';
+import { criticalStyles, inlineStyles } from '../scripts/build-critical-styles.mjs';
 import { activatePageStyles } from '../assets/js/page-styles.js';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -18,15 +18,15 @@ test('critical CSS compaction preserves quoted values, descendant selectors and 
 test('generated first-screen CSS is synchronized, bounded and loads only the headline font', () => {
   const generated = criticalStyles(css);
   assert.equal(html.match(/<style id="critical-styles">\n([\s\S]*?)<\/style>/)[1], generated);
-  assert.ok(Buffer.byteLength(generated) < 16000);
+  assert.ok(Buffer.byteLength(generated) < 16500);
   assert.equal([...generated.matchAll(/@font-face/g)].length, 1);
   assert.match(generated, /assets\/fonts\/space-grotesk-latin\.woff2/);
   assert.doesNotMatch(generated, /src: url\("\.\.\/fonts/);
   assert.match(html, /<link id="page-styles"[^>]*media="print"/);
   const deferred = html.match(/<link id="page-styles"[^>]*>/)[0];
   assert.doesNotMatch(deferred, /\shref=/);
-  assert.match(deferred, /\sdata-href="assets\/css\/site\.css/);
-  assert.match(html, /<noscript><link rel="stylesheet" href="assets\/css\/site\.css/);
+  assert.match(deferred, /\sdata-href="assets\/css\/site\.min\.css/);
+  assert.match(html, /<noscript><link rel="stylesheet" href="assets\/css\/site\.min\.css/);
   assert.match(generated, /\.hero\s*\{/);
   assert.match(generated, /max-width:\s*800px/);
   assert.match(generated, /html\[data-page-transitions="pending"\]/);
@@ -34,16 +34,36 @@ test('generated first-screen CSS is synchronized, bounded and loads only the hea
     'Offscreen layout containment must be temporary and leave no-JavaScript pages alone');
 });
 
-function preview({ loaded = true, decode = 'ready', hash = '', compact = false, checkLayoutReads = false } = {}) {
+test('decorative notes and landscape keep their final positioning before deferred CSS arrives', () => {
+  const generated = criticalStyles(css);
+  assert.match(generated, /\.art-note\{position:absolute/);
+  assert.match(generated, /\.note-one\{top:-20px;right:21px\}/);
+  assert.match(generated, /\.note-two\{bottom:39px;left:-24px/);
+  assert.match(generated, /\.hero-landscape\{[^}]*position:absolute[^}]*width:100%;height:100%/);
+  assert.match(generated, /\.hero-landscape-layer\{position:absolute/);
+});
+
+test('preference and assistant CSS is synchronized inline and makes no blocking stylesheet requests', () => {
+  for (const name of ['display-preferences', 'portfolio-assistant']) {
+    const source = readFileSync(new URL(`../assets/css/${name}.css`, import.meta.url), 'utf8');
+    const embedded = html.match(new RegExp(`<style id="${name}-styles">\\n([\\s\\S]*?)<\\/style>`))[1];
+    assert.equal(embedded, inlineStyles(source));
+    assert.ok(html.indexOf(`id="${name}-styles"`) < html.indexOf('</head>'));
+    assert.doesNotMatch(html, new RegExp(`<link[^>]+${name}\\.css`));
+  }
+});
+
+function preview({ loaded = true, decode = 'ready', hash = '', compact = false, checkLayoutReads = false, reading = false } = {}) {
   const events = new Map(), frames = new Map(), emitted = [];
   let nextId = 0, finishDecode;
   const pending = new Promise(resolve => { finishDecode = resolve; });
   const sheet = { sheet: loaded ? {} : null, media: 'print', dataset: { href: 'assets/css/site.css' },
     addEventListener(name, callback) { events.set(name, callback); }
   };
+  if (reading) { sheet.href = 'assets/css/site.min.css'; sheet.media = 'all'; }
   const links = [], scrolling = new Map();
   const document = { documentElement: { dataset: { pageStyles: 'pending' } },
-    getElementById: id => id === 'page-styles' ? sheet : links.find(link => link.id === id),
+    getElementById: id => (reading ? id === 'reading-styles' : id === 'page-styles') ? sheet : links.find(link => link.id === id),
     createElement: () => ({}), head: { append: link => links.push(link) },
     addEventListener: (name, callback) => scrolling.set(`document:${name}`, callback),
     removeEventListener: name => scrolling.delete(`document:${name}`),
@@ -75,6 +95,14 @@ test('full styling waits for a decoded portrait and two paint opportunities', as
   assert.equal(page.sheet.media, 'all');
   assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
   assert.deepEqual(page.emitted, ['page-styles:ready']);
+});
+
+test('saved reading layout reuses the early stylesheet instead of loading a duplicate', async () => {
+  const page = preview({ reading: true }); await flush();
+  page.paint(); page.paint(); await page.ready;
+  assert.equal(page.sheet.href, 'assets/css/site.min.css');
+  assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
+  assert.equal(page.sheet.media, 'all');
 });
 
 test('initial stylesheet activation settles before enabling colour and layout transitions', async () => {

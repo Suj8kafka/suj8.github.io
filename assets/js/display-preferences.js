@@ -1,4 +1,4 @@
-import { hydrateDisplayPreferences } from './display-state.js?v=20261123-experience-timeline';
+import { hydrateDisplayPreferences } from './display-state.js?v=20261123-performance';
 
 const groups = [
   ['theme', 'Theme', [['mono', 'Monochrome'], ['original', 'Original'], ['dark', 'Dark'], ['auto', 'System']]],

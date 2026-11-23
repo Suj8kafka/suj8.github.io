@@ -5,8 +5,8 @@ Read when changing the homepage, selected work, contact flow or accessibility. [
 ## Ownership and visitor path
 
 - `index.html` owns static content, native links, semantic sections and structured identity. `assets/css/site.css` owns layout; `assets/js/main.js` owns general interactions and skill dialogs.
-- Hero → Selected work → focus strip → About → Experience → How I work → Writing → Contact. Desktop navigation: Work, About, Writing, CV and Get in touch. Mobile: Home, Work, About, Writing, Contact.
-- Hero actions lead to `#work` and `#contact`. About retains experience/skills anchors, CV and notebook links. Contact has one centered project/opportunity card and a native email draft with project, design-help and timeline prompts. Clicking does not send an email; keep a visible direct email fallback.
+- Hero → Selected work → focus strip → About → Experience → How I work → Writing → Contact. Desktop navigation: Work, About, Writing, Resume and Get in touch. Mobile: Home, Work, About, Writing, Contact.
+- Hero actions lead to `#work` and `#contact`. About retains experience/skills anchors, resume and notebook links. Navbar/About resume links use `docs/Sujeet_Khadka_Resume.pdf`. Contact has one centered project/opportunity card and a native email draft with project, design-help and timeline prompts. Clicking does not send an email; keep a visible direct email fallback.
 - Availability is independent; see [availability](availability.md). Welcome/scroll behavior belongs in [motion](motion.md), not the general interaction module.
 
 ## Content rules

@@ -7,7 +7,7 @@ import { securityHeaders } from '../cloudflare/security-headers.mjs';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 const tagId = 'G-0000C91B56';
-const externalTag = `<script async src="https://www.googletagmanager.com/gtm.js?id=${tagId}"></script>`;
+const externalTag = '<script type="module" src="/assets/js/deferred-analytics.js?v=20261123-performance"></script>';
 const inlineTag = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -28,14 +28,16 @@ function pageFiles(directory) {
 const pages = ['index.html', '404.html', 'privacy/index.html', 'login/index.html',
   ...pageFiles('blog'), ...pageFiles('pages')].sort();
 
-test('the supplied Google tag appears once immediately after head on every maintained page', () => {
+test('maintained pages queue the Google tag once and defer its network request', () => {
   assert.equal(pages.length, 28);
   for (const path of pages) {
     const html = read(path).replaceAll('\r\n', '\n');
-    assert.equal(html.split(`gtm.js?id=${tagId}`).length - 1, 1, path);
+    assert.equal(html.split('deferred-analytics.js?v=').length - 1, 1, path);
+    assert.doesNotMatch(html, /<script[^>]+src="https:\/\/www\.googletagmanager\.com/);
     assert.equal(html.split('window.dataLayer = window.dataLayer || [];').length - 1, 1, path);
     assert.ok(html.includes(`<head>\n${completeTag}\n`), `${path}: tag must immediately follow <head>`);
   }
+  assert.equal(read('assets/js/deferred-analytics.js').split(`gtm.js?id=${tagId}`).length - 1, 1);
 });
 
 test('the CSP permits only the exact Google bootstrap and Analytics endpoints', () => {
