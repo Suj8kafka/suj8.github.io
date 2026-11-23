@@ -1,10 +1,10 @@
 # Verification and outstanding work
 
-Last documentation reconciliation: **22 November 2026**. This page records evidence, not a continuous health check. Source/configuration describes intended behavior; use the relevant runbook to verify current live state.
+Last status update: **23 November 2026**. This page records evidence, not a continuous health check. Source/configuration describes intended behavior; use the relevant runbook to verify current live state.
 
 | Area | Last recorded evidence | Still unverified or pending |
 | --- | --- | --- |
-| Static portfolio | SEO commit `04bf05a505ed35e7b8d4a6e9c1364d413c8d3df6` pushed to `origin/master` on 22 November; local and remote branches matched. | GitHub Pages completion and public content for that exact commit were not checked after the push. |
+| Static portfolio | UI commit `dd703a1b26d0b795380338f855753497e2d845bf` pushed to `origin/master` on 23 November; local and remote branches matched. All 270 Node tests and generated-style/media-version checks passed. Post-push GETs confirmed the new homepage at `https://www.sujeetkhadka.com.np/`; fresh requests for the stylesheet and 5,912-byte 2048 thumbnail returned 200 with the expected release content. | Earlier cached asset requests still served the prior CSS or a thumbnail 404 while deployment propagated. The unauthenticated Pages build API returned 404, so exact build status was unavailable. Final public browser behavior and live PageSpeed scores were not audited. |
 | Main site and notebook | Read-only GETs on 22 November: homepage, notebook, Carrom and 2048 UX pages returned 200 with expected www canonicals; robots and sitemap returned 200. The full seven-article release was verified on 15 November at `0c4c2c359c7fff8eccb4ba2cfbdc42df107512ce`. | Post-push public content and Google-selected canonicals. |
 | Google Search Console | Owner screenshot on 22 November confirms www URL-prefix property, sitemap **Success**, 11 discovered pages. Earlier non-www property shows an intentional redirecting homepage. | www homepage URL Inspection, actual indexing, performance baseline and ranking gains. Discovered does not mean indexed. |
 | Old blog host | 22 November GET still returned 200 with non-www homepage canonical. | Redirect Worker cutover, live route review and per-URL verification. |
@@ -13,7 +13,7 @@ Last documentation reconciliation: **22 November 2026**. This page records evide
 | Portfolio assistant | Dedicated Worker, knowledge migration and browser integration exist in source. | Live Worker, AI binding/quota, rate-limit namespace, D1 knowledge migration and matching CSP deployment are not verified by the implementation record. |
 | Firebase owner editor and presence | Local authorization/validation tests exist. Older notes record anonymous sign-in success, presence writes failing and expired CLI authentication. | Current providers, deployed rules, owner allowlist, presence writes and end-to-end owner saving; older failures are not a fresh health check. |
 
-The reviewed SEO snapshot passed **270 Node tests** on Node v24.15.0 before push. This documentation reorganization changes no application behavior; its validation belongs in the change report. Historical test totals and Lighthouse scores remain tied to their recorded snapshots.
+Test totals and Lighthouse scores remain tied to their recorded snapshots. Local checks do not establish live service health.
 
 ## Next actions
 
