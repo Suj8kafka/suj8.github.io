@@ -147,3 +147,26 @@ test('D1 migration applies cleanly and seeds structured portfolio knowledge', as
   assert.equal(aama.url, 'https://aamacure.com');
   database.close();
 });
+
+test('employment correction updates only Neptune knowledge and can be reapplied', async () => {
+  const seed = await readFile(new URL('../cloudflare/migrations/0003-portfolio-assistant.sql', import.meta.url), 'utf8');
+  const correction = await readFile(new URL('../cloudflare/migrations/0004-neptune-experience-ended.sql', import.meta.url), 'utf8');
+  const database = new DatabaseSync(':memory:');
+  try {
+    database.exec(seed);
+    const unrelated = database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-neptune' ORDER BY id").all();
+    const original = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-neptune'").get();
+    database.exec(correction);
+    const updated = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-neptune'").get();
+    assert.match(updated.content, /From January to June 2026, Sujeet worked/);
+    assert.doesNotMatch(updated.content + updated.keywords, /present/i);
+    for (const field of ['id', 'category', 'title', 'url', 'link_label', 'sort_order', 'is_active']) {
+      assert.equal(updated[field], original[field]);
+    }
+    assert.deepEqual(database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-neptune' ORDER BY id").all(), unrelated);
+    database.exec(correction);
+    assert.equal(database.prepare("SELECT content FROM portfolio_knowledge WHERE id = 'experience-neptune'").get().content, updated.content);
+  } finally {
+    database.close();
+  }
+});

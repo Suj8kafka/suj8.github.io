@@ -121,13 +121,17 @@ test('monochrome skill cards use light grayscale surfaces with dark readable tex
   assert.ok(ratio('#111111', '#d9d9d9') >= 4.5);
 });
 
-test('monochrome experience cards keep a light readable surface on hover', () => {
-  const [, selectors, declarations] = css.match(/\[data-theme="mono"\] :is\(([^)]+)\)\s*\{([^}]+)\}/);
-  assert.match(selectors, /\.experience-node:hover \.card-orange/);
-  assert.match(selectors, /\.experience-card\.card-orange:hover/);
-  assert.match(selectors, /\.experience-card\.is-hovered\.card-orange/);
-  assert.match(declarations, /background:\s*#eeeeee !important/);
-  assert.ok(ratio('#222938', '#eeeeee') >= 4.5);
+test('experience exposes roles as a chronological list with a named native project link', () => {
+  const section = html.match(/<section[^>]*id="experience"[\s\S]*?<\/section>/)[0];
+  assert.match(section, /<ol[^>]*aria-label="Professional experience, most recent first"/);
+  assert.equal([...section.matchAll(/<li\b/g)].length, 4);
+  assert.equal([...section.matchAll(/<h3\b/g)].length, 4);
+  const link = attrs(section.match(/<a[^>]*class="experience-project-link"[^>]*>/)[0]);
+  assert.equal(link.href, 'https://aamacure.com');
+  assert.equal(link.target, '_blank');
+  assert.match(link.rel, /noreferrer/);
+  assert.match(link['aria-label'], /Explore Aama Cure.*opens in a new tab/);
+  assert.doesNotMatch(section, /Hover a milestone|<b>|tabindex="0"/);
 });
 
 test('public footers use natural lowercase labels without decorative arrows', () => {

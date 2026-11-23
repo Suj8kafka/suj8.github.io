@@ -47,7 +47,7 @@ export function hydrateDisplayPreferences({ document, window }) {
   if (document.documentElement.hasAttribute?.('data-page-styles')
     && (initial.layout === 'reader' || initial.textScale !== '100' || initial.dyslexiaSpacing === 'on')) {
     const sheet = document.createElement('link');
-    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261119-footer-labels';
+    sheet.rel = 'stylesheet'; sheet.href = '/assets/css/site.css?v=20261123-experience-timeline';
     sheet.setAttribute('blocking', 'render');
     document.head.append(sheet);
   }

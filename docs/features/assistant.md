@@ -10,6 +10,7 @@ Read for assistant UI, request handling or knowledge retrieval. [Task index](../
 | Validation, retrieval, guarded model call and errors | `cloudflare/portfolio-assistant.js` |
 | Worker, AI/rate-limit/D1 bindings and model selection | `cloudflare/wrangler.assistant.jsonc` |
 | Additive knowledge table and seed records | `cloudflare/migrations/0003-portfolio-assistant.sql` |
+| Neptune TechZone employment end date correction | `cloudflare/migrations/0004-neptune-experience-ended.sql` |
 
 The character walks along the portrait's top edge and supports pointer/keyboard activation. Opening flips the portrait to reveal the assistant; closing restores it without covering the rest of the page. Preserve focus, reduced motion and static portfolio content.
 

@@ -9,6 +9,18 @@ const actions = new Map([...html.matchAll(/(<a\b[^>]*data-cta-id="[^"]+"[^>]*>)(
   return [attrs['data-cta-id'], { attrs, opening, label:body.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() }];
 }));
 
+test('experience puts current work first and records Aama Cure as completed employment', () => {
+  const section = html.match(/<section[^>]*id="experience"[\s\S]*?<\/section>/)[0];
+  const roles = [...section.matchAll(/<li\b[\s\S]*?<\/li>/g)].map(([role]) => role);
+  assert.match(roles[0], /Upwork · webapex\.com\.au/);
+  assert.match(roles[0], /Current · Freelance/);
+  assert.match(roles[1], /Neptune TechZone · Aama Cure/);
+  assert.match(roles[1], /datetime="2026-06">Jun 2026/);
+  assert.doesNotMatch(roles[1], /Present|Current/);
+  assert.match(roles[2], /KMAG Pvt\. Ltd\./);
+  assert.match(roles[3], /Okay Journey Pvt\. Ltd\./);
+});
+
 test('the homepage leads with selected work and keeps a distinct contact route', () => {
   assert.equal(actions.size, 7);
   const inquiry = actions.get('hero-inquiry'), work = actions.get('hero-work');

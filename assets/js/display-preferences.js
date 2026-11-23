@@ -1,4 +1,4 @@
-import { hydrateDisplayPreferences } from './display-state.js?v=20261119-footer-labels';
+import { hydrateDisplayPreferences } from './display-state.js?v=20261123-experience-timeline';
 
 const groups = [
   ['theme', 'Theme', [['mono', 'Monochrome'], ['original', 'Original'], ['dark', 'Dark'], ['auto', 'System']]],
