@@ -43,3 +43,17 @@ ignored `.tmp/damage-*`. They are local evidence, not durable release artifacts.
 External requests were blocked to isolate rendering and avoid live visitor
 writes. No live Firebase, assistant, analytics, deployed CSP, real-device or
 production performance verification is implied by these checks.
+
+## Authorized publication
+
+After the assessment, the owner requested the code push. Release
+`e08e983911523657423c1157cb721438c9da3495` was pushed to `origin/master` on
+25 November; `git ls-remote` confirmed that exact commit on GitHub.
+The public homepage initially served the previous version, then returned 200
+with the new footer, bundle and `20261125-motion-cleanup` enhancement import.
+Seven public responses (portfolio bundle, stylesheet, footer SVG, Google Sans
+font and the three motion import-chain modules) returned 200 and matched the
+local SHA-256 hashes. The unauthenticated Pages build metadata API returned 404,
+so build metadata was unavailable. These checks verify source/asset delivery;
+they do not establish production browser behavior or live service health.
+No Worker, Firebase, database, owner-access or DNS changes were made.
