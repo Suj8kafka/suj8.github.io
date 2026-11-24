@@ -504,9 +504,11 @@ h2 { margin-bottom: 1.125rem; font: 600 clamp(2.25rem, 4vw, 3.5rem)/1.05 var(--d
 .social-figma { --brand-color: #f24e1e; }
 .social-figma:is(:hover, :focus-visible) { --figma-green: #0acf83; --figma-purple: #a259ff; --figma-red: #f24e1e; --figma-coral: #ff7262; --figma-blue: #1abcfe; }
 .social-linkedin:is(:hover, :focus-visible) { --linkedin-inset: #fff; }
+.social-facebook:is(:hover, :focus-visible) { --facebook-inset: #fff; }
 .social-youtube:is(:hover, :focus-visible) { --youtube-play: #fff; }
 .social-github { --brand-color: #24292f; }
 .social-linkedin { --brand-color: #0a66c2; }
+.social-facebook { --brand-color: #0866ff; }
 .social-medium { --brand-color: #000; }
 .social-behance { --brand-color: #1769ff; }
 .social-dribbble { --brand-color: #ea4c89; }
