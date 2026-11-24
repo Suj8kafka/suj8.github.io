@@ -113,3 +113,16 @@ test('lighter devices use shorter scrub lag; missing dependencies create no deco
   const controller = createScrollTrail({ document: { querySelector: () => null }, window: {} });
   controller.destroy();
 });
+
+test('cleanup still releases the ribbon after GSAP has detached its scroll trigger', () => {
+  const page = preview();
+  page.resize(8000);
+  page.tween.scrollTrigger = null;
+  assert.doesNotThrow(() => page.controller.destroy());
+  page.flushResize();
+  assert.equal(page.disconnected, true);
+  assert.equal(page.children.length, 0);
+  assert.equal(page.listeners.size, 0);
+  assert.equal(page.tween.killed, true);
+  assert.doesNotThrow(() => page.controller.destroy());
+});

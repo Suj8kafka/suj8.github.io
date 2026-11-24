@@ -4,4 +4,5 @@ import './intro-video.js';
 import './main.js';
 import './scroll-navigation.js';
 import './mobile-navigation.js';
+import './footer-motion.js';
 import './portfolio-assistant.js';

@@ -6,6 +6,7 @@ Read a record only for its specific decision, audit or measurement. [Current tas
 
 | Topic | Dated evidence |
 | --- | --- |
+| Footer regression assessment, welcome checks and GSAP cleanup fix | [Footer assessment — 25 November](footer-assessment-2026-11-25.md) |
 | Hero CLS, deferred bundles, responsive images and prepared CSP verification | [Mobile loading — 23 November](mobile-loading-2026-11-23.md) |
 | Repository background, original agent instructions, early dead ends | [Repository snapshot — 8 November](repository-2026-11-08.md) |
 | Initial mobile asset/startup changes | [Mobile performance](mobile-performance-2026-11-09.md), [rendering](mobile-rendering-2026-11-09.md) |

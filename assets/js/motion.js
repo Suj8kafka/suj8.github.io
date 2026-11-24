@@ -1,5 +1,5 @@
 import { createParallax } from './parallax.js?v=20261123-performance';
-import { createScrollTrail } from './scroll-trail.js?v=20261123-performance';
+import { createScrollTrail } from './scroll-trail.js?v=20261125-motion-cleanup';
 import { motionIsReduced } from './display-state.js?v=20261123-performance';
 
 export function createPortfolioMotion({ document, window, gsap = window.gsap, ScrollTrigger = window.ScrollTrigger }) {

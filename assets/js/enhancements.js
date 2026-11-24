@@ -12,7 +12,7 @@ function script(document, src) {
 async function loadMotion(document, window) {
   if (!window.gsap) await script(document, 'assets/vendor/gsap/gsap.min.js');
   if (!window.ScrollTrigger) await script(document, 'assets/vendor/gsap/ScrollTrigger.min.js');
-  return import('./motion.js?v=20261123-performance');
+  return import('./motion.js?v=20261125-motion-cleanup');
 }
 
 export async function loadServices(document, {

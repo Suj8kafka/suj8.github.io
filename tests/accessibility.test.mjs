@@ -63,7 +63,7 @@ test('every homepage image explicitly declares a meaningful or decorative altern
     if (image.alt === '') assert.match(image.src, /^assets\/images\/tool-icons\//);
     else assert.ok(image.alt.trim().length > 5, `Unhelpful alt: ${image.src}`);
   }
-  assert.match(html, /class="footer-toolkit-dump"[^>]*role="img"/);
+  assert.match(html, /class="footer-box-stage decorative-only"[^>]*aria-hidden="true"/);
 });
 
 function variables(selector) {
@@ -150,6 +150,6 @@ test('public footers use natural lowercase labels without decorative arrows', ()
   }
   assert.match(html, />designed & built with intention</);
   assert.match(html, />privacy & policy</);
-  assert.match(html, />projects & roles</);
+  assert.match(html, />Projects &amp; opportunities</);
   assert.match(html, />back to top</);
 });

@@ -65,6 +65,8 @@ After changing preference hydration in `assets/js/display-state.js`, first run `
 
 After changing versioned public images/fonts, run `node scripts/version-public-media.mjs`, then the critical-style generator; verify with `node scripts/version-public-media.mjs --check`. Inspect stylesheet/script URLs and nested module import `v` values manually for other cached edits. Preserve the space in `assets/images/sujeet-hero- vector2.svg` and its `%20` browser URL.
 
+After changing footer interaction geometry in `assets/js/interaction-studies.js`, first run `node scripts/build-footer-graphics.mjs` to synchronize its static SVG symbols (`--check` verifies them). Then version public media, regenerate performance assets and regenerate critical styles as above.
+
 Keep `loader/files/loader.css` equal to embedded `#welcome-styles` and `loader/files/namaste.svg` synchronized with the inline template. Existing loader tests enforce these contracts.
 
 ## Focused tests

@@ -1,0 +1,3 @@
+The six interaction studies are original, code-generated artwork: grid alignment, a Bézier curve, shape morphing, a compressing surface, connected flow and a moving ripple. `assets/js/interaction-studies.js` supplies their shared vector geometry; `assets/js/footer-graphics.js` renders it to canvas.
+
+`scripts/build-footer-graphics.mjs` generates the static `interaction-studies.svg` symbols used when JavaScript or canvas is unavailable. Regenerate it after geometry changes, then run the public-media versioner and rebuild the performance assets and critical styles. Its `--check` flag verifies synchronization. Do not edit the generated paths by hand.

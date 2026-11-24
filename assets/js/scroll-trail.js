@@ -86,7 +86,8 @@ export function createScrollTrail({ document, window, gsap, ScrollTrigger, light
     observer?.disconnect();
     window.cancelAnimationFrame(resizeFrame);
     document.removeEventListener('visibilitychange', onVisibility);
-    tween.scrollTrigger.kill();
+    // GSAP's media context may already have reverted and detached this trigger.
+    tween.scrollTrigger?.kill();
     tween.kill();
     svg.remove();
   } };
