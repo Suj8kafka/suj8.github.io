@@ -6,9 +6,9 @@ import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../loader/files/loader.js', import.meta.url), 'utf8');
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-function preview({ intro = false, styles = 'ready', returning = false, reduced = false, compact = false, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false, nativeProgress = false } = {}) {
+function preview({ intro = false, styles = 'ready', returning = false, reduced = false, compact = false, constrained = false, motionPreference, firstPaint = true, saveData = false, hash = '', assets = true, blockedStorage = false, brokenAnimation = false, handwriting = false, nativeProgress = false } = {}) {
   const frames = new Map(), timers = new Map(), emitted = [];
-  const stylesheets = [], work = { storage: 0, fonts: 0, portrait: 0 };
+  const stylesheets = [], wordAnimations = [], work = { storage: 0, fonts: 0, portrait: 0 };
   let clock = 0, sequence = 0;
   function target() {
     const listeners = new Map();
@@ -26,11 +26,17 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
   root.classList = { add: value => classes.add(value), remove: value => classes.delete(value), contains: value => classes.has(value) };
   loader.classList = { add() {} };
   root.style.overflow = 'auto'; body.style.overflow = 'scroll';
+  if (motionPreference) root.dataset.motion = motionPreference;
   loader.querySelector = selector => ({ '.ld-skip': skip, '.ld-bar': bar })[selector];
   const motion = Object.assign(target(), { matches: reduced });
   const template = handwriting ? { content: { cloneNode: () => ({ textContent: 'नमस्ते' }) } } : undefined;
   if (handwriting) word.replaceChildren = node => { word.textContent = node.textContent; word.written = true; };
-  word.animate = () => { if (brokenAnimation) throw new Error('Animation unavailable'); return { cancel() {} }; };
+  word.animate = (keyframes, options) => {
+    if (brokenAnimation) throw new Error('Animation unavailable');
+    const animation = { keyframes, options, cancelled: false, cancel() { this.cancelled = true; } };
+    wordAnimations.push(animation);
+    return animation;
+  };
   const progressMotion = { cancelled: 0, keyframes: [],
     cancel() { this.cancelled++; }, effect: { setKeyframes(value) { progressMotion.keyframes = value; } } };
   if (nativeProgress) fill.animate = keyframes => { progressMotion.keyframes = keyframes; return progressMotion; };
@@ -48,7 +54,7 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
   const storage = { values: new Map(returning ? [['portfolio-intro-seen', '1']] : []),
     getItem(key) { work.storage++; if (blockedStorage) throw new Error('Storage blocked'); return this.values.get(key) || null; },
     setItem(key, value) { work.storage++; if (blockedStorage) throw new Error('Storage blocked'); this.values.set(key, value); } };
-  const window = Object.assign(target(), { location: { hash, search: intro ? '?intro=1' : '' }, navigator: { connection: { saveData } } });
+  const window = Object.assign(target(), { location: { hash, search: intro ? '?intro=1' : '' }, navigator: { deviceMemory: constrained ? 4 : 8, hardwareConcurrency: 8, connection: { saveData } } });
   const local = { ...storage, values: new Map(storage.values) };
   vm.runInNewContext(source, {
     document, window, URLSearchParams, localStorage: local, sessionStorage: storage,
@@ -64,7 +70,8 @@ function preview({ intro = false, styles = 'ready', returning = false, reduced =
     if (paint) { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(clock)); }
     for (const [id, timer] of [...timers]) if (timer.at <= clock) { timers.delete(id); timer.callback(); }
   }
-  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, progressMotion, advance };
+  if (firstPaint && loader.dataset.visit === 'returning') { advance(0); advance(0); }
+  return { root, body, loader, word, language, fill, bar, skip, heading, document, window, motion, emitted, frames, timers, stylesheets, work, wordAnimations, progressMotion, advance };
 }
 
 test('normal desktop visits show the first welcome or returning Namaste', async () => {
@@ -86,7 +93,9 @@ test('returning explicit previews show Namaste with a monotonic progress bar and
   assert.equal(page.word.textContent, 'नमस्ते');
   assert.equal(page.word.lang, 'ne');
   assert.equal(page.root.classList.contains('loader-running'), true);
-  page.advance(525); assert.equal(page.bar.attributes['aria-valuenow'], '50');
+  page.advance(525);
+  // Native progress moves between greeting boundaries without a JS frame loop.
+  assert.ok(Number(page.bar.attributes['aria-valuenow']) >= 0 && Number(page.bar.attributes['aria-valuenow']) < 100);
   page.advance(525); assert.equal(page.bar.attributes['aria-valuenow'], '100');
   page.advance(180);
   assert.equal(page.loader.style.display, 'none');
@@ -283,6 +292,22 @@ test('Namaste uses the pen-stroke artwork and holds the completed word before di
   assert.equal(page.root.dataset.loaderDone, 'true');
 });
 
+test('brief Namaste starts its clock after paint while its independent deadline remains bounded', async () => {
+  const page = preview({ returning: true, handwriting: true, firstPaint: false }); await flush();
+  page.advance(400, false);
+  assert.equal(page.root.dataset.loaderDone, 'false');
+  page.advance(0); page.advance(16);
+  page.advance(880);
+  assert.equal(page.root.classList.contains('loader-running'), true, 'A delayed first paint must not consume the ink hold');
+  page.advance(170); page.advance(180);
+  assert.equal(page.root.dataset.loaderDone, 'true');
+  assert.deepEqual(page.emitted, ['loader:done']);
+  const stalled = preview({ returning: true, firstPaint: false });
+  stalled.advance(2000, false);
+  assert.equal(stalled.root.dataset.loaderDone, 'true', 'Unpainted/stalled pages still unlock by two seconds');
+  assert.equal(stalled.frames.size, 0);
+});
+
 test('Namaste drawing is local vector geometry with a bounded, ordered stroke sequence', () => {
   const svg = readFileSync(new URL('../loader/files/namaste.svg', import.meta.url), 'utf8');
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -311,14 +336,47 @@ test('Namaste draws the visible ink directly without a font reveal or finishing 
   assert.doesNotMatch(css, /ld-write-finish|ld-ink-finish/);
 });
 
-test('desktop first visits cycle every language with compositor-friendly text motion', async () => {
-  const page = preview(); await flush();
+test('desktop first visits use bounded greeting blur and clear it before the ink animation', async () => {
+  const page = preview({ handwriting: true }); await flush();
+  assert.equal(page.loader.dataset.effects, 'full');
+  assert.equal(page.wordAnimations.length, 1, 'Hello receives the entrance treatment too');
   for (const [delay, lang] of [[940, 'es'], [940, 'fr'], [940, 'it'], [940, 'de'], [960, 'ne']]) {
     page.advance(delay);
     assert.equal(page.word.lang, lang);
   }
-  assert.doesNotMatch(source, /filter: 'blur/);
+  assert.equal(page.wordAnimations.length, 5, 'Only Latin greetings receive blur');
+  for (const animation of page.wordAnimations) {
+    assert.ok(animation.options.duration >= 940 && animation.options.duration <= 960);
+    assert.ok(animation.keyframes.some(frame => frame.filter === 'blur(0px)' && frame.opacity === 1), 'Each word settles clearly for reading');
+    assert.equal(animation.cancelled, true, 'The prior effect releases before Namaste');
+  }
+  assert.equal(page.word.written, true);
   assert.equal(page.stylesheets.length, 0);
+});
+
+test('returning Namaste, compact and constrained visits avoid greeting blur', async () => {
+  for (const options of [{ returning: true }, { compact: true }, { constrained: true }]) {
+    const page = preview({ ...options, handwriting: true }); await flush();
+    assert.equal(page.loader.dataset.effects, 'light');
+    if (!options.returning) page.advance(options.compact ? 700 : 940);
+    assert.ok(page.wordAnimations.every(animation => animation.keyframes.every(frame => !frame.filter)));
+    page.skip.dispatch('click');
+    assert.ok(page.wordAnimations.every(animation => animation.cancelled));
+    assert.equal(page.timers.size, 0);
+  }
+});
+
+test('explicit Full motion overrides the OS preference while Reduced always bypasses', async () => {
+  const full = preview({ reduced: true, motionPreference: 'full', returning: true, handwriting: true });
+  await flush();
+  assert.equal(full.root.classList.contains('loader-running'), true);
+  assert.equal(full.word.written, true);
+  full.advance(1050); full.advance(180);
+  assert.equal(full.root.dataset.loaderDone, 'true');
+  const reduced = preview({ motionPreference: 'reduced' });
+  assert.equal(reduced.root.classList.contains('loader-running'), false);
+  const css = readFileSync(new URL('../loader/files/loader.css', import.meta.url), 'utf8');
+  assert.match(css, /html:not\(\[data-motion="full"\]\)\.loader-running #loader \{ display: none; \}/);
 });
 
 test('first-paint bootstrap precedes body and inline welcome CSS matches its source', () => {

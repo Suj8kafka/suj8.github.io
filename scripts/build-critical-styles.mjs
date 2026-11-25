@@ -59,7 +59,7 @@ export function criticalStyles(source) {
         const inner = select(body);
         return inner ? [`${selector}{${inner}}`] : [];
       }
-      if (selector === '@font-face') return /Space Grotesk/.test(body) ? [`${selector}{${body.trim()}}`] : [];
+      if (selector === '@font-face') return /Product Sans/.test(body) && /font-weight:\s*700\s*;/.test(body) ? [`${selector}{${body.trim()}}`] : [];
       if (selector.startsWith('@')) return [];
       // These states cannot occur before the full sheet and enhancements are ready.
       if (/\.is-detached|parallax|palette-(?:transition|preview)|\.scroll-trail|\.live-presence-list|\.live-presence-item|\.availability-tooltip/.test(selector)) return [];

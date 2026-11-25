@@ -13,6 +13,12 @@ const loader = read('loader/files/loader.css');
 const home = read('index.html');
 
 test('the shared type ramp reserves small text for secondary information', () => {
+  assert.match(site, /--display:\s*"Product Sans", sans-serif;/);
+  assert.match(site, /--body:\s*"DM Sans", sans-serif;/);
+  assert.match(site, /h1, h2, h3\s*\{\s*font-family:\s*var\(--display\)/);
+  assert.match(site, /\.footer-name\s*\{[^}]*var\(--display\)/);
+  assert.match(site, /--footer-font:\s*var\(--body\)/);
+  assert.doesNotMatch(site, /Space Grotesk|Google Sans/);
   assert.match(site, /--type-caption:\s*\.8125rem;/);
   assert.match(site, /--type-label:\s*\.875rem;/);
   assert.match(site, /--type-body:\s*1rem;/);

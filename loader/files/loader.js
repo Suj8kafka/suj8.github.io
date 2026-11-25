@@ -15,6 +15,8 @@
   clearTimeout(window.loaderBootTimeout);
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const reduced = () => root.dataset.layout === 'reader' || (root.dataset.motion ? root.dataset.motion === 'reduced' : motion.matches);
+  const constrained = (window.navigator.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
+    || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
   const seenKey = 'portfolio-intro-seen';
   const exitDuration = 180;
   const firstVisitDuration = compact ? 5000 : 6000; // Includes Namaste and the exit fade.
@@ -42,8 +44,10 @@
   const maximumDuration = compact ? duration : returning ? 1800 : duration;
   loader.dataset.visit = compact ? 'mobile' : returning ? 'returning' : 'first';
   loader.dataset.mode = compact ? 'mobile' : 'desktop';
+  loader.dataset.effects = !compact && !returning && !constrained ? 'full' : 'light';
   const navigationKeys = new Set(['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
   let running = false, completed = false, ready = false;
+  let waitingForPaint = returning && !compact;
   let failSafe, revealTimer, greetingTimer, exitTimer, frame, animation, progressAnimation, startedAt;
   let previousOverflow, previousBodyOverflow;
   let activeIndex = -1, displayedProgress = 0;
@@ -110,7 +114,14 @@
     word.dataset.writing = String(!!writing);
     language.textContent = greeting.label;
     loader.dataset.palette = String(index % 3);
-    if (!writing && index > 0 && typeof word.animate === 'function') {
+    if (!writing && !compact && !returning && !constrained && typeof word.animate === 'function') {
+      animation = word.animate([
+        { opacity: .15, transform: 'translateY(14px) scale(.98)', filter: 'blur(8px)', offset: 0, easing: 'cubic-bezier(.16,1,.3,1)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0px)', offset: .24, easing: 'linear' },
+        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0px)', offset: .82, easing: 'ease-in' },
+        { opacity: .1, transform: 'translateY(-10px) scale(.99)', filter: 'blur(6px)', offset: 1 }
+      ], { duration: greeting.duration, easing: 'linear', fill: 'both' });
+    } else if (!writing && index > 0 && typeof word.animate === 'function') {
       animation = word.animate([
         { opacity: .35, transform: 'translateY(8px)' },
         { opacity: 1, transform: 'translateY(0)' }
@@ -118,7 +129,7 @@
     }
   }
   function tick(now) {
-    if (!running) return;
+    if (!running || waitingForPaint) return;
     clearTimeout(greetingTimer);
     try {
       const elapsed = now - startedAt;
@@ -165,7 +176,17 @@
       if (typeof fill.animate === 'function') progressAnimation = fill.animate([
         { transform: 'scaleX(0)' }, { transform: 'scaleX(.92)' }
       ], { duration, easing: 'linear', fill: 'forwards' });
-      frame = requestAnimationFrame(tick);
+      // Let the brief SVG reach a painted frame before spending its reading time.
+      frame = requestAnimationFrame(now => {
+        if (!waitingForPaint) { tick(now); return; }
+        frame = requestAnimationFrame(paintedAt => {
+          if (completed) return;
+          waitingForPaint = false;
+          startedAt = paintedAt;
+          if (progressAnimation) progressAnimation.currentTime = 0;
+          tick(paintedAt);
+        });
+      });
     } catch { complete(); }
   }
 
@@ -180,7 +201,7 @@
     ready = true;
     if (completed) return;
     progressAnimation?.effect?.setKeyframes([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }]);
-    if (running && performance.now() - startedAt >= duration) tick(performance.now());
+    if (running && !waitingForPaint && performance.now() - startedAt >= duration) tick(performance.now());
   });
   // Inline welcome styles are available before the first paint.
   run();

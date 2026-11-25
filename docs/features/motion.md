@@ -23,6 +23,8 @@ First paint uses generated critical CSS, inline preference/assistant styles and 
 ## Welcome contract
 
 - First desktop visit: Hello, Hola, Bonjour, Ciao, Hallo, then handwritten Namaste; six seconds including exit. Returning desktop visits use a brief Namaste.
+- Unconstrained first desktop visits use short greeting blur/vertical movement with a clear reading hold, quiet orbital linework and a diffuse theme-aware focus wash. Blur stays confined to the greeting and exit stage. Phones, returning visits and constrained devices keep lighter effects; Namaste's pen strokes stay clear.
+- The returning Namaste clock starts after two paint opportunities so cold rendering does not consume the finished-ink hold. Its independent two-second deadline still unlocks a stalled page. The explicit Full motion preference overrides an OS reduced-motion default in both CSS and the controller.
 - Phones: full five-second sequence; reveal the portfolio and restore scrolling after 500 ms, finishing in a dismissible 184px panel above bottom navigation.
 - Reduced motion, save-data, direct section links and hidden startup bypass the overlay. No JavaScript leaves it hidden. A nine-second bootstrap watchdog releases the page if the deferred script fails; late scripts cannot restart the intro.
 - Skip, scrolling/navigation input and visibility changes clean up timers and release the page. Closing the phone panel restores appropriate focus. Progress uses a browser animation rather than a continuous JS loop.

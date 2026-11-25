@@ -20,7 +20,7 @@ test('generated first-screen CSS is synchronized, bounded and loads only the hea
   assert.equal(html.match(/<style id="critical-styles">\n([\s\S]*?)<\/style>/)[1], generated);
   assert.ok(Buffer.byteLength(generated) < 16500);
   assert.equal([...generated.matchAll(/@font-face/g)].length, 1);
-  assert.match(generated, /assets\/fonts\/space-grotesk-latin\.woff2/);
+  assert.match(generated, /assets\/fonts\/Product%20Sans%20Bold\.ttf/);
   assert.doesNotMatch(generated, /src: url\("\.\.\/fonts/);
   assert.match(html, /<link id="page-styles"[^>]*media="print"/);
   const deferred = html.match(/<link id="page-styles"[^>]*>/)[0];

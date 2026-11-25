@@ -61,7 +61,7 @@ test('notebook cards use compact thumbnails while archival originals remain avai
 
 test('public image and font cache versions match their file contents', () => {
   for (const source of [html, read('assets/css/site.css').toString(), read('assets/css/secondary-fonts.css').toString()]) {
-    for (const [url, path, version] of source.matchAll(/((?:assets\/(?:images|fonts)\/|\.\.\/fonts\/)[\w./% -]+?\.(?:webp|png|jpe?g|svg|woff2))\?v=([a-f0-9]{12})/g)) {
+    for (const [url, path, version] of source.matchAll(/((?:assets\/(?:images|fonts)\/|\.\.\/fonts\/)[\w./% -]+?\.(?:webp|png|jpe?g|svg|woff2|ttf))\?v=([a-f0-9]{12})/g)) {
       const local = decodeURIComponent(path.replace(/^\.\.\/fonts\//, 'assets/fonts/'));
       assert.equal(version, createHash('sha256').update(read(local)).digest('hex').slice(0, 12), url);
     }
@@ -90,7 +90,8 @@ test('hero uses one responsive image preload matching its eagerly discoverable W
 test('only the headline font is preloaded and welcome CSS needs no extra request', () => {
   const fonts = [...html.matchAll(/<link\b[^>]*\bas="font"[^>]*>/g)];
   assert.equal(fonts.length, 1);
-  assert.match(fonts[0][0], /space-grotesk-latin\.woff2/);
+  assert.match(fonts[0][0], /Product%20Sans%20Bold\.ttf/);
+  assert.equal(attributes(fonts[0][0]).type, 'font/ttf');
   assert.doesNotMatch(html, /<link\b[^>]*href="loader\/files\/loader\.css/);
   const css = read('assets/css/site.css').toString();
   assert.match(css, /#loader\s*\{\s*display:\s*none/);
@@ -110,5 +111,6 @@ test('critical HTML leaves optional libraries to the scheduler and uses valid lo
   for (const file of ['dm-mono-400-latin.woff2', 'dm-mono-500-latin.woff2', 'dm-sans-latin.woff2', 'space-grotesk-latin.woff2']) {
     assert.equal(read(`assets/fonts/${file}`).toString('ascii', 0, 4), 'wOF2');
   }
+  for (const file of ['Product Sans Regular.ttf', 'Product Sans Bold.ttf']) assert.equal(read(`assets/fonts/${file}`).readUInt32BE(0), 0x00010000, 'Valid supplied TrueType font');
   for (const family of ['DM-Mono', 'DM-Sans', 'Space-Grotesk']) assert.match(read(`assets/fonts/${family}-OFL.txt`).toString(), /SIL OPEN FONT LICENSE/i);
 });

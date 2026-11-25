@@ -155,11 +155,11 @@
 .story-meta a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .story-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 0 0 3.375rem; border-block: 1px solid var(--line); }
 .story-facts > div { padding: 1.375rem 1.5rem 1.375rem 0; }
-.story-facts dt { margin-bottom: .5rem; color: var(--muted); font: .625rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+.story-facts dt { margin-bottom: .5rem; color: var(--muted); font: .625rem var(--body); text-transform: uppercase; letter-spacing: .08em; }
 .story-facts dd { margin: 0; font-size: .8125rem; line-height: 1.7; }
 .story-layout { display: grid; grid-template-columns: 200px minmax(0, 740px); gap: 4rem; align-items: start; padding-bottom: 3.75rem; }
 .story-toc { position: sticky; top: 32px; padding-top: .3125rem; }
-.story-toc h2 { margin-bottom: 1.125rem; color: var(--muted); font: .625rem "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.story-toc h2 { margin-bottom: 1.125rem; color: var(--muted); font: .625rem var(--display); letter-spacing: .08em; text-transform: uppercase; }
 .story-toc ol { margin: 0; padding-left: 1.125rem; color: var(--muted); }
 .story-toc a { display: block; padding: .5rem 0 .5rem .25rem; font-size: .75rem; line-height: 1.5; }
 .story-toc a:hover { color: var(--accent-text); }

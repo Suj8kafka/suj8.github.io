@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const files = ['index.html', 'assets/css/site.css', 'assets/css/secondary-fonts.css'];
 for (const file of files) {
   const source = readFileSync(file, 'utf8');
-  const updated = source.replace(/(?:assets\/(?:images|fonts)\/|\.\.\/fonts\/)[\w./% -]+?\.(?:webp|png|jpe?g|svg|woff2)(?:\?v=[\w.-]+)?/g, url => {
+  const updated = source.replace(/(?:assets\/(?:images|fonts)\/|\.\.\/fonts\/)[\w./% -]+?\.(?:webp|png|jpe?g|svg|woff2|ttf)(?:\?v=[\w.-]+)?/g, url => {
     const path = url.split('?')[0];
     const localPath = decodeURIComponent(path.replace(/^\.\.\/fonts\//, 'assets/fonts/'));
     const version = createHash('sha256').update(readFileSync(localPath)).digest('hex').slice(0, 12);
