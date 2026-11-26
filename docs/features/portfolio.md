@@ -20,6 +20,8 @@ Use the confirmed identity and preferences in [status](../status.md). Keep role/
 
 The Neptune TechZone / Aama Cure UI/UX Designer role ran from January to June 2026; it is past employment. The [current résumé](../Sujeet_Khadka_Resume.pdf) specifies UI/UX Design Intern in January–March and Junior Designer in April–June. Preserve that distinction in detailed career answers.
 
+Upwork freelance work began in **August 2025** and is ongoing, as confirmed by the owner and current résumé. Keep the visible date and machine-readable `datetime="2025-08"` aligned; do not infer a 2026 start from other career entries.
+
 Experience uses a compact vertical timeline in reverse chronological order, with dates beside each role on desktop and above it on phones. A subtle grid remains behind the desktop dates. All descriptions are visible without hover; only native text links indicate navigation, including a direct Aama Cure product link. Reader mode removes the grid and timeline decoration.
 
 Fine-pointer hover and focus within a timeline row accent its marker and logo border, lift the logo by 2px and emphasize the role label. Text links adjust their underline on hover/focus and press. These are bounded CSS transitions with no extra tab stops or JavaScript; reduced motion stops transforms, and Reader mode keeps the rows static.

@@ -195,3 +195,26 @@ test('resume correction keeps the completed intern and junior periods separate a
     assert.equal(database.prepare("SELECT content FROM portfolio_knowledge WHERE id = 'experience-neptune'").get().content, corrected.content);
   } finally { database.close(); }
 });
+
+test('Upwork starts in August 2025 and its correction preserves all other knowledge and role fields', async () => {
+  const database = new DatabaseSync(':memory:');
+  try {
+    for (const file of ['0003-portfolio-assistant.sql', '0004-neptune-experience-ended.sql', '0005-neptune-resume-roles.sql']) {
+      database.exec(await readFile(new URL(`../cloudflare/migrations/${file}`, import.meta.url), 'utf8'));
+    }
+    const correction = await readFile(new URL('../cloudflare/migrations/0006-upwork-start-2025.sql', import.meta.url), 'utf8');
+    const original = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-upwork'").get();
+    const unrelated = database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-upwork' ORDER BY id").all();
+    database.exec(correction);
+    const updated = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-upwork'").get();
+    assert.match(updated.content, /From August 2025 to the present/);
+    assert.doesNotMatch(updated.content + updated.keywords, /2026/);
+    assert.equal(updated.content, original.content.replace('August 2026', 'August 2025'));
+    for (const field of ['id', 'category', 'title', 'url', 'link_label', 'sort_order', 'is_active']) {
+      assert.equal(updated[field], original[field]);
+    }
+    assert.deepEqual(database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-upwork' ORDER BY id").all(), unrelated);
+    database.exec(correction);
+    assert.equal(database.prepare("SELECT content FROM portfolio_knowledge WHERE id = 'experience-upwork'").get().content, updated.content);
+  } finally { database.close(); }
+});

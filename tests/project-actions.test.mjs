@@ -14,6 +14,8 @@ test('experience puts current work first and records Aama Cure as completed empl
   const roles = [...section.matchAll(/<li\b[\s\S]*?<\/li>/g)].map(([role]) => role);
   assert.match(roles[0], /Upwork · webapex\.com\.au/);
   assert.match(roles[0], /Current · Freelance/);
+  assert.match(roles[0], /datetime="2025-08">Aug 2025<\/time>/);
+  assert.doesNotMatch(roles[0], /Aug 2026|datetime="2026-08"/);
   assert.match(roles[1], /Neptune TechZone · Aama Cure/);
   assert.match(roles[1], /datetime="2026-06">Jun 2026/);
   assert.doesNotMatch(roles[1], /Present|Current/);
