@@ -1,0 +1,210 @@
+{
+  "siteCommit": "a23871e35586319a5651752614e073e846833bbe",
+  "securityWorkerVersion": "ef6ee33e-c997-42da-bb1b-8023cb59331a",
+  "conditions": {
+    "browser": "Brave Chromium headless",
+    "baseUrl": "https://www.sujeetkhadka.com.np/",
+    "desktop": {
+      "width": 1440,
+      "height": 900
+    },
+    "phone": {
+      "width": 390,
+      "height": 900
+    },
+    "network": "unthrottled",
+    "thirdPartyVisitorAnalyticsWrites": "blocked during browser QA",
+    "storage": "fresh first visit; retained for returning visits"
+  },
+  "checkedAt": "2026-11-26T03:55:33.606Z",
+  "cases": [
+    {
+      "name": "desktop-first",
+      "trace": {
+        "greetings": [
+          "en",
+          "es",
+          "fr",
+          "it",
+          "de",
+          "ne"
+        ],
+        "visible": [
+          "en",
+          "es",
+          "fr",
+          "it",
+          "de",
+          "ne"
+        ],
+        "done": 7099,
+        "policy": []
+      },
+      "now": 7115.300000011921,
+      "visit": "first",
+      "active": false,
+      "display": "none",
+      "ink": 10,
+      "styles": "ready",
+      "hash": ""
+    },
+    {
+      "name": "desktop-returning",
+      "trace": {
+        "greetings": [
+          "ne"
+        ],
+        "visible": [
+          "ne"
+        ],
+        "done": 2085.600000023842,
+        "policy": []
+      },
+      "now": 2102,
+      "visit": "returning",
+      "active": false,
+      "display": "none",
+      "ink": 10,
+      "styles": "ready",
+      "hash": ""
+    },
+    {
+      "name": "phone-first",
+      "trace": {
+        "greetings": [
+          "en",
+          "es",
+          "fr",
+          "it",
+          "de",
+          "ne"
+        ],
+        "visible": [
+          "en",
+          "es",
+          "fr",
+          "it",
+          "de",
+          "ne"
+        ],
+        "done": 5133.200000017881,
+        "policy": []
+      },
+      "now": 5148.700000017881,
+      "visit": "first",
+      "active": false,
+      "display": "none",
+      "ink": 10,
+      "styles": "ready",
+      "hash": ""
+    },
+    {
+      "name": "phone-returning",
+      "trace": {
+        "greetings": [
+          "ne"
+        ],
+        "visible": [
+          "ne"
+        ],
+        "done": 1510.5999999940395,
+        "policy": []
+      },
+      "now": 1529.0999999940395,
+      "visit": "returning",
+      "active": false,
+      "display": "none",
+      "ink": 10,
+      "styles": "ready",
+      "hash": ""
+    },
+    {
+      "name": "returning-section",
+      "trace": {
+        "greetings": [
+          "ne"
+        ],
+        "visible": [
+          "ne"
+        ],
+        "done": 1510.5999999940395,
+        "policy": []
+      },
+      "now": 1669.5999999940395,
+      "visit": "returning",
+      "active": false,
+      "display": "none",
+      "ink": 10,
+      "styles": "ready",
+      "hash": "#contact"
+    },
+    {
+      "name": "reduced-motion",
+      "trace": {
+        "greetings": [],
+        "visible": [],
+        "done": 44.099999994039536,
+        "policy": []
+      },
+      "now": 580.9000000059605,
+      "visit": "returning",
+      "active": false,
+      "display": "none",
+      "ink": 0,
+      "styles": "pending",
+      "hash": ""
+    }
+  ],
+  "errors": [],
+  "policies": [],
+  "publicAssets": {
+    "checkedAt": "2026-11-26T03:54:55.337Z",
+    "status": 200,
+    "releaseServed": true,
+    "inline": [
+      {
+        "attrs": "",
+        "allowed": true
+      },
+      {
+        "attrs": " id=\"display-bootstrap\"",
+        "allowed": true
+      },
+      {
+        "attrs": " id=\"loader-bootstrap\"",
+        "allowed": true
+      },
+      {
+        "attrs": " id=\"welcome-controller\"",
+        "allowed": true
+      }
+    ],
+    "assets": [
+      {
+        "path": "assets/js/portfolio.bundle.js?v=3ddaf8157a7c",
+        "status": 200,
+        "matches": true
+      },
+      {
+        "path": "assets/css/site.min.css?v=c99f3adefefb",
+        "status": 200,
+        "matches": true
+      },
+      {
+        "path": "assets/js/page-styles.js?v=20261125-startup-repair",
+        "status": 200,
+        "matches": true
+      },
+      {
+        "path": "assets/images/footer/sujeet-footer-gestures.webp?v=f2da93ca980f",
+        "status": 200,
+        "matches": true
+      },
+      {
+        "path": "assets/images/footer/sujeet-overhead-walk.webp?v=fba1f7f58937",
+        "status": 200,
+        "matches": true
+      }
+    ]
+  }
+}

@@ -16,6 +16,8 @@ Allow only the current required external script, media, frame, image and connect
 
 When changing inline bootstraps, endpoints, Firebase imports or the festival iframe, inspect all exact hashes/origins and browser violations. Match generated HTML and CSP using [display-preference steps](../docs/features/display-preferences.md). Do not assume a local test proves compatibility with scripts Cloudflare injects at the live edge. Coordinate matching site/Worker changes within the approved release.
 
+The policy retains the exact head-bootstrap hash from the preceding welcome release so cached HTML remains usable during rollout. Preserve that compatibility until the prior HTML cache lifetime has elapsed; arbitrary inline scripts remain blocked. A fixture-based regression test verifies the shipped bootstrap against this policy.
+
 Prepared indexing rules preserve history without treating raw source copies as active websites:
 
 - `/Blogpage/`, `/archive/`, `/assets/documents/blog/source-pages/`: `X-Robots-Tag: noindex, nofollow`; HTML downloads as a plain-text attachment with original bytes preserved.
