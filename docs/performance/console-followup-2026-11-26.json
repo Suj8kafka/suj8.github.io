@@ -1,0 +1,296 @@
+{
+  "releaseCommit": "f33c3d1c0fd1726b138240f0fb10fabbe1694a9a",
+  "securityWorkerVersion": "1327310b-4132-432d-b8c5-038754a97063",
+  "browser": "Google Chrome headless; third-party scripts enabled",
+  "baseline": [
+    {
+      "name": "desktop-first",
+      "blocked": [
+        {
+          "directive": "script-src-elem",
+          "blocked": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "source": ""
+        }
+      ]
+    },
+    {
+      "name": "phone-first",
+      "blocked": [
+        {
+          "directive": "script-src-elem",
+          "blocked": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "source": ""
+        }
+      ]
+    },
+    {
+      "name": "phone-returning",
+      "blocked": [
+        {
+          "directive": "script-src-elem",
+          "blocked": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+          "source": ""
+        }
+      ]
+    }
+  ],
+  "normal": {
+    "checkedAt": "2026-11-26T04:24:53.447Z",
+    "conditions": {
+      "slow": false,
+      "requireCloudflareBeacon": true,
+      "measurementPosts": "intercepted; scripts and CSP checks enabled"
+    },
+    "cases": [
+      {
+        "name": "desktop-first",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "desktop-reload",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "phone-first",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "phone-reload",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      }
+    ],
+    "measurementPosts": [
+      "https://www.sujeetkhadka.com.np/cdn-cgi/rum",
+      "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev/collect",
+      "https://www.google-analytics.com/g/collect"
+    ],
+    "passed": true
+  },
+  "slow": {
+    "checkedAt": "2026-11-26T04:22:29.219Z",
+    "conditions": {
+      "slow": true,
+      "measurementPosts": "intercepted; scripts and CSP checks enabled"
+    },
+    "cases": [
+      {
+        "name": "desktop-first",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "desktop-reload",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "phone-first",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      },
+      {
+        "name": "phone-reload",
+        "issues": {
+          "csp": 0,
+          "preload": 0,
+          "otherWarnings": 0,
+          "otherErrors": 0,
+          "network": 0,
+          "runtime": 0
+        },
+        "loader": false,
+        "styles": "ready",
+        "beaconScripts": [
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ],
+        "preloads": [
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24",
+            "as": "font",
+            "crossOrigin": "anonymous"
+          },
+          {
+            "href": "https://www.sujeetkhadka.com.np/assets/images/sujeet-hero-440.webp?v=5ee4d49c7b7b",
+            "as": "image",
+            "crossOrigin": null
+          }
+        ]
+      }
+    ],
+    "measurementPosts": [
+      "https://www.sujeetkhadka.com.np/cdn-cgi/rum",
+      "https://nameless-truth-99f0.sujeetkhadka00001.workers.dev/collect",
+      "https://www.google-analytics.com/g/collect"
+    ],
+    "passed": true
+  },
+  "limits": [
+    "Measurement POSTs were intercepted after CSP checks; analytics ingestion was not tested.",
+    "The reported additional connection URLs and unused-preload URLs were redacted by the console excerpt. They did not recur in these runs; this does not identify their original resources."
+  ]
+}
