@@ -18,6 +18,8 @@ When changing inline bootstraps, endpoints, Firebase imports or the festival ifr
 
 The policy retains the exact head-bootstrap hash from the preceding welcome release so cached HTML remains usable during rollout. Preserve that compatibility until the prior HTML cache lifetime has elapsed; arbitrary inline scripts remain blocked. A fixture-based regression test verifies the shipped bootstrap against this policy.
 
+Cloudflare can inject its Web Analytics beacon at the edge, outside the repository HTML. Permit `https://static.cloudflareinsights.com` in `script-src` and `https://cloudflareinsights.com` in `connect-src`; proxied reports to same-origin `/cdn-cgi/rum` use `'self'`. These are the [documented collection origins](https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/). Verify the served page with the beacon script enabled. A run that blocks tracking scripts does not verify the production CSP for them.
+
 Prepared indexing rules preserve history without treating raw source copies as active websites:
 
 - `/Blogpage/`, `/archive/`, `/assets/documents/blog/source-pages/`: `X-Robots-Tag: noindex, nofollow`; HTML downloads as a plain-text attachment with original bytes preserved.
@@ -44,5 +46,7 @@ node scripts/check-security-headers.mjs
 The read-only checker compares actual policies to source on HTTPS apex/www, login, missing-page responses and redirect hops; it checks HTTP upgrades separately. Missing policy, downgrade, loop or fetch failure exits nonzero. Optional URL arguments narrow its targets. It prints statuses/header names, not bodies or credentials.
 
 Also inspect a versioned asset, unversioned module, login, missing asset and preserved download. Browser-check themes, welcome, dialogs, media, assistant, Firebase and analytics for CSP failures. Inspect legitimate crawler traffic and actual edge bot policies when diagnosing SEO; do not broadly bypass security based on a claimed user-agent string.
+
+Use `scripts/check-browser-console.mjs` as described in the development guide to capture the served edge beacon, connection violations and unused-preload warnings on fresh visits and reloads. Keep third-party script loading enabled; a passing audit with those scripts suppressed is only partial evidence. If a user reports additional blocked URLs that do not reproduce, obtain their host/path before expanding the allowlist.
 
 Run `security-headers`, `security-header-check`, `asset-cache` and relevant bootstrap tests. Record deployment/version and actual response checks in [status](../docs/status.md). Local mocked headers are not deployed protection.

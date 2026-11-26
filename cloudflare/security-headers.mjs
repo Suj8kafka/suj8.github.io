@@ -10,13 +10,13 @@ export const securityHeaders = {
     "object-src 'none'",
     "frame-ancestors 'none'",
     "form-action 'self'",
-    `script-src 'self' ${displayBootstrapCsp} ${loaderBootstrapCsp} ${welcomeControllerCsp} ${previousLoaderBootstrapCsp} 'sha256-jYHg7tXSuuVUqjy+JeRT8vyG97+Spkw5IFHdQEBbmrw=' https://www.googletagmanager.com https://www.gstatic.com https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js`,
+    `script-src 'self' ${displayBootstrapCsp} ${loaderBootstrapCsp} ${welcomeControllerCsp} ${previousLoaderBootstrapCsp} 'sha256-jYHg7tXSuuVUqjy+JeRT8vyG97+Spkw5IFHdQEBbmrw=' https://www.googletagmanager.com https://www.gstatic.com https://static.cloudflareinsights.com https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js`,
     // Inline styles are used by animations, particles.js and the noscript loader fallback.
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com",
     "media-src 'self'",
-    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://*.asia-southeast1.firebasedatabase.app wss://*.asia-southeast1.firebasedatabase.app https://ipwho.is https://api.bigdatacloud.net https://nameless-truth-99f0.sujeetkhadka00001.workers.dev https://portfolio-assistant.sujeetkhadka00001.workers.dev https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com",
+    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://*.asia-southeast1.firebasedatabase.app wss://*.asia-southeast1.firebasedatabase.app https://ipwho.is https://api.bigdatacloud.net https://nameless-truth-99f0.sujeetkhadka00001.workers.dev https://portfolio-assistant.sujeetkhadka00001.workers.dev https://cloudflareinsights.com https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com",
     "frame-src https://sujeet-portfolio.firebaseapp.com https://nepalifestivecount.netlify.app https://www.googletagmanager.com",
     "upgrade-insecure-requests"
   ].join("; "),

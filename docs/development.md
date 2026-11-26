@@ -24,6 +24,14 @@ Tests use Node's built-in runner, assertions, DOM stubs and VM harnesses. Run th
 
 `verify-project.mjs` runs all Node tests, generated welcome/CSP, critical styles, media versions, footer artwork and bundle checks, then whitespace verification. It runs from any working directory, uses check mode only, reports every failed step and exits nonzero on failure. It requires the existing esbuild 0.28.2 tool directory described below; use `--esbuild-module <path>` to select another copy. It never installs tooling, regenerates files or publishes. The GitHub Actions `Verify project` workflow runs the same command on pushes and pull requests. Its first hosted run and any required branch-status rule remain separate from local validation.
 
+For production console/CSP changes, use an installed Chromium browser with tracking scripts enabled, not a run that disables the injected scripts under test:
+
+```powershell
+node scripts/check-browser-console.mjs --browser "C:/Program Files/Google/Chrome/Application/chrome.exe" --url https://www.sujeetkhadka.com.np/ --output .tmp/browser-console.json --require-cloudflare-beacon
+```
+
+The optional audit exercises fresh desktop/phone visits and real reloads, captures CSP, network and preload diagnostics, and exits nonzero for recorded errors/warnings. `--slow` adds 4× CPU slowdown and a 1.6Mbps/150ms connection. It loads tracking scripts normally and intercepts measurement POSTs after CSP evaluation to avoid recording QA analytics; successful ingestion is therefore not verified. Check that the served Cloudflare beacon is actually present in the report before claiming coverage for it. Reports redact URL queries except static asset versions. This browser check is separate from the Node-only CI verifier and requires no browser installation step when a browser already exists.
+
 ## Source ownership
 
 | Area | Entry points |

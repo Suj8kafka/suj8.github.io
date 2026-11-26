@@ -106,3 +106,19 @@ test('the prepared policy also allows the last shipped head bootstrap for cached
   const hash = createHash('sha256').update(bootstrap).digest('base64');
   assert.ok(securityHeaders['Content-Security-Policy'].includes(`'sha256-${hash}'`));
 });
+
+test('Cloudflare edge-injected analytics can load and report through its specific origins', () => {
+  const policy = securityHeaders['Content-Security-Policy'].split('; ');
+  const scripts = policy.find(rule => rule.startsWith('script-src ')).split(' ');
+  const connections = policy.find(rule => rule.startsWith('connect-src ')).split(' ');
+  const injectedBeacon = new URL('https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092');
+  const collector = new URL('https://cloudflareinsights.com/cdn-cgi/rum');
+  assert.ok(scripts.includes(injectedBeacon.origin));
+  assert.ok(connections.includes(collector.origin));
+  assert.ok(connections.includes("'self'"), 'Proxied Cloudflare reports can use same-origin /cdn-cgi/rum');
+  for (const sources of [scripts, connections]) {
+    assert.ok(!sources.includes('*'));
+    assert.ok(!sources.includes('https:'));
+    assert.ok(!sources.includes('https://*.cloudflareinsights.com'));
+  }
+});
