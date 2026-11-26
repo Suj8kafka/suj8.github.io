@@ -11,6 +11,7 @@ Read for assistant UI, request handling or knowledge retrieval. [Task index](../
 | Worker, AI/rate-limit/D1 bindings and model selection | `cloudflare/wrangler.assistant.jsonc` |
 | Additive knowledge table and seed records | `cloudflare/migrations/0003-portfolio-assistant.sql` |
 | Neptune TechZone employment end date correction | `cloudflare/migrations/0004-neptune-experience-ended.sql` |
+| Résumé-aligned Neptune internship/junior periods and responsibilities | `cloudflare/migrations/0005-neptune-resume-roles.sql` |
 
 The character walks along the portrait's top edge and supports pointer/keyboard activation. Opening flips the portrait to reveal the assistant; closing restores it without covering the rest of the page. Preserve focus, reduced motion and static portfolio content.
 
@@ -24,6 +25,7 @@ Portfolio questions retrieve active `portfolio_knowledge` records from the exist
 
 - Render answers with `textContent`. Links come from trusted knowledge fields and are protocol-checked by both Worker and browser.
 - Unknown information and service/quota failures remain explicit. Do not invent availability, qualifications, outcomes or personal facts.
+- The current [résumé](../Sujeet_Khadka_Resume.pdf) records Neptune TechZone as a UI/UX Design Intern in January–March 2026, followed by Junior Designer in April–June 2026. Keep the two completed periods distinct; do not describe this as current employment. The scoped follow-up migration preserves other knowledge and record identity/link fields.
 - No private key or Worker credential belongs in browser code. Do not log/store conversations as part of a UI change.
 - Keep the homepage endpoint, Worker URL and security CSP `connect-src` aligned. Live deployment and remote migrations are separate authorized actions.
 - This small on-site assistant does not determine recommendations in external chatbots; see [SEO](../operations/seo.md).

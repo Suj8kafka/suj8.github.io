@@ -170,3 +170,28 @@ test('employment correction updates only Neptune knowledge and can be reapplied'
     database.close();
   }
 });
+
+test('resume correction keeps the completed intern and junior periods separate and preserves unrelated knowledge', async () => {
+  const seed = await readFile(new URL('../cloudflare/migrations/0003-portfolio-assistant.sql', import.meta.url), 'utf8');
+  const ended = await readFile(new URL('../cloudflare/migrations/0004-neptune-experience-ended.sql', import.meta.url), 'utf8');
+  const resume = await readFile(new URL('../cloudflare/migrations/0005-neptune-resume-roles.sql', import.meta.url), 'utf8');
+  const database = new DatabaseSync(':memory:');
+  try {
+    database.exec(seed);
+    const unrelated = database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-neptune' ORDER BY id").all();
+    const original = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-neptune'").get();
+    database.exec(ended);
+    database.exec(resume);
+    const corrected = database.prepare("SELECT * FROM portfolio_knowledge WHERE id = 'experience-neptune'").get();
+    assert.match(corrected.content, /UI\/UX Design Intern from January to March 2026/);
+    assert.match(corrected.content, /Junior Designer from April to June 2026/);
+    assert.match(corrected.content, /employment has ended/);
+    assert.doesNotMatch(corrected.content + corrected.keywords, /present|currently|ongoing/i);
+    for (const field of ['id', 'category', 'title', 'url', 'link_label', 'sort_order', 'is_active']) {
+      assert.equal(corrected[field], original[field]);
+    }
+    assert.deepEqual(database.prepare("SELECT * FROM portfolio_knowledge WHERE id != 'experience-neptune' ORDER BY id").all(), unrelated);
+    database.exec(resume);
+    assert.equal(database.prepare("SELECT content FROM portfolio_knowledge WHERE id = 'experience-neptune'").get().content, corrected.content);
+  } finally { database.close(); }
+});

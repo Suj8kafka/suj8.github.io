@@ -18,7 +18,7 @@ Shared typography uses the supplied Product Sans regular/bold files for headings
 
 Use the confirmed identity and preferences in [status](../status.md). Keep role/location, visible biography, metadata and author markup consistent. Use [SEO](../operations/seo.md) for indexing changes.
 
-The Neptune TechZone / Aama Cure UI/UX Designer role ran from January to June 2026; it is past employment.
+The Neptune TechZone / Aama Cure UI/UX Designer role ran from January to June 2026; it is past employment. The [current résumé](../Sujeet_Khadka_Resume.pdf) specifies UI/UX Design Intern in January–March and Junior Designer in April–June. Preserve that distinction in detailed career answers.
 
 Experience uses a compact vertical timeline in reverse chronological order, with dates beside each role on desktop and above it on phones. A subtle grid remains behind the desktop dates. All descriptions are visible without hover; only native text links indicate navigation, including a direct Aama Cure product link. Reader mode removes the grid and timeline decoration.
 
