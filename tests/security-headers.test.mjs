@@ -66,7 +66,7 @@ test('CSP blocks embedding and inline executable scripts while allowing site dep
   assert.match(bareInlineScripts[0][1], /window\.dataLayer/);
   const inline = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
     .filter(([, attributes]) => !/\bsrc=|type="application\/ld\+json"/.test(attributes));
-  assert.equal(inline.length, 3);
+  assert.equal(inline.length, 4);
   for (const [, , script] of inline) {
     const hash = createHash('sha256').update(script.replaceAll('\r\n', '\n')).digest('base64');
     assert.ok(scripts.includes(`'sha256-${hash}'`), 'Every executable inline bootstrap needs its exact CSP hash');
@@ -99,4 +99,10 @@ test('preserved source websites download as non-crawlable text while other downl
       assert.equal(response.headers.get('X-Robots-Tag'), null, path);
     }
   } finally { globalThis.fetch = originalFetch; }
+});
+
+test('the prepared policy also allows the last shipped head bootstrap for cached HTML', () => {
+  const bootstrap = JSON.parse(readFileSync(new URL('./fixtures/loader-bootstrap-20261125.json', import.meta.url), 'utf8')).source;
+  const hash = createHash('sha256').update(bootstrap).digest('base64');
+  assert.ok(securityHeaders['Content-Security-Policy'].includes(`'sha256-${hash}'`));
 });

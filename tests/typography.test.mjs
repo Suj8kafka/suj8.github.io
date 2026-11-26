@@ -45,8 +45,8 @@ test('forms and the portfolio companion do not fall below normal UI sizes', () =
 });
 
 test('loader language labels stay synchronized and readable', () => {
-  assert.match(loader, /html\.loader-docked \.ld-language\s*\{[^}]*font-size:\s*13px/);
+  assert.match(loader, /\.ld-language\s*\{[^}]*font-size:\s*14px/);
   assert.match(loader, /@media \(max-height: 420px\)[\s\S]*\.ld-language\s*\{[^}]*font-size:\s*13px/);
-  assert.match(home, /html\.loader-docked \.ld-language\s*\{[^}]*font-size:\s*13px/);
+  assert.match(home, /\.ld-language\s*\{[^}]*font-size:\s*14px/);
   assert.match(home, /@media \(max-height: 420px\)[\s\S]*\.ld-language\s*\{[^}]*font-size:\s*13px/);
 });

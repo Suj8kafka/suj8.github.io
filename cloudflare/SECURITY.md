@@ -12,7 +12,7 @@ Pushing GitHub Pages files does not deploy this Worker or activate its headers/c
 
 ## CSP and preserved-source contracts
 
-Allow only the current required external script, media, frame, image and connection origins. Inline display hydration and welcome startup use the generated `display-bootstrap-csp.mjs` hashes; the Google data-layer bootstrap has its specific hash. Regenerate after changing either inline startup script with `node scripts/sync-display-preferences.mjs`. Arbitrary inline executable scripts remain blocked. JSON-LD is metadata. Inline styles remain allowed for the existing animation implementation.
+Allow only the current required external script, media, frame, image and connection origins. Inline display hydration, welcome head bootstrap and the early welcome controller use the generated `display-bootstrap-csp.mjs` hashes; the Google data-layer bootstrap has its specific hash. Run `node scripts/sync-display-preferences.mjs` for display source changes or `node scripts/sync-welcome.mjs` for welcome source changes; both use `scripts/sync-bootstrap-csp.mjs` to hash the actual inline scripts. Arbitrary inline executable scripts remain blocked. JSON-LD is metadata. Inline styles remain allowed for the existing animation implementation.
 
 When changing inline bootstraps, endpoints, Firebase imports or the festival iframe, inspect all exact hashes/origins and browser violations. Match generated HTML and CSP using [display-preference steps](../docs/features/display-preferences.md). Do not assume a local test proves compatibility with scripts Cloudflare injects at the live edge. Coordinate matching site/Worker changes within the approved release.
 

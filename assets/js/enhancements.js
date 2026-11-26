@@ -19,17 +19,17 @@ export async function loadServices(document, {
   presence = () => import('./firebase-presence.js?v=20261123-performance'),
   availability = () => import('./availability-client.js')
 } = {}) {
-  const results = await Promise.allSettled([Promise.resolve().then(presence), Promise.resolve().then(availability)]);
-  if (results[0].status === 'rejected') {
+  const live = Promise.resolve().then(presence).catch(error => {
     const label = document.querySelector('.live-presence-label');
     const dot = document.querySelector('.live-presence-dot');
     const button = document.querySelector('.live-presence');
     if (label) label.textContent = 'Live presence unavailable';
     if (dot) dot.dataset.state = 'error';
     if (button) button.disabled = button.dataset?.analyticsReady !== 'true';
-    console.warn('Live presence could not be loaded.', results[0].reason);
-  }
-  return results;
+    console.warn('Live presence could not be loaded.', error);
+    throw error;
+  });
+  return Promise.allSettled([live, Promise.resolve().then(availability)]);
 }
 
 export function scheduleEnhancements({ document, window, motion = () => loadMotion(document, window),
@@ -37,11 +37,30 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
   services = () => loadServices(document) }) {
   let started = false, queued = false, destroyed = false, frame = 0, idle = 0, timer = 0;
   let imageReady = false, decoding = false, motionStarted = false;
+  let servicesStarted = false, servicesQueued = false, servicesFrame = 0, servicesIdle = 0, servicesTimer = 0;
   const listeners = [];
   const listen = (target, name, callback) => {
     target.addEventListener(name, callback);
     listeners.push(() => target.removeEventListener(name, callback));
   };
+  const launch = task => Promise.resolve().then(task).catch(error => console.warn('Optional portfolio enhancement unavailable.', error));
+  function queueServices() {
+    if (destroyed || servicesStarted || servicesQueued || document.hidden || document.readyState === 'loading') return;
+    servicesQueued = true;
+    const start = () => {
+      servicesQueued = false;
+      if (destroyed || servicesStarted || document.hidden) return;
+      servicesStarted = true;
+      launch(services);
+    };
+    // Live UI needs no portrait, full stylesheet or completed welcome animation.
+    servicesFrame = window.requestAnimationFrame(() => {
+      servicesFrame = window.requestAnimationFrame(() => {
+        if (window.requestIdleCallback) servicesIdle = window.requestIdleCallback(start, { timeout: 1500 });
+        else servicesTimer = window.setTimeout(start, 250);
+      });
+    });
+  }
   function run() {
     queued = false;
     if (destroyed || started || document.hidden || document.documentElement.classList.contains('loader-running')) return;
@@ -52,8 +71,6 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
     const constrained = window.navigator.connection?.saveData
       || (window.navigator.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
       || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
-    const launch = task => Promise.resolve().then(task).catch(error => console.warn('Optional portfolio enhancement unavailable.', error));
-    launch(services);
     const startMotion = () => {
       if (destroyed || motionStarted || document.hidden || motionIsReduced(document.documentElement, window.matchMedia('(prefers-reduced-motion: reduce)'))) return;
       motionStarted = true;
@@ -79,6 +96,7 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
     startPortrait();
   }
   function queue() {
+    queueServices();
     if (destroyed || started || queued || document.readyState !== 'complete' || document.hidden
       || document.documentElement.dataset?.pageStyles === 'pending'
       || document.documentElement.classList.contains('loader-running')) return;
@@ -110,6 +128,9 @@ export function scheduleEnhancements({ document, window, motion = () => loadMoti
     window.cancelAnimationFrame(frame);
     window.cancelIdleCallback?.(idle);
     window.clearTimeout(timer);
+    window.cancelAnimationFrame(servicesFrame);
+    window.cancelIdleCallback?.(servicesIdle);
+    window.clearTimeout(servicesTimer);
     listeners.forEach(remove => remove());
   } };
 }

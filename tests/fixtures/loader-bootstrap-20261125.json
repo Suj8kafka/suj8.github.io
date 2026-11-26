@@ -1,0 +1,4 @@
+{
+  "commit": "cb3fd97",
+  "source": "\n    (() => {\n      if ((document.documentElement.dataset.motion ? document.documentElement.dataset.motion === 'reduced' : matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.layout === 'reader' || navigator.connection?.saveData || location.hash || document.hidden) return;\n      const root = document.documentElement;\n      root.classList.add('loader-running');\n      window.loaderBootTimeout = setTimeout(() => {\n        root.classList.remove('loader-running');\n        root.dataset.loaderDone = 'true';\n        document.dispatchEvent(new CustomEvent('loader:done'));\n      }, 9000);\n    })();\n  "
+}

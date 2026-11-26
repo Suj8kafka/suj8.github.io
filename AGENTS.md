@@ -4,10 +4,20 @@ Maintain Sujeet Khadka's public portfolio. The public entry is `index.html`; the
 
 ## Read only what the task needs
 
-- Start here. Use [the task index](docs/README.md) to select one relevant guide and its source files; do not read all documentation by default.
+- Start here. Use [the task index](docs/README.md) to select the relevant feature guide and its source files before edits. For shared startup, styling or cross-feature changes, also read the affected guides; do not read unrelated documentation by default.
 - [Development](docs/development.md) has the architecture, local commands and test map. [Status](docs/status.md) records dated verification and pending live work.
 - [Historical records](docs/history/README.md) are optional evidence, not current instructions. Read a specific record only when investigating its decision or measurement.
 - Keep current behavior in its feature guide, operational steps in its runbook, and dated evidence in history. Avoid duplicating session transcripts or test totals across guides.
+
+## Preserve behavior while changing the project
+
+Follow the [change workflow](docs/change-workflow.md) for implementation work. Before editing, identify the requested change, the documented behavior to preserve, affected consumers and baseline checks. A broad request to fix speed or bugs does not by itself authorize removing features, changing visit rules or redesigning interactions.
+
+- Treat documented feature contracts and existing regression expectations as constraints. Do not rewrite either to make an unrequested behavior change pass. When a user explicitly changes a contract, name that change and update its guide and tests together.
+- Exercise ordinary entry paths in regression tests. Never make a special query flag, saved preference or altered fixture default stand in for a normal visitor. Welcome must retain the full first visit and brief returning Namaste unless the user changes that requirement.
+- Keep changes scoped. Shared CSS, startup events, preferences and generated assets require checks for their existing consumers as well as the new feature. Preserve unrelated dirty/untracked work.
+- Run focused checks while working and `node scripts/verify-project.mjs` before completing implementation. The verifier checks without regenerating assets or publishing. Report pre-existing failures and verification limits; do not label an unchecked feature as working.
+- Update the existing feature guide only for an intended behavior change. Record dated checks in status/history; do not turn an accidental regression into the new documented specification.
 
 ## Commands
 

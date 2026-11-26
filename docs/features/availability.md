@@ -27,6 +27,8 @@ Owner authentication uses session persistence with an in-memory fallback, isolat
 
 `assets/js/firebase-presence.js` uses a separate anonymous in-memory identity per page, registers disconnect cleanup and removes only its own record on exit. Live presence is approximate: background tabs may persist while suspended, and stale peers are filtered locally. It is independent of Cloudflare analytics; `visitor-panel.js` must remain usable when Firebase fails.
 
+The enhancement scheduler starts live services after two paints and idle time without waiting for the welcome, portrait or full stylesheet. A failed presence import reports an unavailable state independently of the availability request.
+
 `assets/js/live-cursors.js` sends section-relative positions at most ten times per second. Input contents and exact input-field positions are not shared. Reduced motion disables sending/display; the sidebar checkbox also disables both. Remote cursor opacity drops after three idle seconds and hides after five; heartbeats do not reset this movement timer. Hidden tabs hide cursors while retaining their connection record.
 
 The shared database module calls `forceWebSockets()` before database consumers create references/listeners. This avoids Firebase long-polling iframe behavior but removes fallback on networks blocking WebSockets. Static content remains usable; real connection health needs browser verification.

@@ -54,7 +54,7 @@ test('preference and assistant CSS is synchronized inline and makes no blocking 
 });
 
 function preview({ loaded = true, decode = 'ready', hash = '', compact = false, checkLayoutReads = false, reading = false } = {}) {
-  const events = new Map(), frames = new Map(), emitted = [];
+  const events = new Map(), frames = new Map(), timers = new Map(), emitted = [];
   let nextId = 0, finishDecode;
   const pending = new Promise(resolve => { finishDecode = resolve; });
   const sheet = { sheet: loaded ? {} : null, media: 'print', dataset: { href: 'assets/css/site.css' },
@@ -72,16 +72,20 @@ function preview({ loaded = true, decode = 'ready', hash = '', compact = false, 
   };
   const window = { location: { hash }, CustomEvent: class { constructor(type) { this.type = type; } },
     matchMedia: () => ({ matches: compact }),
+    setTimeout(callback) { const id = ++nextId; timers.set(id, callback); return id; },
+    clearTimeout(id) { timers.delete(id); },
     get scrollY() {
       assert.equal(checkLayoutReads, false, 'Stylesheet startup and activation must not query scroll geometry');
       return 0;
     },
     addEventListener: (name, callback) => scrolling.set(name, callback),
     removeEventListener: name => scrolling.delete(name),
-    requestAnimationFrame(callback) { frames.set(++nextId, callback); }
+    requestAnimationFrame(callback) { const id = ++nextId; frames.set(id, callback); return id; },
+    cancelAnimationFrame(id) { frames.delete(id); }
   };
   const ready = activatePageStyles({ document, window });
-  return { document, sheet, frames, emitted, ready, finishDecode, links, scroll: () => scrolling.get('scroll')?.({ type: 'scroll' }),
+  return { document, sheet, frames, timers, emitted, ready, finishDecode, links, scroll: () => scrolling.get('scroll')?.({ type: 'scroll' }),
+    expireImageBudget() { const callbacks = [...timers.values()]; timers.clear(); callbacks.forEach(callback => callback()); },
     loaded() { events.get('load')?.(); },
     paint() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback()); }
   };
@@ -167,5 +171,29 @@ test('direct section links activate full layout immediately, including with slow
   assert.equal(page.sheet.media, 'all');
   assert.equal(page.frames.size, 0);
   page.loaded(); await page.ready;
+  assert.deepEqual(page.emitted, ['page-styles:ready']);
+});
+
+test('a stalled portrait cannot indefinitely delay full styling; late decode is harmless', async () => {
+  const page = preview({ loaded: false, decode: 'pending' });
+  await flush();
+  assert.equal(page.sheet.href, undefined);
+  page.expireImageBudget(); await flush();
+  assert.equal(page.sheet.href, 'assets/css/site.css');
+  page.loaded(); await flush(); page.paint(); page.paint(); await page.ready;
+  assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
+  assert.equal(page.timers.size, 0);
+  page.finishDecode(); await flush(); page.paint(); page.paint();
+  assert.deepEqual(page.emitted, ['page-styles:ready']);
+});
+
+test('suspended painting cannot hold back a loaded stylesheet', async () => {
+  const page = preview(); await flush();
+  assert.equal(page.sheet.media, 'print');
+  page.expireImageBudget(); await page.ready;
+  assert.equal(page.sheet.media, 'all');
+  assert.equal(page.document.documentElement.dataset.pageStyles, 'ready');
+  assert.equal(page.timers.size, 0);
+  page.paint(); page.paint();
   assert.deepEqual(page.emitted, ['page-styles:ready']);
 });

@@ -14,6 +14,7 @@ const width = mobile ? 390 : 1440, height = mobile ? 844 : 1000, waitMs = fast ?
 const profile = await mkdtemp(join(tmpdir(), 'portfolio-performance-'));
 const delay = ms => new Promise(done => setTimeout(done, ms));
 const browser = spawn(browserPath, ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
+  '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
 let socket;
 try {
@@ -44,6 +45,7 @@ try {
     return result.result.value;
   };
   await send('Page.enable'); await send('Network.enable');
+  await send('Page.bringToFront');
   await send('Network.setCacheDisabled', { cacheDisabled: true });
   // Avoid creating real visitor records during QA; fonts and local resources are included.
   await send('Network.setBlockedURLs', { urls: ['*firebase*', '*cloudflare*', '*identitytoolkit*'] });
@@ -55,6 +57,9 @@ try {
   if (noJs) await send('Emulation.setScriptExecutionDisabled', { value: true });
   await send('Page.addScriptToEvaluateOnNewDocument', { source: `
     window.__lcp = [];
+    window.__startup = {};
+    document.addEventListener('loader:done', () => { window.__startup.welcomeDone = performance.now(); });
+    document.addEventListener('page-styles:ready', () => { window.__startup.stylesReady = performance.now(); });
     new PerformanceObserver(list => {
       for (const e of list.getEntries()) window.__lcp.push({ time: e.startTime, size: e.size, url: e.url,
         element: e.element?.tagName, id: e.element?.id, className: e.element?.className });
@@ -68,6 +73,9 @@ try {
     resources: performance.getEntriesByType('resource').map(e => ({url:e.name,start:e.startTime,duration:e.duration,bytes:e.encodedBodySize,kind:e.initiatorType})),
     mobile: matchMedia('(max-width: 800px)').matches,
     loaderRunning: document.documentElement.classList.contains('loader-running'),
+    visibility: document.visibilityState,
+    startup: window.__startup,
+    pageStyles: document.documentElement.dataset.pageStyles,
     heroSource: document.querySelector('.portrait-base')?.currentSrc,
     inlinePortrait: !!document.querySelector('.portrait-path-art'),
     motionEngine: document.documentElement.dataset.motionEngine,
@@ -80,7 +88,7 @@ try {
   await writeFile(output, JSON.stringify(report, null, 2) + '\n');
   const screenshot = await send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false });
   await writeFile(output.replace(/\.json$/, '.png'), Buffer.from(screenshot.data, 'base64'));
-  console.log(JSON.stringify({output, lcp:result.lcp, paints:result.paints, loaderRunning:result.loaderRunning, heroSource:result.heroSource, inlinePortrait:result.inlinePortrait, motionEngine:result.motionEngine, trail:result.trail, overflow:result.overflow, fonts:result.fonts}));
+  console.log(JSON.stringify({output, lcp:result.lcp, paints:result.paints, loaderRunning:result.loaderRunning, visibility:result.visibility, startup:result.startup, heroSource:result.heroSource, inlinePortrait:result.inlinePortrait, motionEngine:result.motionEngine, trail:result.trail, overflow:result.overflow, fonts:result.fonts}));
   if (args.includes('--check-scroll') && !noJs) {
     await evaluate('window.scrollTo({top:500,behavior:"instant"})');
     for (let attempt = 0; attempt < 40; attempt++) {

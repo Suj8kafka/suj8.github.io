@@ -7,7 +7,7 @@ export function activatePageStyles({ document, window }) {
   // Scroll events (including restored positions) signal intent without a geometry
   // read that can synchronously lay out the entire page during module startup.
   let scrolled = false;
-  let activated = false, resolveReady;
+  let activated = false, resolveReady, imageTimer, activationTimer, frame;
   const ready = new Promise(resolve => { resolveReady = resolve; });
   function fonts() {
     if (document.getElementById('secondary-fonts')) return;
@@ -35,6 +35,9 @@ export function activatePageStyles({ document, window }) {
   function activate() {
     if (activated) return;
     activated = true;
+    window.clearTimeout(imageTimer);
+    window.clearTimeout(activationTimer);
+    window.cancelAnimationFrame(frame);
     sheet.media = 'all';
     document.removeEventListener('click', onIntent, true);
     document.removeEventListener('keydown', onIntent, true);
@@ -55,13 +58,20 @@ export function activatePageStyles({ document, window }) {
   document.addEventListener('keydown', onIntent, true);
   window.addEventListener('scroll', onIntent, { passive: true });
   const decoded = image?.decode ? Promise.resolve().then(() => image.decode()).catch(() => {}) : Promise.resolve();
-  // Even downloading below-the-fold CSS must not compete with the primary image.
-  decoded.then(load);
+  // Give the primary image a head start, but never leave the rest of the page
+  // waiting indefinitely on a slow or stalled image request.
+  const imageBudget = new Promise(resolve => { imageTimer = window.setTimeout(resolve, 800); });
+  const contentReady = Promise.race([decoded, imageBudget]);
+  contentReady.then(() => { window.clearTimeout(imageTimer); load(); });
   // Critical CSS already paints the hero. Activate below-the-fold styles after that paint.
-  Promise.all([styles, decoded]).then(() => {
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-      activate();
-    }));
+  Promise.all([styles, contentReady]).then(() => {
+    if (activated) return;
+    // Background/restoring tabs can suspend animation frames. Full styling must
+    // still become usable once its resources are ready.
+    activationTimer = window.setTimeout(activate, 150);
+    frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(activate);
+    });
   });
   return ready;
 }

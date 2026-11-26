@@ -2,6 +2,8 @@
 
 Read for local setup, source ownership or test selection. [Task index](README.md) · [Live status](status.md)
 
+Use the [change workflow](change-workflow.md) before implementation. Preserve the selected feature guide's contracts and establish a baseline before editing their source or tests.
+
 ## Run and verify
 
 Use PowerShell from the repository root. Checked-in files are served directly; no dependency installation or application build is required for preview. There is no configured linter.
@@ -15,9 +17,12 @@ Open `http://127.0.0.1:8000/` or `/login/`; Ctrl+C stops the server. Use HTTP be
 ```powershell
 node --test tests/availability.test.mjs
 node --test tests/*.test.mjs
+node scripts/verify-project.mjs
 ```
 
 Tests use Node's built-in runner, assertions, DOM stubs and VM harnesses. Run the focused files for your change and the full suite before release. Check `git diff --check`. Browser layout, focus behavior, reduced motion and live service health need separate verification. Keep temporary measurements/screenshots in ignored `.tmp/`; avoid writing real visitor events during local QA.
+
+`verify-project.mjs` runs all Node tests, generated welcome/CSP, critical styles, media versions, footer artwork and bundle checks, then whitespace verification. It runs from any working directory, uses check mode only, reports every failed step and exits nonzero on failure. It requires the existing esbuild 0.28.2 tool directory described below; use `--esbuild-module <path>` to select another copy. It never installs tooling, regenerates files or publishes. The GitHub Actions `Verify project` workflow runs the same command on pushes and pull requests. Its first hosted run and any required branch-status rule remain separate from local validation.
 
 ## Source ownership
 
@@ -67,7 +72,7 @@ After changing versioned public images/fonts, run `node scripts/version-public-m
 
 After changing footer interaction geometry in `assets/js/interaction-studies.js`, first run `node scripts/build-footer-graphics.mjs` to synchronize its static SVG symbols (`--check` verifies them). Then version public media, regenerate performance assets and regenerate critical styles as above.
 
-Keep `loader/files/loader.css` equal to embedded `#welcome-styles` and `loader/files/namaste.svg` synchronized with the inline template. Existing loader tests enforce these contracts.
+After changing `loader/files/loader.js`, `loader.css` or `namaste.svg`, run `node scripts/sync-welcome.mjs`, then `node scripts/sync-welcome.mjs --check`. This embeds the controller immediately after the SVG template, synchronizes CSS/artwork, and generates the exact startup CSP hashes. `sync-display-preferences.mjs` shares the CSP generator without owning welcome content. Homepage HTML does not download the loader script. Publish the matching security Worker policy with the approved site release; site and Worker publication require separate authorization.
 
 ## Focused tests
 

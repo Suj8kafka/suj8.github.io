@@ -4,6 +4,7 @@ Choose the row matching your task. Read that guide and its linked source files; 
 
 | Task | Read |
 | --- | --- |
+| Make a change while preserving existing features; regression and completion checks | [Change workflow](change-workflow.md) |
 | Local setup, repository structure, generated assets, test selection | [Development](development.md) |
 | Determine what was pushed, deployed or still unverified | [Status](status.md) |
 | Homepage content, projects, contact actions, accessibility | [Portfolio](features/portfolio.md) |
@@ -29,3 +30,5 @@ Choose the row matching your task. Read that guide and its linked source files; 
 - Asset provenance and licenses stay beside the fonts, project images and vendored GSAP. Preserved blog-source README files are archival artifacts, not project instructions.
 
 Update the existing guide when behavior changes. Add a file only for a distinct task or substantial dated evidence. Keep current guides short and link to source for implementation detail. In status updates, identify the date, commit or service, verification method and remaining uncertainty; do not repeat old test counts as current results.
+
+Feature guides describe the behavior to preserve, not just the most recent implementation. Follow the [change workflow](change-workflow.md) before changing those contracts; tests passing after rewriting their expectations does not establish compatibility.

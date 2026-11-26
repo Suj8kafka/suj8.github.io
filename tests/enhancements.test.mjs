@@ -19,6 +19,18 @@ test('a blocked presence module shows an unavailable state while availability st
   assert.equal(button.disabled, true);
 });
 
+test('presence failure is visible even while availability never resolves', async context => {
+  context.mock.method(console, 'warn', () => {});
+  const label = {}, dot = { dataset: {} };
+  loadServices({ querySelector: selector => ({ '.live-presence-label': label, '.live-presence-dot': dot })[selector] }, {
+    presence: () => Promise.reject(new Error('Blocked presence')),
+    availability: () => new Promise(() => {})
+  });
+  await flush();
+  assert.equal(label.textContent, 'Live presence unavailable');
+  assert.equal(dot.dataset.state, 'error');
+});
+
 function preview({ compact = true, reduced = false, ready = true, loader = false, constrained = false, idleSupport = true, failMotion = false, decode = 'ready', scrollY = 0 } = {}) {
   function target() {
     const events = new Map();
@@ -59,9 +71,9 @@ function preview({ compact = true, reduced = false, ready = true, loader = false
   };
 }
 
-test('mobile waits for image decode and two paints; GSAP starts only on first scroll', async () => {
+test('mobile decorative work waits for image decode and two paints; GSAP starts only on first scroll', async () => {
   const page = preview({ ready: false });
-  assert.equal(page.frames.size, 0);
+  assert.equal(page.frames.size, 1, 'Live services have their own paint queue');
   page.document.readyState = 'complete'; page.window.dispatch('load');
   await flush();
   page.paint(); await flush(); assert.deepEqual(page.calls, []);
@@ -78,7 +90,8 @@ test('mobile waits for image decode and two paints; GSAP starts only on first sc
 
 test('desktop portrait is deferred with the intro and constrained/reduced-motion devices avoid it', async () => {
   const desktop = preview({ compact: false, loader: true });
-  assert.equal(desktop.frames.size, 0);
+  desktop.paint(); desktop.paint(); desktop.background(); await flush();
+  assert.deepEqual(desktop.calls, ['services'], 'Live UI connects during the welcome');
   desktop.finishLoader(); await flush(); desktop.paint(); desktop.paint(); desktop.background(); await flush();
   assert.deepEqual(desktop.calls, ['services', 'motion', 'portrait']);
   for (const options of [{ compact: false, constrained: true }, { compact: false, reduced: true }]) {
@@ -112,10 +125,9 @@ test('hidden tabs wait until visible; cleanup cancels idle and timeout fallbacks
   }
 });
 
-test('slow decoding gates background work, decode failure keeps a usable fallback, and restored scroll starts motion', async () => {
+test('slow decoding gates decoration but keeps live services usable; decode failure and restored scroll recover', async () => {
   const slow = preview({ decode: 'pending' }); await flush();
-  assert.equal(slow.frames.size, 0);
-  slow.paint(); slow.background(); await flush(); assert.deepEqual(slow.calls, []);
+  slow.paint(); slow.paint(); slow.background(); await flush(); assert.deepEqual(slow.calls, ['services']);
   slow.finishDecode(); await flush(); slow.paint(); slow.paint(); slow.background(); await flush();
   assert.deepEqual(slow.calls, ['services']);
   const failed = preview({ decode: 'failed', scrollY: 120 }); await flush();
@@ -125,11 +137,12 @@ test('slow decoding gates background work, decode failure keeps a usable fallbac
   destroyed.finishDecode(); await flush(); assert.equal(destroyed.frames.size, 0);
 });
 
-test('optional enhancements wait until full page styles are active', async () => {
+test('live services start while full styles are pending; decoration waits', async () => {
   const page = preview({ ready: false });
   page.document.documentElement.dataset = { pageStyles: 'pending' };
   page.document.readyState = 'complete'; page.window.dispatch('load'); await flush();
-  assert.equal(page.frames.size, 0);
+  page.paint(); page.paint(); page.background(); await flush();
+  assert.deepEqual(page.calls, ['services']);
   page.document.documentElement.dataset.pageStyles = 'ready';
   page.document.dispatch('page-styles:ready'); await flush();
   page.paint(); page.paint(); page.background(); await flush();

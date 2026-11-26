@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-page-styles="pending" data-page-transitions="pending" data-styles-href="/assets/css/site.min.css?v=8df951587a7b">
+<html lang="en" data-page-styles="pending" data-page-transitions="pending" data-styles-href="/assets/css/site.min.css?v=c99f3adefefb">
 
 <head>
 <!-- Google tag -->
@@ -69,14 +69,16 @@
 })({ document, window });</script>
   <script id="loader-bootstrap">
     (() => {
-      if ((document.documentElement.dataset.motion ? document.documentElement.dataset.motion === 'reduced' : matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.layout === 'reader' || navigator.connection?.saveData || location.hash || document.hidden) return;
+      if ((document.documentElement.dataset.motion ? document.documentElement.dataset.motion === 'reduced' : matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.layout === 'reader' || navigator.connection?.saveData) return;
       const root = document.documentElement;
       root.classList.add('loader-running');
-      window.loaderBootTimeout = setTimeout(() => {
+      const release = () => {
+        if (document.hidden) { window.loaderBootTimeout = setTimeout(release, 1000); return; }
         root.classList.remove('loader-running');
         root.dataset.loaderDone = 'true';
         document.dispatchEvent(new CustomEvent('loader:done'));
-      }, 9000);
+      };
+      window.loaderBootTimeout = setTimeout(release, 9000);
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -122,7 +124,7 @@
   background: var(--bg);
   font-family: var(--body);
   opacity: 1;
-  transition: opacity .18s ease;
+  transition: opacity .22s ease;
 }
 html.loader-running:not(.loader-docked), html.loader-running:not(.loader-docked) body { overflow: hidden; overscroll-behavior: none; }
 html.loader-running #loader { display: grid; }
@@ -197,7 +199,7 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 #loader[data-effects="full"] .ld-satellite { transform-origin: 360px 240px; animation: loader-satellite-turn 6s cubic-bezier(.3,.1,.4,1) both; }
 @keyframes loader-track-travel { to { stroke-dashoffset: -320; } }
 @keyframes loader-inner-turn { from { transform: rotate(-12deg) scale(.94); } to { transform: rotate(12deg) scale(1.04); } }
-@keyframes loader-satellite-turn { from { transform: rotate(-30deg); } to { transform: rotate(125deg); } }
+@keyframes loader-satellite-turn { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
 @keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
 @media (max-width: 800px), (pointer: coarse) {
   .ld-graphic { width: 140vw; max-width: 760px; opacity: .2; animation-duration: 5s; }
@@ -206,10 +208,30 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 #loader[data-visit="returning"] .ld-graphic { display: none; }
 #loader[data-visit="returning"] .ld-wash { animation: none; }
+#loader[data-phase="pending"] *, #loader[data-phase="pending"]::before { animation-play-state: paused !important; }
+
+/* Kinetic typography: a masked foreground, outlined echo and moving construction lines. */
+.ld-echo { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; pointer-events: none; opacity: 0; color: transparent; -webkit-text-stroke: 1px var(--fg); font: 700 clamp(100px, 29vw, 420px)/1 var(--display); letter-spacing: -.065em; }
+.ld-letter { display: inline-block; transform-origin: center bottom; }
+#loader[data-visit="returning"] .ld-echo { display: none; }
+#loader[data-effects="full"] .ld-stage { width: min(94vw, 1040px); }
+#loader[data-effects="full"] .ld-kicker { font-size: 13px; text-transform: uppercase; letter-spacing: .16em; }
+#loader[data-effects="full"] .ld-word[data-writing="false"] { height: clamp(140px, 23vw, 260px); overflow: hidden; gap: .015em; font-size: clamp(48px, 12vw, 164px); line-height: 1.1; }
+#loader[data-effects="full"] .ld-graphic { width: min(125vw, 1100px); opacity: .24; }
+#loader[data-effects="full"] .ld-orbit-track { stroke-width: 1.5; }
+#loader[data-effects="full"] .ld-stage::before,
+#loader[data-effects="full"] .ld-stage::after { position: absolute; width: clamp(24px, 8vw, 90px); height: 2px; content: ""; background: var(--fg); opacity: .5; animation: loader-rule-sweep .94s cubic-bezier(.2,.65,.3,1) infinite; }
+#loader[data-effects="full"] .ld-stage::before { left: 0; top: 30%; transform-origin: left; }
+#loader[data-effects="full"] .ld-stage::after { right: 0; bottom: 26%; transform-origin: right; animation-delay: .12s; }
+#loader[data-greeting="ne"] .ld-stage::before, #loader[data-greeting="ne"] .ld-stage::after { display: none; }
+@keyframes loader-rule-sweep { 0% { transform: scaleX(0); } 35%, 65% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
 
 .ld-top {
-  margin-bottom: 24px;
-  font: 700 40px/1.2 var(--display);
+  position: absolute;
+  top: 28px;
+  left: 24px;
+  margin: 0;
+  font: 700 28px/1.2 var(--display);
   letter-spacing: -.06em;
 }
 .ld-top i { color: var(--accent); font-style: normal; }
@@ -236,6 +258,7 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
 .ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
 .ld-write-stroke { opacity: 0; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) var(--pen-easing, cubic-bezier(.32,.05,.45,1)) var(--pen-delay) forwards; }
+#loader[data-ink="pending"] .ld-write-stroke { animation-play-state: paused; }
 @keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
 .ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
 .ld-bar {
@@ -263,29 +286,12 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 .ld-skip:hover { text-decoration: underline; text-underline-offset: 3px; }
 .ld-skip:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
-/* Finish the same welcome above the phone navigation, leaving the page usable. */
-html.loader-docked #loader {
-  inset: auto max(16px, env(safe-area-inset-right)) calc(88px + env(safe-area-inset-bottom)) auto;
-  width: 184px;
-  border: 1px solid var(--track);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(24, 33, 30, .12);
-  contain: layout paint;
-  animation: loader-panel-in .18s ease-out;
-}
-html.loader-docked .ld-stage { width: 100%; padding: 28px 12px 12px; transform: none; }
-html.loader-docked .ld-top, html.loader-docked .ld-kicker { display: none; }
-html.loader-docked .ld-graphic { display: none; }
-html.loader-docked .ld-word { height: 42px; font-size: 30px; }
-html.loader-docked .ld-language { margin-top: 4px; font-size: 13px; }
-html.loader-docked .ld-bar { width: 100px; height: 2px; margin-top: 10px; }
-html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; font: 22px/1 sans-serif; }
-@keyframes loader-panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* Keep both welcome variants full-screen, including landscape phones. */
 @media (max-height: 420px) {
   .ld-stage { padding: 16px; transform: none; }
   .ld-top { margin-bottom: 8px; font-size: 28px; }
   .ld-kicker { display: none; }
-  .ld-word { height: 85px; font-size: 48px; }
+  .ld-word, #loader[data-effects="full"] .ld-word[data-writing="false"] { height: 85px; font-size: 48px; }
   .ld-language { margin-top: 4px; font-size: 13px; }
   .ld-bar { margin-top: 16px; }
 }
@@ -305,9 +311,9 @@ html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; paddi
 @font-face{font-family:"Product Sans";font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/Product%20Sans%20Bold.ttf?v=8dbeee804c24") format("truetype")}:root{--ink:#111111;--paper:#ffffff;--muted:#5b5b5b;--line:#d4d4d4;--orange:#202020;--accent:#303030;--accent-text:#202020;--intro-button-bg:#202020;--blue:#e8e8e8;--lime:#f2f2f2;--pink:#dedede;--display:"Product Sans",sans-serif;--body:"DM Sans",sans-serif;--type-caption:.8125rem;--type-label:.875rem;--type-body:1rem;--type-body-large:1.0625rem;--shadow:rgba(17,17,17,.35)}[data-theme="dark"]{--ink:#f7efe8;--paper:#1c1d24;--muted:#b9b1b1;--line:#49444a;--orange:#ff7b4a;--accent:#ff7b4a;--accent-text:#ff9a73;--shadow:rgba(0,0,0,.55)}*{box-sizing:border-box}html{scroll-behavior:smooth;scrollbar-gutter:stable;overflow-x:clip}body{margin:0;color:var(--ink);background:var(--paper);font:400 var(--type-body)/1.6 var(--body);transition:color .18s ease-out,background-color .18s ease-out;overflow-x:clip}#loader{display:none}html[data-page-transitions="pending"] *,html[data-page-transitions="pending"] *::before,html[data-page-transitions="pending"] *::after{transition:none !important}html.loader-running[data-page-styles="pending"] main > section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 800px}html.is-anchor-scrolling .scroll-motion{visibility:visible;will-change:opacity;transition:none}html[data-scroll-effects="light"] .scroll-motion{-webkit-backdrop-filter:blur(1.2px);backdrop-filter:blur(1.2px)}html[data-scroll-effects="minimal"] .scroll-motion{display:none}body.modal-open{overflow:hidden}a{color:inherit;text-decoration:none}.site-header{gap:1.5rem;position:fixed;z-index:20;top:0;left:50%;width:100%;height:92px;max-width:1280px;margin:auto;padding:0 2.625rem;display:flex;align-items:center;justify-content:space-between;transform:translateX(-50%);transition:top .72s cubic-bezier(.22,1.65,.36,1),width .64s cubic-bezier(.22,1.65,.36,1),height .64s cubic-bezier(.22,1.65,.36,1),padding .64s cubic-bezier(.22,1.65,.36,1),background .42s ease,box-shadow .55s ease,border-radius .42s ease}html.is-anchor-scrolling .site-header{transition:none}html:is([data-scroll-effects="light"],[data-scroll-effects="minimal"]) .site-header{transition:background .2s ease,box-shadow .2s ease}.wordmark{font:700 1.5625rem var(--display);letter-spacing:-.08em}.wordmark span:first-of-type{letter-spacing:-.13em}.wordmark .dot{color:var(--orange);letter-spacing:normal}.nav{display:flex;gap:1.75rem;margin-left:2rem;font-size:.875rem}.nav a,.nav-contact,.footer-links a{transition:color .2s}.nav span,.nav-contact span{color:var(--orange);margin-left:.25rem}.nav-contact{font-size:.875rem;border-bottom:1px solid var(--ink);padding-bottom:.3125rem}.header-tools{display:flex;align-items:center;gap:1.4375rem}.availability-badge{position:relative;display:inline-flex;align-items:center;min-height:36px;margin-left:.1875rem;padding:.25rem 0 .25rem .625rem;border:0;border-left:1px solid var(--line);color:var(--ink);background:transparent;cursor:pointer;font:500 .875rem/1.4 var(--body);white-space:nowrap}.availability-label{display:block;max-width:132px;overflow:hidden;text-overflow:ellipsis}.availability-badge[data-availability-status="closed"]{color:var(--muted)}.availability-detail{position:absolute;width:1px;height:1px;padding:0;margin:-.0625rem;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}@media (min-width:801px) and (max-width:1100px){.site-header{padding-left:1.5rem;padding-right:1.5rem}.site-header .nav{gap:.875rem;margin-left:0}.header-tools{gap:1rem}}@media (min-width:801px) and (max-width:950px){.site-header .nav a:last-child{display:none}}.live-presence-wrap{position:relative;display:inline-flex;align-items:center;gap:.25rem;padding:.1875rem .3125rem;border:1px solid var(--line);border-radius:999px;background:var(--paper)}.live-counter{position:relative;display:inline-flex}.live-presence{display:inline-flex;align-items:center;gap:.4375rem;min-height:36px;padding:.25rem .375rem;border:0;border-radius:999px;color:var(--muted);background:transparent;cursor:pointer;font:.875rem/1.4 var(--body);white-space:nowrap}.live-presence-wrap .nav-contact{display:inline-flex;align-items:center;gap:.25rem;min-height:36px;padding:.375rem .5625rem;border:0;border-left:1px solid var(--line);color:var(--accent-text);font-size:.875rem;font-weight:600;white-space:nowrap}.live-presence:focus-visible,.availability-badge:focus-visible,.live-presence-wrap .nav-contact:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.live-presence-dot{width:6px;height:6px;border-radius:50%;background:#7ebf65;box-shadow:0 0 0 3px rgba(126,191,101,.18)}.live-presence-dot[data-state="error"]{background:var(--muted);box-shadow:none}.live-presence-dot[data-state="connecting"]{background:var(--muted);box-shadow:none}.live-presence-empty{display:block;padding:.25rem .1875rem}.live-presence-analytics{width:100%;margin-top:.5625rem;padding:.5rem .1875rem .125rem;border:0;border-top:1px solid var(--line);color:var(--orange);background:none;cursor:pointer;font:.875rem var(--body);text-align:left}.hero{--hero-muted:color-mix(in srgb,var(--muted) 86%,var(--ink));position:relative;max-width:1280px;min-height:690px;margin:auto;padding:8.75rem 2.625rem 3rem;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:4.375rem;overflow:hidden}.hero .eyebrow,.hero .hero-intro,.hero .image-caption{color:var(--hero-muted)}.hero-landscape{position:absolute;z-index:0;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;isolation:isolate;mask-image:linear-gradient(to bottom,transparent 5%,#000 24%,#000 78%,transparent 100%)}.hero-landscape::after{position:absolute;inset:0;content:"";background:linear-gradient(90deg,color-mix(in srgb,var(--paper) 76%,transparent),color-mix(in srgb,var(--paper) 48%,transparent) 38%,transparent 68%)}.hero-landscape-layer{position:absolute;left:-5%;bottom:-4%;width:110%;height:110%;overflow:visible;fill:none;stroke-linecap:round;stroke-linejoin:round}.landscape-far{color:var(--muted)}.landscape-sun{fill:var(--orange);opacity:.065}.landscape-ridge-fill{fill:var(--blue);opacity:.10}.landscape-ridge-line{stroke:currentColor;stroke-width:1.1;opacity:.18}.landscape-hill-fill{fill:var(--blue);opacity:.10}.landscape-hill-line,.landscape-terraces{stroke:var(--muted);stroke-width:1;opacity:.18}.landscape-terraces{opacity:.12}.landscape-buildings{stroke:var(--muted);stroke-width:1.15;opacity:.25}.landscape-building-fill{fill:var(--paper);fill-opacity:.8;stroke:none}.landscape-roof{fill:color-mix(in srgb,var(--paper) 90%,var(--orange))}.landscape-brickwork,.landscape-distant-roofs{opacity:.6}.landscape-bezier{stroke:var(--accent);stroke-width:1;opacity:.16}.landscape-bezier circle,.landscape-bezier rect{fill:var(--paper)}.landscape-handles{opacity:.55}[data-theme="dark"] .landscape-ridge-fill,[data-theme="dark"] .landscape-hill-fill{opacity:.035}[data-theme="dark"] .landscape-buildings{opacity:.22}@media (max-width:800px){.hero-landscape{mask-image:linear-gradient(to bottom,transparent 12%,#000 34%,#000 72%,transparent 100%)}.hero-landscape::after{background:color-mix(in srgb,var(--paper) 38%,transparent)}.hero-landscape-layer{height:78%;bottom:4%}.landscape-buildings{opacity:.18}}.hero-copy,.hero-art{position:relative;z-index:1}.eyebrow{margin:0 0 1.375rem;color:var(--muted);font:500 .8125rem var(--body);letter-spacing:.1em;text-transform:uppercase}.status-dot{display:inline-block;width:7px;height:7px;background:#7ebf65;border-radius:100%;margin-right:.5rem;box-shadow:0 0 0 4px #dcebd5}h1,h2,h3,p{margin-top:0}h1{max-width:580px;margin-bottom:1.5625rem;font:700 clamp(3.25rem,6.2vw,5.5625rem)/.98 var(--display);letter-spacing:-.055em}h1 em,h2 em{color:var(--orange);font-style:normal}h1,h2,h3{font-family:var(--display)}.hero-intro{max-width:390px;margin-bottom:.875rem;color:var(--muted);font-size:1.0625rem;line-height:1.65}.hero-engagement{display:inline-flex;align-items:flex-start;gap:.5625rem;max-width:430px;margin:0 0 1.75rem;padding:.5625rem .75rem;border:1px solid var(--line);border-radius:10px;color:var(--ink);background:color-mix(in srgb,var(--accent) 4%,var(--paper));font:500 .875rem/1.65 var(--body)}.hero-engagement::before{flex:0 0 6px;width:6px;height:6px;margin-top:.4375rem;border-radius:50%;background:#6b9964;content:""}.hero-engagement[data-availability-status="limited"]::before{background:var(--accent)}.hero-engagement[data-availability-status="closed"]::before{background:var(--muted)}.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem}.hero-actions .button{gap:.875rem}.hero-actions .text-link{display:inline-flex;align-items:center;gap:.375rem;min-height:44px;padding:.5rem 0;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:4px}.hero-actions a:focus-visible,.contact-link:focus-visible{outline:3px solid var(--accent);outline-offset:5px}.button{display:inline-flex;align-items:center;gap:1.4375rem;padding:.9375rem 1.1875rem;font-size:.875rem;font-weight:600;transition:transform .2s,background .2s,box-shadow .2s}.button-dark{color:var(--paper);background:linear-gradient(145deg,color-mix(in srgb,var(--ink) 88%,white 12%),var(--ink));border:1px solid color-mix(in srgb,var(--ink) 75%,white 25%);box-shadow:inset 1px 1px 0 rgba(255,255,255,.18),inset -1px -1px 0 rgba(0,0,0,.35),0 3px 0 rgba(0,0,0,.3)}.text-link{border-bottom:1px solid var(--ink);padding-bottom:.3125rem;font-size:.875rem}.text-link span{color:var(--orange);margin-left:.4375rem}.hero-art{--portrait-cut:clamp(24px,3.2vw,44px);width:100%;max-width:440px;position:relative;justify-self:end}.portrait-frame{position:relative;width:100%;height:auto;aspect-ratio:1145 / 1527;overflow:hidden;background:var(--paper);clip-path:polygon(0 0,calc(100% - var(--portrait-cut)) 0,100% var(--portrait-cut),100% 100%,var(--portrait-cut) 100%,0 calc(100% - var(--portrait-cut)))}.portrait-frame img,.about-image img{transition:filter .45s cubic-bezier(.2,.7,.2,1);filter:grayscale(1) saturate(0)}.portrait-frame img{width:100%;height:100%;object-fit:contain;object-position:center}.portrait-visual{position:relative;display:block;width:100%;height:100%}.portrait-base,.portrait-color-network{position:absolute;inset:0;display:block;width:100%;height:100%}.portrait-frame[data-vector-ready="true"] .portrait-base{opacity:0}@media (prefers-reduced-motion:reduce){:where(html:not([data-motion="full"])) .portrait-frame .portrait-base{filter:none}}@media (hover:none),(pointer:coarse){.portrait-frame .portrait-base{filter:none}}.image-caption{margin:.875rem 0 0 .8125rem;color:var(--muted);font:.8125rem/1.6 var(--body)}.hero-art .image-caption{margin-left:var(--portrait-cut)}@media (min-width:801px) and (max-width:1100px){.hero{padding:8rem 1.5rem 3rem;column-gap:3rem}.hero-art{width:88%;max-width:400px}}.image-caption span{color:var(--orange)}.art-note{position:absolute;z-index:1;font:1.625rem var(--display);color:var(--orange);opacity:.35;pointer-events:none}.note-one{top:-20px;right:21px}.note-two{bottom:39px;left:-24px;font-size:1.25rem}.section{max-width:1280px;margin:auto;padding:8.75rem 2.625rem}.section > :not(.section-illustration){position:relative;z-index:1}.section-heading .eyebrow{align-self:start;grid-row:span 2}h2{margin-bottom:1.125rem;font:700 clamp(2.25rem,4vw,3.5rem)/1.05 var(--display);letter-spacing:-.045em}.skills-heading .eyebrow{margin-bottom:1.125rem}.skill-dialog-content .eyebrow{margin-bottom:.625rem;font-size:.625rem}.skill-dialog-visual-icon .icon{width:100px;height:100px}.icon-sprite{position:absolute;overflow:hidden}.icon{display:inline-block;width:1em;height:1em;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.6;vertical-align:-.12em}.about-copy > p:not(.eyebrow){max-width:510px;color:var(--muted);font-size:.9375rem;line-height:1.7}.button-outline{border:1px solid var(--ink)}.social-icon .icon{width:16px;height:16px}@media (prefers-reduced-motion:reduce){html:not([data-motion="full"]){scroll-behavior:auto}:where(html:not([data-motion="full"])) .portrait-frame img,:where(html:not([data-motion="full"])) .about-image img{transition:none}}@media (max-width:800px){.site-header{height:75px;padding:0 1.25rem}.live-presence-wrap{display:none}.nav{gap:.5rem;margin-left:0;font-size:.75rem}.nav a:nth-child(2),.nav a:nth-child(4){display:none}.nav a{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}.nav-contact{display:none}.hero{display:block;padding:7rem 1.25rem 2.5rem}.hero-art{width:90%;margin:3.5rem auto 0;max-width:380px}.section{padding:5.625rem 1.25rem}}@media (max-width:430px){h1{font-size:3rem}.hero-intro{font-size:1rem}.site-header{padding:0 .75rem}.nav{gap:.25rem}.nav a:nth-child(6){display:none}}.mobile-nav{display:none}@media (max-width:800px),(max-width:1100px) and (pointer:coarse){body{padding-bottom:calc(4.75rem + env(safe-area-inset-bottom,0rem))}html{scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}.site-header{position:absolute;top:0;left:0;width:100%;height:72px;padding:0 1.25rem;transform:none;transition:none}.site-header .nav,.site-header .header-tools{display:none}.mobile-nav{position:fixed;z-index:40;inset:auto 0 0;display:grid;grid-template-columns:repeat(5,1fr);min-height:72px;padding:.4375rem max(.5rem,env(safe-area-inset-right,0rem)) calc(.4375rem + env(safe-area-inset-bottom,0rem)) max(.5rem,env(safe-area-inset-left,0rem));border-top:1px solid var(--line);background:var(--paper);color:var(--ink);box-shadow:0 -4px 18px rgba(24,33,30,.06)}.mobile-nav a{display:flex;min-width:0;min-height:54px;padding:.375rem .125rem;gap:.25rem;align-items:center;justify-content:center;flex-direction:column;border-radius:10px;font:500 .875rem/1.3 var(--body)}.mobile-nav .icon{width:23px;height:23px;stroke-width:1.7}.mobile-nav a[aria-current="location"]{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 8%,var(--paper))}.mobile-nav a[aria-current="location"] .icon{stroke-width:2.2}.mobile-nav a:focus-visible{outline:2px solid var(--accent-text);outline-offset:-2px}}a.skip-link{position:fixed;z-index:10000;top:12px;left:12px;padding:.875rem 1.25rem;color:var(--paper);background:var(--ink);transform:translateY(-160%)}a.skip-link:focus-visible{transform:none;outline:3px solid var(--accent);outline-offset:3px}.site-header .nav{margin-left:0;gap:1.5rem}.site-header .nav a,.site-header .nav a:last-child{display:inline-flex;align-items:center;gap:.3125rem;min-height:44px}.nav .nav-resource-type{color:var(--muted);font-size:.8125rem;margin-left:0}.header-tools{gap:1rem}.header-tools > .nav-contact{display:inline-flex;align-items:center;gap:.4375rem;min-height:44px;padding:.5rem 0;color:var(--accent-text);border-bottom-color:currentColor;white-space:nowrap}.nav a:focus-visible,.header-tools > .nav-contact:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.hero{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);column-gap:3rem}.hero h1{font-size:clamp(3rem,5vw,4.5rem);line-height:1.04;letter-spacing:-.055em}.hero-intro{max-width:540px}.hero-proof{display:flex;flex-wrap:wrap;gap:1rem 1.75rem;margin:1.875rem 0 0;padding:1.375rem 0 0;border-top:1px solid var(--line);list-style:none}.hero-proof a{display:block;padding:.25rem 0}.hero-proof strong,.hero-proof span{display:block}.hero-proof strong{font:600 .875rem/1.5 var(--body)}.hero-proof span{margin-top:.1875rem;color:var(--hero-muted);font-size:.8125rem;line-height:1.5}.hero-proof a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}@media (min-width:801px) and (max-width:1100px){.site-header{gap:1rem}.site-header .nav{gap:1rem;font-size:.875rem}.header-tools{gap:.75rem}.live-presence-wrap{padding:.1875rem}.hero{column-gap:1.75rem}.hero-proof{gap:1rem}}@media (max-width:800px){.hero{padding-top:6.625rem}.hero h1{max-width:620px;font-size:clamp(2.5rem,11vw,3.25rem)}.hero-art{max-width:280px;margin-top:2.25rem}.hero-proof{gap:.875rem 1.5rem}.hero-proof span{font-size:.8125rem}}.presence-panel,.skill-modal{visibility:hidden;pointer-events:none;position:fixed;inset:0}.live-presence-list,.availability-tooltip{position:absolute;visibility:hidden;opacity:0}img,video{max-width:100%}
 </style>
   <style id="palette-critical">[data-theme="original"]{--ink:#222938;--paper:#f7f2ec;--muted:#6b6870;--line:#d9cdc4;--orange:#e75a2a;--accent:#e75a2a;--accent-text:#b53b18;--intro-button-bg:#ad3513;--blue:#d9e1e3;--lime:#eadfce;--pink:#f0d4c9;--shadow:rgba(34,41,56,.86)}</style>
-  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.min.css?v=8df951587a7b" media="print">
-  <noscript><link rel="stylesheet" href="assets/css/site.min.css?v=8df951587a7b"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
-  <script type="module" src="assets/js/page-styles.js?v=20261123-performance"></script>
+  <link id="page-styles" rel="stylesheet" data-href="assets/css/site.min.css?v=c99f3adefefb" media="print">
+  <noscript><link rel="stylesheet" href="assets/css/site.min.css?v=c99f3adefefb"><link rel="stylesheet" href="assets/css/secondary-fonts.css"></noscript>
+  <script type="module" src="assets/js/page-styles.js?v=20261125-startup-repair"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -379,6 +385,7 @@ html[data-text-scale="100"]{font-size:100%}html[data-text-scale="115"]{font-size
 <body>
   <a class="skip-link" href="#top">Skip to content</a>
 <div id="loader" role="region" aria-label="Welcome intro" data-palette="0">
+  <div id="ld-echo" class="ld-echo" aria-hidden="true"></div>
   <div class="ld-wash ld-wash-one" aria-hidden="true"></div>
   <div class="ld-wash ld-wash-two" aria-hidden="true"></div>
   <div class="ld-wash ld-wash-three" aria-hidden="true"></div>
@@ -392,8 +399,8 @@ html[data-text-scale="100"]{font-size:100%}html[data-text-scale="115"]{font-size
     <circle class="ld-dot" cx="226" cy="72" r="3" />
     <circle class="ld-dot" cx="494" cy="408" r="3" />
   </svg>
+  <div class="ld-top" aria-hidden="true">Sujeet<i>.</i></div>
   <div class="ld-stage">
-    <div class="ld-top" aria-hidden="true">Sujeet<i>.</i></div>
     <p class="ld-kicker" aria-hidden="true">A little hello from Nepal</p>
     <div id="ld-word" class="ld-word" data-f="headline" lang="en" aria-hidden="true">Hello</div>
     <span id="ld-lang" class="ld-language" aria-hidden="true">English</span>
@@ -421,6 +428,258 @@ html[data-text-scale="100"]{font-size:100%}html[data-text-scale="115"]{font-size
     <path class="ld-write-stroke" pathLength="1" stroke-width="6.8" style="--pen-delay:724ms;--pen-duration:136ms;--pen-easing:cubic-bezier(.2,.05,.65,1)" d="M17 55 C88 53 192 58 287 54"/>
   </g>
 </svg></template>
+  <script id="welcome-controller">/* Embedded before page content: no network, image or font dependency at startup. */
+(() => {
+  function startWelcome(restored = false) {
+    const loader = document.getElementById('loader');
+    if (!loader) return;
+    const root = document.documentElement;
+    if (!restored && root.dataset.loaderDone === 'true') return;
+    const compact = matchMedia('(max-width: 800px), (pointer: coarse)').matches;
+    const word = document.getElementById('ld-word');
+    const language = document.getElementById('ld-lang');
+    const fill = document.getElementById('ld-fill');
+    const progress = loader.querySelector('.ld-bar');
+    const skip = loader.querySelector('.ld-skip');
+    const handwriting = document.getElementById('ld-namaste-template');
+    if (!word || !language || !fill || !skip) return;
+    clearTimeout(window.loaderBootTimeout);
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const reduced = () => root.dataset.layout === 'reader' || (root.dataset.motion ? root.dataset.motion === 'reduced' : motion.matches);
+    const constrained = (window.navigator.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
+      || (window.navigator.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
+    const seenKey = 'portfolio-intro-seen';
+    const exitDuration = 220;
+    const firstVisitDuration = compact ? 5000 : 6000;
+    let returning = false, storageAvailable = false;
+    function remember(storage) {
+      const savedCount = Number(storage.getItem('portfolio-visit-count'));
+      const seen = storage.getItem(seenKey) === '1' || (Number.isSafeInteger(savedCount) && savedCount > 0);
+      storage.setItem(seenKey, '1');
+      return seen;
+    }
+    try { returning = remember(sessionStorage); storageAvailable = true; } catch {}
+    try { returning = remember(localStorage) || returning; storageAvailable = true; } catch {}
+    if (!storageAvailable) returning = true;
+    const brief = returning;
+    const namaste = { text: 'नमस्ते', label: 'Namaste · Nepali', lang: 'ne', font: 'dev', duration: brief ? 1250 : compact ? 1250 : 1100 };
+    const greetings = brief ? [namaste] : [
+      { text: 'Hello', label: 'English', lang: 'en', font: 'headline', duration: compact ? 700 : 940 },
+      { text: 'Hola', label: 'Spanish', lang: 'es', font: 'headline', duration: compact ? 700 : 940 },
+      { text: 'Bonjour', label: 'French', lang: 'fr', font: 'headline', duration: compact ? 700 : 940 },
+      { text: 'Ciao', label: 'Italian', lang: 'it', font: 'headline', duration: compact ? 700 : 940 },
+      { text: 'Hallo', label: 'German', lang: 'de', font: 'headline', duration: compact ? 770 : 960 },
+      namaste
+    ];
+    const duration = greetings.reduce((sum, greeting) => sum + greeting.duration, 0);
+    loader.dataset.visit = returning ? 'returning' : 'first';
+    loader.dataset.mode = compact ? 'mobile' : 'desktop';
+    loader.dataset.effects = !brief && !constrained ? 'full' : 'light';
+    loader.dataset.ink = 'pending';
+    loader.dataset.phase = 'pending';
+    loader.style.display = '';
+    loader.classList.remove('is-exiting');
+    const navigationKeys = new Set(['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
+    let running = false, completed = false, started = false;
+    let waitingForPaint = true;
+    let waitingForInk = false, inkFinishedAt = Infinity;
+    let failSafe, greetingTimer, exitTimer, frame, progressAnimation;
+    const animations = [];
+    let previousOverflow, previousBodyOverflow;
+    let activeIndex = -1, displayedProgress = 0, greetingStartedAt = 0;
+
+    function clearAnimations() {
+      animations.splice(0).forEach(animation => animation.cancel());
+    }
+    function animate(element, keyframes, options) {
+      if (typeof element?.animate !== 'function') return;
+      try {
+        const animation = element.animate(keyframes, options);
+        if (waitingForPaint) animation.pause?.();
+        animations.push(animation);
+      } catch { /* Keep the static greeting readable. */ }
+    }
+    function watchInk() {
+      let strokes;
+      try { strokes = word.getAnimations?.({ subtree: true }).filter(effect => effect.animationName === 'ld-pen-write') || []; }
+      catch { return; } // CSS drawing remains usable if animation inspection is unavailable.
+      if (!strokes.length) return;
+      waitingForInk = true;
+      Promise.all(strokes.map(effect => effect.finished)).then(() => {
+        if (completed) return;
+        inkFinishedAt = performance.now();
+        tick(inkFinishedAt);
+      }, () => {
+        if (completed) return;
+        waitingForInk = false;
+        tick(performance.now());
+      });
+    }
+    function setProgress(value) {
+      displayedProgress = Math.max(displayedProgress, Math.min(1, value));
+      if (displayedProgress === 1) { progressAnimation?.cancel(); progressAnimation = null; }
+      if (!progressAnimation) fill.style.transform = `scaleX(${displayedProgress})`;
+      progress?.setAttribute('aria-valuenow', String(Math.round(displayedProgress * 100)));
+    }
+    function complete(moveFocus = false) {
+      if (completed) return;
+      completed = true; running = false;
+      clearTimeout(failSafe); clearTimeout(greetingTimer); clearTimeout(exitTimer); cancelAnimationFrame(frame);
+      clearAnimations();
+      setProgress(1);
+      const focusWasInside = loader.contains(document.activeElement);
+      loader.style.display = 'none';
+      root.classList.remove('loader-running');
+      root.classList.remove('loader-docked');
+      if (previousOverflow !== undefined) root.style.overflow = previousOverflow;
+      if (previousBodyOverflow !== undefined) document.body.style.overflow = previousBodyOverflow;
+      document.removeEventListener('keydown', onKey, true);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('wheel', onScrollIntent);
+      window.removeEventListener('touchmove', onScrollIntent);
+      window.removeEventListener('pagehide', onPageHide);
+      motion.removeEventListener('change', onMotionChange);
+      document.removeEventListener('display-preferences:change', onMotionChange);
+      skip.removeEventListener('click', onSkip);
+      if (moveFocus || focusWasInside) {
+        const heading = document.getElementById('hero-title');
+        if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
+      }
+      root.dataset.loaderDone = 'true';
+      document.dispatchEvent(new CustomEvent('loader:done'));
+    }
+    function onKey(event) { if (navigationKeys.has(event.key)) complete(); }
+    function onSkip() { complete(true); }
+    function onScrollIntent() { complete(); }
+    function onMotionChange(event) {
+      if (root.dataset.layout === 'reader' || (root.dataset.motion ? root.dataset.motion === 'reduced' : event.matches ?? motion.matches)) complete();
+    }
+    function onPageHide() { complete(); }
+    function onVisibility() {
+      if (!started && !document.hidden) run();
+      else if (started && document.hidden) complete();
+    }
+
+    function showGreeting(index, now = performance.now()) {
+      if (index === activeIndex) return;
+      activeIndex = index;
+      greetingStartedAt = now;
+      const greeting = greetings[index];
+      clearAnimations();
+      const writing = greeting.lang === 'ne' && handwriting?.content && typeof word.replaceChildren === 'function';
+      if (writing) word.replaceChildren(handwriting.content.cloneNode(true));
+      else if (loader.dataset.effects === 'full' && typeof word.replaceChildren === 'function') {
+        const letters = [...greeting.text].map(letter => {
+          const span = document.createElement('span');
+          span.className = 'ld-letter'; span.textContent = letter;
+          return span;
+        });
+        word.replaceChildren(...letters);
+        letters.forEach((letter, position) => animate(letter, [
+          { opacity: 0, transform: 'translateY(110%) rotate(9deg) scale(.85)', offset: 0 },
+          { opacity: 1, transform: 'translateY(-4%) rotate(-2deg) scale(1.02)', offset: .22 },
+          { opacity: 1, transform: 'translateY(0) rotate(0deg) scale(1)', offset: .4 },
+          { opacity: 1, transform: 'translateY(0) rotate(0deg) scale(1)', offset: 1 }
+        ], { delay: position * 22, duration: greeting.duration - position * 22, easing: 'cubic-bezier(.22,.7,.25,1)', fill: 'both' }));
+      } else word.textContent = greeting.text;
+      word.lang = greeting.lang; word.dataset.f = greeting.font;
+      word.dataset.writing = String(!!writing);
+      language.textContent = greeting.label;
+      loader.dataset.palette = String(index % 3);
+      loader.dataset.greeting = greeting.lang;
+      const echo = document.getElementById('ld-echo');
+      if (echo) {
+        echo.textContent = writing ? '' : greeting.text;
+        if (!writing) animate(echo, [
+          { opacity: 0, transform: 'translateX(6%) scale(.92)' },
+          { opacity: .12, transform: 'translateX(0) scale(1)', offset: .4 },
+          { opacity: 0, transform: 'translateX(-6%) scale(1.08)' }
+        ], { duration: greeting.duration, easing: 'ease-in-out', fill: 'both' });
+      }
+      animate(language, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 240, fill: 'both' });
+      if (writing && !waitingForPaint) watchInk();
+      else if (!writing && loader.dataset.effects === 'light') {
+        animate(word, [
+          { opacity: .35, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 180, easing: 'ease-out', fill: 'both' });
+      }
+    }
+    function tick(now) {
+      if (!running || waitingForPaint) return;
+      clearTimeout(greetingTimer);
+      try {
+        if (now - greetingStartedAt >= greetings[activeIndex].duration && activeIndex < greetings.length - 1) showGreeting(activeIndex + 1, now);
+        const age = now - greetingStartedAt;
+        const spent = greetings.slice(0, activeIndex).reduce((sum, greeting) => sum + greeting.duration, 0);
+        setProgress(Math.min(1, (spent + age) / duration));
+        const inkHoldRemaining = waitingForInk ? Math.max(0, inkFinishedAt + 300 - now) : 0;
+        if (activeIndex === greetings.length - 1 && age >= greetings[activeIndex].duration && inkHoldRemaining === 0) {
+          setProgress(1);
+          running = false;
+          loader.classList.add('is-exiting');
+          exitTimer = setTimeout(complete, exitDuration);
+          return;
+        }
+        // Wake only for the next greeting. The browser animates the progress bar.
+        const next = age < greetings[activeIndex].duration ? greetings[activeIndex].duration - age : inkHoldRemaining;
+        if (!Number.isFinite(next)) return; // Stroke completion or the independent watchdog wakes us.
+        greetingTimer = setTimeout(() => tick(performance.now()), Math.max(1, next));
+      } catch (error) {
+        console.warn('Welcome animation unavailable.', error);
+        complete();
+      }
+    }
+    function run() {
+      if (started || completed) return;
+      started = true; running = true;
+      root.dataset.loaderDone = 'false';
+      failSafe = setTimeout(complete, brief ? 2500 : firstVisitDuration + 2000);
+      previousOverflow = root.style.overflow; previousBodyOverflow = document.body.style.overflow;
+      root.style.overflow = 'hidden'; document.body.style.overflow = 'hidden';
+      root.classList.add('loader-running');
+      document.addEventListener('keydown', onKey, true);
+      window.addEventListener('wheel', onScrollIntent, { passive: true });
+      window.addEventListener('touchmove', onScrollIntent, { passive: true });
+      motion.addEventListener('change', onMotionChange);
+      document.addEventListener('display-preferences:change', onMotionChange);
+      try {
+        showGreeting(0);
+        if (typeof fill.animate === 'function') progressAnimation = fill.animate([
+          { transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }
+        ], { duration, easing: 'linear', fill: 'forwards' });
+        progressAnimation?.pause?.();
+        // Let the brief SVG reach a painted frame before spending its reading time.
+        frame = requestAnimationFrame(() => {
+          frame = requestAnimationFrame(paintedAt => {
+            if (completed) return;
+            waitingForPaint = false;
+            greetingStartedAt = paintedAt;
+            loader.dataset.ink = 'drawing';
+            loader.dataset.phase = 'playing';
+            // Restart native effects from the first visible frame, including warm reloads.
+            animations.forEach(animation => { animation.currentTime = 0; animation.play?.(); });
+            if (brief) watchInk();
+            if (progressAnimation) { progressAnimation.currentTime = 0; progressAnimation.play?.(); }
+            tick(paintedAt);
+          });
+        });
+      } catch { complete(); }
+    }
+
+    skip.addEventListener('click', onSkip);
+    // Returning visitors get brief Namaste; only accessibility/data-saving
+    // preferences bypass the welcome.
+    if (window.navigator?.connection?.saveData || reduced()) { complete(); return; }
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+    root.classList.add('loader-running');
+    if (!document.hidden) run();
+  }
+  startWelcome();
+  window.addEventListener('pageshow', event => { if (event.persisted) startWelcome(true); });
+})();
+</script>
   <noscript><style>#loader { display: none !important; }</style></noscript>
   <svg class="icon-sprite" aria-hidden="true" width="0" height="0">
     <symbol id="icon-arrow-up-right" viewBox="0 0 16 16">
@@ -1091,9 +1350,23 @@ html[data-text-scale="100"]{font-size:100%}html[data-text-scale="115"]{font-size
 
   <footer class="site-footer portfolio-footer" aria-label="Sujeet Khadka, portfolio footer">
     <div class="footer-inner">
+      <div class="footer-observer decorative-only" data-footer-character data-character-state="thinking">
+        <span class="footer-character-sprite" aria-hidden="true">
+          <img class="footer-character-sheet" src="assets/images/footer/sujeet-footer-gestures.webp?v=f2da93ca980f"
+            width="1024" height="2560" alt="" aria-hidden="true" loading="lazy" decoding="async">
+        </span>
+        <span class="footer-character-overhead" aria-hidden="true">
+          <img class="footer-character-overhead-sheet" data-src="assets/images/footer/sujeet-overhead-walk.webp?v=fba1f7f58937"
+            width="512" height="512" alt="" aria-hidden="true" decoding="async">
+        </span>
+        <span class="footer-character-message" aria-hidden="true"></span>
+        <button class="footer-character-control" type="button" aria-label="Say hi to Sujeet" hidden>
+          <span class="footer-character-hint" aria-hidden="true">Say hi</span>
+        </button>
+      </div>
       <div class="footer-top">
         <div class="footer-introduction">
-          <p class="footer-name footer-first-name">Sujeet</p>
+          <p class="footer-name footer-first-name">Sujeet<span class="footer-mobile-last-name"> Khadka</span></p>
           <p class="footer-description">Interfaces, games &amp; the ideas in between.</p>
         </div>
         <div class="footer-object">
@@ -1142,9 +1415,8 @@ html[data-text-scale="100"]{font-size:100%}html[data-text-scale="115"]{font-size
       </div>
     </div>
   </footer>
-  <script src="loader/files/loader.js?v=780834c62d18" defer></script>
-  <script type="module" src="assets/js/enhancements.js?v=20261125-motion-cleanup"></script>
-  <script type="module" src="assets/js/portfolio.bundle.js?v=025bca5f2c92"></script>
+  <script type="module" src="assets/js/enhancements.js?v=c19d3bed0853"></script>
+  <script type="module" src="assets/js/portfolio.bundle.js?v=3ddaf8157a7c"></script>
 </body>
 
 </html>

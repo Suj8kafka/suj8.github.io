@@ -59,9 +59,15 @@ test('project images have useful descriptions while grouped toolkit decorations 
 test('every homepage image explicitly declares a meaningful or decorative alternative', () => {
   for (const [opening] of html.matchAll(/<img\b[^>]*>/g)) {
     const image = attrs(opening);
+    const source = image.src || image['data-src'];
     assert.equal(typeof image.alt, 'string', `Missing alt: ${image.src}`);
-    if (image.alt === '') assert.match(image.src, /^assets\/images\/tool-icons\//);
-    else assert.ok(image.alt.trim().length > 5, `Unhelpful alt: ${image.src}`);
+    if (image.alt === '') {
+      if (source.startsWith('assets/images/footer/')) {
+        assert.match(source, /^assets\/images\/footer\/sujeet-(?:footer-gestures|overhead-walk)\.webp\?v=[a-f0-9]+$/);
+        assert.equal(image['aria-hidden'], 'true');
+        assert.match(image.class, /\bfooter-character-(?:overhead-)?sheet\b/);
+      } else assert.match(source, /^assets\/images\/tool-icons\//);
+    } else assert.ok(image.alt.trim().length > 5, `Unhelpful alt: ${image.src}`);
   }
   assert.match(html, /class="footer-box-stage decorative-only"[^>]*aria-hidden="true"/);
 });

@@ -13,7 +13,7 @@
   background: var(--bg);
   font-family: var(--body);
   opacity: 1;
-  transition: opacity .18s ease;
+  transition: opacity .22s ease;
 }
 html.loader-running:not(.loader-docked), html.loader-running:not(.loader-docked) body { overflow: hidden; overscroll-behavior: none; }
 html.loader-running #loader { display: grid; }
@@ -88,7 +88,7 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 #loader[data-effects="full"] .ld-satellite { transform-origin: 360px 240px; animation: loader-satellite-turn 6s cubic-bezier(.3,.1,.4,1) both; }
 @keyframes loader-track-travel { to { stroke-dashoffset: -320; } }
 @keyframes loader-inner-turn { from { transform: rotate(-12deg) scale(.94); } to { transform: rotate(12deg) scale(1.04); } }
-@keyframes loader-satellite-turn { from { transform: rotate(-30deg); } to { transform: rotate(125deg); } }
+@keyframes loader-satellite-turn { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
 @keyframes loader-orbit { to { transform: rotate(5deg) scale(1.02); } }
 @media (max-width: 800px), (pointer: coarse) {
   .ld-graphic { width: 140vw; max-width: 760px; opacity: .2; animation-duration: 5s; }
@@ -97,10 +97,30 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 #loader[data-visit="returning"] .ld-graphic { display: none; }
 #loader[data-visit="returning"] .ld-wash { animation: none; }
+#loader[data-phase="pending"] *, #loader[data-phase="pending"]::before { animation-play-state: paused !important; }
+
+/* Kinetic typography: a masked foreground, outlined echo and moving construction lines. */
+.ld-echo { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; pointer-events: none; opacity: 0; color: transparent; -webkit-text-stroke: 1px var(--fg); font: 700 clamp(100px, 29vw, 420px)/1 var(--display); letter-spacing: -.065em; }
+.ld-letter { display: inline-block; transform-origin: center bottom; }
+#loader[data-visit="returning"] .ld-echo { display: none; }
+#loader[data-effects="full"] .ld-stage { width: min(94vw, 1040px); }
+#loader[data-effects="full"] .ld-kicker { font-size: 13px; text-transform: uppercase; letter-spacing: .16em; }
+#loader[data-effects="full"] .ld-word[data-writing="false"] { height: clamp(140px, 23vw, 260px); overflow: hidden; gap: .015em; font-size: clamp(48px, 12vw, 164px); line-height: 1.1; }
+#loader[data-effects="full"] .ld-graphic { width: min(125vw, 1100px); opacity: .24; }
+#loader[data-effects="full"] .ld-orbit-track { stroke-width: 1.5; }
+#loader[data-effects="full"] .ld-stage::before,
+#loader[data-effects="full"] .ld-stage::after { position: absolute; width: clamp(24px, 8vw, 90px); height: 2px; content: ""; background: var(--fg); opacity: .5; animation: loader-rule-sweep .94s cubic-bezier(.2,.65,.3,1) infinite; }
+#loader[data-effects="full"] .ld-stage::before { left: 0; top: 30%; transform-origin: left; }
+#loader[data-effects="full"] .ld-stage::after { right: 0; bottom: 26%; transform-origin: right; animation-delay: .12s; }
+#loader[data-greeting="ne"] .ld-stage::before, #loader[data-greeting="ne"] .ld-stage::after { display: none; }
+@keyframes loader-rule-sweep { 0% { transform: scaleX(0); } 35%, 65% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
 
 .ld-top {
-  margin-bottom: 24px;
-  font: 700 40px/1.2 var(--display);
+  position: absolute;
+  top: 28px;
+  left: 24px;
+  margin: 0;
+  font: 700 28px/1.2 var(--display);
   letter-spacing: -.06em;
 }
 .ld-top i { color: var(--accent); font-style: normal; }
@@ -127,6 +147,7 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 .ld-word[data-f="bn"] { font-family: "Noto Sans Bengali", sans-serif; }
 .ld-handwriting { display: block; width: 2.8em; height: auto; max-width: 100%; max-height: 100%; overflow: visible; }
 .ld-write-stroke { opacity: 0; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ld-pen-write var(--pen-duration) var(--pen-easing, cubic-bezier(.32,.05,.45,1)) var(--pen-delay) forwards; }
+#loader[data-ink="pending"] .ld-write-stroke { animation-play-state: paused; }
 @keyframes ld-pen-write { from { opacity: 1; stroke-dashoffset: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
 .ld-language { display: block; margin-top: 12px; font-size: 14px; line-height: 1.6; }
 .ld-bar {
@@ -154,29 +175,12 @@ html.loader-running .marquee-track { animation-play-state: paused; }
 }
 .ld-skip:hover { text-decoration: underline; text-underline-offset: 3px; }
 .ld-skip:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
-/* Finish the same welcome above the phone navigation, leaving the page usable. */
-html.loader-docked #loader {
-  inset: auto max(16px, env(safe-area-inset-right)) calc(88px + env(safe-area-inset-bottom)) auto;
-  width: 184px;
-  border: 1px solid var(--track);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(24, 33, 30, .12);
-  contain: layout paint;
-  animation: loader-panel-in .18s ease-out;
-}
-html.loader-docked .ld-stage { width: 100%; padding: 28px 12px 12px; transform: none; }
-html.loader-docked .ld-top, html.loader-docked .ld-kicker { display: none; }
-html.loader-docked .ld-graphic { display: none; }
-html.loader-docked .ld-word { height: 42px; font-size: 30px; }
-html.loader-docked .ld-language { margin-top: 4px; font-size: 13px; }
-html.loader-docked .ld-bar { width: 100px; height: 2px; margin-top: 10px; }
-html.loader-docked .ld-skip { top: 0; right: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; font: 22px/1 sans-serif; }
-@keyframes loader-panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* Keep both welcome variants full-screen, including landscape phones. */
 @media (max-height: 420px) {
   .ld-stage { padding: 16px; transform: none; }
   .ld-top { margin-bottom: 8px; font-size: 28px; }
   .ld-kicker { display: none; }
-  .ld-word { height: 85px; font-size: 48px; }
+  .ld-word, #loader[data-effects="full"] .ld-word[data-writing="false"] { height: 85px; font-size: 48px; }
   .ld-language { margin-top: 4px; font-size: 13px; }
   .ld-bar { margin-top: 16px; }
 }
