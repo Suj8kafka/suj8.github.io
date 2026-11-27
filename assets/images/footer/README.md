@@ -8,7 +8,7 @@ The active standing atlas is `sujeet-footer-gestures.webp` (1024 × 2560, four c
 
 `sujeet-overhead-walk.webp` contains four new overhead walking frames (512 × 512, two columns by two rows, 38,438 bytes, WebP quality 88/alpha quality 100). The built-in imagegen tool used the existing outline sheet as its identity/style reference. CSS rotates this actual overhead artwork to the travel heading; it does not rotate a standing figure to imitate an overhead view. The sheet is loaded only when the footer's motion gate permits travel.
 
-`assets/js/footer-character.js` owns camera changes, touring and pose selection; `footer-character-route.js` owns the pure route/standing-space helpers. Both image alphas are preserved, and CSS inverts the linework for dark mode. The atlas is packed from existing generated poses without redrawing them. There is no introduction or chat flow.
+`assets/js/footer-character.js` owns camera changes, touring, pose selection and prewritten bubbles; `footer-character-route.js` owns the pure route, standing-space and bubble-placement helpers. Both image alphas are preserved, and CSS inverts the linework for dark mode. The atlas is packed from existing generated poses without redrawing them. The first two character interactions per page visit show an introduction; later interactions and thinking poses share contextual UI/UX thoughts. Bubble text and tails are HTML/CSS, separate from the artwork.
 
 Overhead generation prompt:
 

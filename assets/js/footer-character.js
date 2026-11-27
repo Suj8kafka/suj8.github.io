@@ -1,4 +1,21 @@
-import { findFooterStop, planFooterRoute } from './footer-character-route.js';
+import { findFooterStop, planFooterRoute, placeFooterBubble } from './footer-character-route.js';
+
+const introduction = "Hi, I'm Sujeet Khadka.\nUI/UX designer.";
+const thoughts = {
+  home: ['Start by understanding people.', 'A little breathing room helps.', 'Is the next step clear?'],
+  name: ['Type sets the hierarchy.', 'Does this read at a glance?'],
+  surname: ['Spacing brings a name together.', 'Hierarchy guides the eye.'],
+  artwork: ['Motion connects these pieces.', 'Give that curve room to breathe.', 'Does this interaction feel clear?'],
+  contact: ['Make getting in touch easy.', 'Clear labels make the next step easy.'],
+  inquiry: ['One clear invitation is enough.', 'Good design starts with questions.'],
+  navigation: ['Familiar labels help us navigate.', 'Navigation should feel predictable.'],
+  links: ['Where will this link take me?', 'Descriptive links help everyone.'],
+  credits: ['Small details need hierarchy too.', 'A footer can be a useful last stop.']
+};
+const thoughtFor = (target, index = 0) => {
+  const lines = thoughts[target] || thoughts.home;
+  return lines[index % lines.length];
+};
 
 // Layout is measured only on startup, resizing, font completion and resumption.
 export function measureFooterScene({ document, window, footer }) {
@@ -8,14 +25,18 @@ export function measureFooterScene({ document, window, footer }) {
   const relative = node => {
     const rect = node?.getBoundingClientRect();
     if (!rect?.width || !rect.height) return null;
-    let left = rect.left, right = rect.right;
+    let left = rect.left, right = rect.right, top = rect.top, bottom = rect.bottom;
     if (node.matches?.('.footer-name, .footer-description, .footer-details > p, .footer-contact span, .footer-colophon > span') && document.createRange) {
       const range = document.createRange();
       range.selectNodeContents(node);
       const text = range.getBoundingClientRect();
-      if (text.width) { left = text.left; right = text.right; }
+      if (text.width) {
+        left = text.left; right = text.right;
+        // Display glyphs can extend beyond their compact line box.
+        top = Math.min(top, text.top); bottom = Math.max(bottom, text.bottom);
+      }
     }
-    return { left: left - bounds.left, right: right - bounds.left, top: rect.top - bounds.top, bottom: rect.bottom - bounds.top };
+    return { left: left - bounds.left, right: right - bounds.left, top: top - bounds.top, bottom: bottom - bounds.top };
   };
   const solid = [...footer.querySelectorAll('a, .footer-box-stage, .footer-motion-toggle')].map(relative).filter(Boolean);
   const scenery = [...footer.querySelectorAll('.footer-name, .footer-description, .footer-details > p, .footer-contact span, .footer-colophon > span')].map(relative).filter(Boolean);
@@ -47,13 +68,14 @@ export function createFooterCharacter({ document, window, measure = measureFoote
 
   const listeners = [], variants = new Map();
   const tour = ['name', 'inquiry', 'navigation', 'credits', 'links', 'contact', 'surname', 'artwork', 'home'];
-  const properties = ['--character-x', '--character-y', '--character-size', '--character-camera-scale', '--character-heading'];
+  const properties = ['--character-x', '--character-y', '--character-size', '--character-camera-scale', '--character-heading', '--character-bubble-left', '--character-bubble-top', '--character-bubble-width', '--character-bubble-tail-offset'];
   const spriteProperties = ['--character-column', '--character-row', '--character-facing'];
   let scene, location, currentSize = 242, currentView = 'standing';
   let wanted = false, running = false, destroyed = false, started = false, focusedHold = false;
   let ready = sheet.complete && sheet.naturalWidth > 0, overheadReady = overhead.complete && overhead.naturalWidth > 0;
   let timer = 0, frame = 0, deadline = 0, remaining = 0, elapsed = 0, previous = null, lastPaint = -Infinity;
   let queue = [], cursor = 0, destination = 'home', pending = null, tourIndex = 0;
+  let introductions = 0, replies = 0, hovering = false, focused = false, bubbleKey = '', bubblePlacement = null;
   const now = () => window.performance.now();
   const listen = (target, name, callback) => {
     target?.addEventListener?.(name, callback);
@@ -68,6 +90,7 @@ export function createFooterCharacter({ document, window, measure = measureFoote
     if (destroyed || !running) return;
     const next = measure({ document, window, footer, actor });
     if (!next) return;
+    bubbleKey = '';
     const changed = scene && (scene.width !== next.width || scene.height !== next.height);
     scene = next;
     if (!location || changed) {
@@ -86,6 +109,40 @@ export function createFooterCharacter({ document, window, measure = measureFoote
     const margin = Math.min(location.x, scene.width - location.x, location.y, scene.height - location.y);
     actor.style.setProperty('--character-camera-scale', currentView === 'overhead' ? Math.min(requested, margin / 32) : requested);
   }
+  function showBubble(text, kind = 'thought') {
+    if (message.textContent !== text) message.textContent = text;
+    actor.dataset.bubbleKind = kind;
+    actor.dataset.bubbleVisible = 'false';
+    if (!text || !running || currentView !== 'standing' || !scene || !location) return;
+    const key = `${text}/${currentSize}/${location.x}/${location.y}/${scene.width}/${scene.height}`;
+    if (key !== bubbleKey) {
+      // Try narrower readable bubbles in tight spaces. Size reads happen only
+      // when a standing message changes, never on walking frames.
+      bubblePlacement = null;
+      let bestScore = Infinity, bestWidth = 160;
+      for (const preferredWidth of [160, 144, 128]) {
+        const width = Math.min(preferredWidth, scene.width - 24);
+        actor.style.setProperty('--character-bubble-width', width + 'px');
+        const bounds = message.getBoundingClientRect?.();
+        const height = bounds?.height || 18 + (Math.ceil(text.length * 6 / (width - 22)) + text.split('\n').length - 1) * 17;
+        const placement = placeFooterBubble({ anchor: { ...location, size: currentSize }, width: scene.width, height: scene.height,
+          bubbleWidth: bounds?.width || width, bubbleHeight: height, obstacles: scene.obstacles });
+        if (!placement) continue;
+        const score = Math.hypot(placement.left + width / 2 - location.x,
+          placement.top + height / 2 - (location.y - currentSize * .87)) + Math.abs(144 - width);
+        if (score < bestScore) { bestScore = score; bestWidth = width; bubblePlacement = placement; }
+      }
+      bubbleKey = key;
+      if (bubblePlacement) {
+        actor.style.setProperty('--character-bubble-width', bestWidth + 'px');
+        actor.style.setProperty('--character-bubble-left', bubblePlacement.left - location.x + currentSize / 4 + 'px');
+        actor.style.setProperty('--character-bubble-top', bubblePlacement.top - location.y + currentSize + 'px');
+        actor.style.setProperty('--character-bubble-tail-offset', bubblePlacement.tail + 'px');
+        actor.dataset.bubbleSide = bubblePlacement.side;
+      }
+    }
+    actor.dataset.bubbleVisible = String(!!bubblePlacement);
+  }
   function render(step) {
     currentView = step.view || 'standing';
     actor.dataset.characterView = currentView;
@@ -101,7 +158,10 @@ export function createFooterCharacter({ document, window, measure = measureFoote
       sprite.style.setProperty('--character-row', Math.floor(step.index / 4));
       sprite.style.setProperty('--character-facing', step.facing || 1);
     }
-    message.textContent = step.message || '';
+    const reflecting = currentView === 'standing' && (actor.dataset.characterState === 'thinking'
+      || actor.dataset.characterState === 'idle' || actor.dataset.characterState === 'inspecting' && [4, 15].includes(step.index));
+    const reflection = reflecting ? thoughtFor(destination, Math.max(0, (variants.get(destination) || 1) - 1) + (step.index === 15 ? 1 : 0)) : '';
+    showBubble(step.message || reflection, step.bubbleKind || (step.message ? 'speech' : 'thought'));
     button.hidden = !running || currentView !== 'standing';
   }
   function reactions(target, at = location) {
@@ -165,7 +225,8 @@ export function createFooterCharacter({ document, window, measure = measureFoote
       return;
     }
     if (pending) { const target = pending; pending = null; visit(target); return; }
-    const target = tour[tourIndex++ % tour.length];
+    const destinations = tour.filter(target => scene.stops[target]);
+    const target = destinations[tourIndex++ % destinations.length];
     visit(target);
   }
   function schedule(duration) {
@@ -224,14 +285,31 @@ export function createFooterCharacter({ document, window, measure = measureFoote
       if (timer) remaining = Math.max(0, deadline - now());
       cancelClock();
       button.hidden = true;
+      hovering = focused = false;
+      actor.dataset.bubbleVisible = 'false';
     }
   }
   function greet(event) {
-    if (!running || destroyed || currentView !== 'standing' || actor.dataset.characterState === 'greeting' || event?.pointerType === 'touch' && event.type === 'pointerenter') return;
+    if (!running || destroyed || currentView !== 'standing' || event?.pointerType === 'touch' && event.type === 'pointerenter') return;
+    const type = event?.type || 'click';
+    const fresh = type === 'pointerenter' ? !hovering : type === 'focus' ? !hovering && !focused : !hovering && !focused;
+    if (type === 'pointerenter') hovering = true;
+    if (type === 'focus') focused = true;
+    if (!fresh && actor.dataset.characterState === 'greeting') return;
+    const introducing = fresh && introductions < 2;
+    if (introducing) introductions++;
+    const text = introducing ? introduction : thoughtFor(destination, replies++);
+    const bubbleKind = introducing ? 'introduction' : 'thought';
+    if (actor.dataset.characterState === 'greeting') {
+      for (const step of queue) if (step.state === 'greeting') { step.message = text; step.bubbleKind = bubbleKind; }
+      showBubble(text, bubbleKind);
+      return;
+    }
     const wave = [8, 9, 10, 11];
-    play([pose(7, 300, { state: 'greeting', message: 'Hi!' }),
-      ...Array.from({ length: 12 }, (_, index) => pose(wave[index % 4], 220, { state: 'greeting', message: 'Hi!' })),
-      pose(7, 1000, { state: 'greeting' }), pose(4, 6000, { state: 'thinking' })]);
+    const speech = { state: 'greeting', message: text, bubbleKind };
+    play([pose(7, 300, speech),
+      ...Array.from({ length: 12 }, (_, index) => pose(wave[index % 4], 220, speech)),
+      pose(7, 2000, speech), pose(4, 5000, { state: 'thinking' })]);
   }
   function requestVisit(target, event) {
     if (!running || destroyed || event?.pointerType === 'touch') return;
@@ -239,7 +317,8 @@ export function createFooterCharacter({ document, window, measure = measureFoote
     pending = target;
   }
   listen(button, 'pointerenter', greet); listen(button, 'focus', greet); listen(button, 'click', greet);
-  listen(button, 'blur', () => { if (running && focusedHold) { focusedHold = false; finish(); } });
+  listen(button, 'pointerleave', () => { hovering = false; });
+  listen(button, 'blur', () => { focused = false; if (running && focusedHold) { focusedHold = false; finish(); } });
   for (const [selector, target] of [['.footer-box-stage', 'artwork'], ['.footer-first-name', 'name'], ['.footer-last-name', 'surname'], ['.footer-contact', 'contact'], ['.footer-inquiry', 'inquiry'], ['.footer-nav', 'navigation'], ['.footer-profiles', 'links'], ['.footer-colophon', 'credits']]) {
     const element = footer.querySelector(selector);
     listen(element, 'pointerenter', event => requestVisit(target, event));
@@ -262,7 +341,7 @@ export function createFooterCharacter({ document, window, measure = measureFoote
       properties.forEach(name => actor.style.removeProperty(name));
       spriteProperties.forEach(name => sprite.style.removeProperty(name));
       overhead.style.removeProperty('--overhead-column'); overhead.style.removeProperty('--overhead-row');
-      for (const name of ['characterActive', 'characterView', 'characterTarget']) delete actor.dataset[name];
+      for (const name of ['characterActive', 'characterView', 'characterTarget', 'bubbleKind', 'bubbleVisible', 'bubbleSide']) delete actor.dataset[name];
       actor.dataset.characterState = 'thinking'; message.textContent = ''; button.hidden = true;
     }
   };

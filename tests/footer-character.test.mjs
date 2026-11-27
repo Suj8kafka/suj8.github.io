@@ -1,6 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createFooterCharacter } from '../assets/js/footer-character.js';
+import { createFooterCharacter, measureFooterScene } from '../assets/js/footer-character.js';
+
+test('scene geometry protects display glyphs beyond their compact line boxes', () => {
+  const name = { matches: () => true, getBoundingClientRect: () => ({ left: 10, right: 500, top: 20, bottom: 120, width: 490, height: 100 }) };
+  const artwork = { matches: () => false, getBoundingClientRect: () => ({ left: 800, right: 1000, top: 0, bottom: 178, width: 200, height: 178 }) };
+  const inner = { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 600 }) };
+  const footer = {
+    querySelector: selector => ({ '.footer-inner': inner, '.footer-first-name': name, '.footer-box-stage': artwork })[selector],
+    querySelectorAll: selector => selector.startsWith('a,') ? [artwork] : [name]
+  };
+  const document = { documentElement: {}, createRange: () => ({ selectNodeContents() {}, getBoundingClientRect: () => ({ left: 10, right: 300, top: -5, bottom: 150, width: 290 }) }) };
+  const window = { getComputedStyle: () => ({ fontSize: '16px', getPropertyValue: () => '178' }) };
+  const scene = measureFooterScene({ document, window, footer });
+  assert.deepEqual(scene.rects.name, { left: 10, right: 300, top: -5, bottom: 150 });
+  assert.ok(scene.obstacles.includes(scene.rects.name) || scene.obstacles.some(rect => rect.top === -5 && rect.bottom === 150));
+});
 
 function fixture({ loaded = true, overheadLoaded = true } = {}) {
   const target = extra => {
@@ -154,13 +169,14 @@ test('pause freezes travel and pose timers, then resumes without teleporting or 
   f.controller.destroy();
 });
 
-test('hover, focus and click wave, with no conversation or automatic movement while keyboard focused', () => {
+test('hover, focus and click introduce the character while keyboard focus keeps him stationary', () => {
   for (const event of ['pointerenter', 'focus', 'click']) {
     const f = fixture(); f.controller.setRunning(true);
     if (event === 'focus') f.document.activeElement = f.button;
     f.button.emit(event);
     assert.equal(f.actor.dataset.characterState, 'greeting');
-    assert.equal(f.message.textContent, 'Hi!');
+    assert.match(f.message.textContent, /Sujeet Khadka[\s\S]*UI\/UX designer/);
+    assert.equal(f.actor.dataset.bubbleKind, 'introduction');
     f.advance(600);
     assert.equal(f.sprite.styles.get('--character-row'), '2');
     f.advance(9800);
@@ -175,6 +191,84 @@ test('hover, focus and click wave, with no conversation or automatic movement wh
     }
     f.controller.destroy();
   }
+});
+
+test('only the first two distinct hovers introduce Sujeet; later hovers share design thoughts', () => {
+  const f = fixture(); f.controller.setRunning(true);
+  assert.match(f.message.textContent, /understanding people/);
+  for (let index = 0; index < 2; index++) {
+    f.button.emit('pointerenter', { pointerType: 'mouse' });
+    assert.match(f.message.textContent, /Sujeet Khadka[\s\S]*UI\/UX designer/);
+    assert.equal(f.actor.dataset.bubbleKind, 'introduction');
+    assert.equal(f.actor.dataset.bubbleVisible, 'true');
+    f.button.emit('pointerleave'); f.advance(5200);
+    assert.equal(f.actor.dataset.bubbleKind, 'thought');
+  }
+  f.button.emit('pointerenter', { pointerType: 'mouse' });
+  assert.equal(f.actor.dataset.bubbleKind, 'thought');
+  assert.doesNotMatch(f.message.textContent, /Sujeet Khadka/);
+  assert.equal(f.events.size, 1, 'Bubbles share the owned pose timer');
+  f.controller.destroy();
+});
+
+test('focus and click from one hover do not consume another introduction or restart its clock', () => {
+  const f = fixture(); f.controller.setRunning(true);
+  f.button.emit('pointerenter', { pointerType: 'mouse' });
+  const timer = [...f.events.keys()];
+  f.document.activeElement = f.button; f.button.emit('focus'); f.button.emit('click');
+  assert.deepEqual([...f.events.keys()], timer);
+  f.button.emit('pointerleave'); f.button.emit('pointerenter', { pointerType: 'mouse' });
+  assert.equal(f.actor.dataset.bubbleKind, 'introduction', 'The second hover still introduces');
+  f.button.emit('pointerleave'); f.button.emit('pointerenter', { pointerType: 'mouse' });
+  assert.equal(f.actor.dataset.bubbleKind, 'thought');
+  assert.deepEqual([...f.events.keys()], timer, 'Rapid re-entry updates the bubble without another loop');
+  f.advance(10400);
+  assert.equal(f.actor.dataset.characterState, 'idle');
+  assert.equal(f.events.size, 0);
+  f.controller.destroy();
+});
+
+test('keyboard introductions share the two-visit limit and paused or touch hovers do not spend it', () => {
+  const f = fixture();
+  f.button.emit('pointerenter', { pointerType: 'mouse' });
+  f.controller.setRunning(true);
+  f.button.emit('pointerenter', { pointerType: 'touch' });
+  for (let index = 0; index < 3; index++) {
+    f.document.activeElement = f.button; f.button.emit('focus');
+    assert.equal(f.actor.dataset.bubbleKind, index < 2 ? 'introduction' : 'thought');
+    f.button.emit('click');
+    f.document.activeElement = null; f.button.emit('blur');
+  }
+  f.controller.setRunning(false);
+  assert.equal(f.actor.dataset.bubbleVisible, 'false');
+  assert.equal(f.events.size, 0);
+  f.controller.setRunning(true);
+  assert.equal(f.actor.dataset.bubbleVisible, 'true');
+  assert.equal(f.actor.dataset.bubbleKind, 'thought');
+  f.controller.destroy();
+  assert.equal(f.message.textContent, '');
+  assert.equal(f.actor.dataset.bubbleVisible, undefined);
+});
+
+test('automatic thoughts match the footer landmark being inspected and disappear during travel', () => {
+  for (const [node, target, words] of [
+    ['box', 'artwork', /motion|curve|interaction/i], ['name', 'name', /type|hierarchy|read/i],
+    ['contact', 'contact', /touch|label|step/i], ['inquiry', 'inquiry', /invitation|questions|conversation/i],
+    ['navigation', 'navigation', /labels|navigation|way/i], ['links', 'links', /link/i],
+    ['credits', 'credits', /detail|hierarchy|footer/i]
+  ]) {
+    const f = fixture({ overheadLoaded: false }); f.controller.setRunning(true);
+    f[node].emit('pointerenter');
+    f.until(() => f.actor.dataset.characterTarget === target && f.actor.dataset.bubbleVisible === 'true');
+    assert.match(f.message.textContent, words);
+    assert.equal(f.actor.dataset.bubbleKind, 'thought');
+    f.controller.destroy();
+  }
+  const moving = fixture(); moving.controller.setRunning(true); moving.advance(12500);
+  assert.equal(moving.actor.dataset.characterView, 'overhead');
+  assert.equal(moving.message.textContent, '');
+  assert.equal(moving.actor.dataset.bubbleVisible, 'false');
+  moving.controller.destroy();
 });
 
 test('new interests queue the latest visit without cutting a journey or reaction short', () => {
@@ -205,6 +299,18 @@ test('lower footer navigation, surname and credits are independent destinations'
     assert.equal(f.actor.styles.get('--character-y'), f.scene.stops[target].y + 'px');
     f.controller.destroy();
   }
+});
+
+test('the tour skips absent link groups and continues through the remaining footer landmarks', () => {
+  const f = fixture({ overheadLoaded: false });
+  const stops = { ...f.scene.stops };
+  delete stops.links;
+  f.setScene({ ...f.scene, stops }); f.controller.setRunning(true);
+  f.until(() => f.actor.dataset.characterTarget === 'credits');
+  f.until(() => f.actor.dataset.characterTarget !== 'credits');
+  assert.equal(f.actor.dataset.characterTarget, 'contact');
+  assert.equal(f.events.size, 1);
+  f.controller.destroy();
 });
 
 test('failed overhead images keep standing reactions available and cleanup releases every owned resource', () => {

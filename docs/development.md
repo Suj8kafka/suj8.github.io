@@ -42,6 +42,7 @@ The optional audit exercises fresh desktop/phone visits and real reloads, captur
 | First paint and optional startup | `assets/js/page-styles.js`, `assets/js/enhancements.js`, `loader/files/loader.js` |
 | Depth, ribbon, native anchor scrolling | `motion.js`, `parallax.js`, `scroll-trail.js`, `scroll-navigation.js` in `assets/js/` |
 | Portrait and mobile navigation | `assets/js/portrait-network.js`, `assets/js/mobile-navigation.js` |
+| Desktop section status | `assets/js/header-location.js`, using the scroll-navigation frame; `assets/js/header-letters.js` for bounded letter transitions |
 | Preferences | `display-state.js`, `display-preferences.js` in `assets/js/`, `assets/css/display-preferences.css` |
 | Availability and live connections | `availability.js`, `availability-client.js`, `firebase-presence.js`, `live-cursors.js` in `assets/js/` |
 | Analytics | `deferred-analytics.js`, `analytics-entry.js`, `analytics-config.js`, `usage-tracker.js`, `engagement-tracker.js`, `visitor-panel.js`, `privacy.js` in `assets/js/`; `cloudflare/analytics-worker.js` |
@@ -90,7 +91,7 @@ All names below are under `tests/` and end in `.test.mjs`.
 | --- | --- |
 | Homepage, contact, semantics | `project-actions`, `accessibility`, `typography`, `skill-modal-keyboard`, `intro-video` |
 | Welcome and first paint | `loader`, `critical-styles`, `enhancements`, `performance-assets` |
-| Motion and navigation | `motion`, `parallax`, `scroll-trail`, `scroll-navigation`, `mobile-navigation`, `portrait-network` |
+| Motion and navigation | `motion`, `parallax`, `scroll-trail`, `scroll-navigation`, `header-location`, `header-letters`, `mobile-navigation`, `portrait-network` |
 | Preferences | `display-preferences`, plus affected motion/media tests |
 | Availability or Firebase | `availability`, `admin`, `sidebar-availability`, `presence`, `live-cursors`, `firebase-transport` |
 | Analytics | `analytics-worker`, `analytics-cache`, `usage-analytics`, `usage-tracker`, `engagement-tracker`, `visitor-panel`, `privacy`, `google-tag` |

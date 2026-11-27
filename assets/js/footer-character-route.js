@@ -70,3 +70,40 @@ export function findFooterStop({ target, width, height, obstacles, preferredHeig
   }
   return best;
 }
+
+// Place a standing character's bubble in nearby free space using cached scene
+// geometry. Nothing here measures the DOM or runs on walking frames.
+export function placeFooterBubble({ anchor, width, height, bubbleWidth, bubbleHeight, obstacles = [] }) {
+  const gap = 6, inset = 8;
+  if (bubbleWidth > width - inset * 2 || bubbleHeight > height - inset * 2) return null;
+  // The atlas cell includes transparent space on both sides of the figure.
+  const body = { left: anchor.x - anchor.size * .12, right: anchor.x + anchor.size * .12, top: anchor.y - anchor.size, bottom: anchor.y };
+  const head = { x: anchor.x, y: body.top + anchor.size * .13 };
+  const blocks = [...obstacles, body];
+  const xs = [head.x - bubbleWidth / 2, body.left - bubbleWidth - gap, body.right + gap,
+    head.x - bubbleWidth + 16, head.x - 16];
+  const ys = [body.top - bubbleHeight - gap, head.y - 16, head.y - bubbleHeight / 2, head.y - bubbleHeight + 16];
+  let best = null, score = Infinity;
+  for (const x of xs) for (const y of ys) {
+    const left = Math.max(inset, Math.min(width - bubbleWidth - inset, x));
+    const top = Math.max(inset, Math.min(height - bubbleHeight - inset, y));
+    const rect = { left, top, right: left + bubbleWidth, bottom: top + bubbleHeight };
+    if (blocks.some(block => rect.left < block.right + 4 && rect.right > block.left - 4 && rect.top < block.bottom + 4 && rect.bottom > block.top - 4)) continue;
+    const side = rect.right <= body.left ? 'left' : rect.left >= body.right ? 'right' : rect.bottom <= body.top ? 'above' : null;
+    if (!side) continue;
+    // A tail must reach toward the head. Never move a bubble into remote free
+    // space just because the area beside the figure is occupied.
+    const tail = side === 'above' ? head.x - left : head.y - top;
+    const length = side === 'above' ? bubbleWidth : bubbleHeight;
+    if (tail < 12 || tail > length - 12) continue;
+    const nearest = { x: Math.max(rect.left, Math.min(rect.right, head.x)), y: Math.max(rect.top, Math.min(rect.bottom, head.y)) };
+    const separation = distance(nearest, head);
+    if (separation > Math.max(28, anchor.size * .14 + gap)) continue;
+    const candidate = separation + distance({ x: left + bubbleWidth / 2, y: top + bubbleHeight / 2 }, head) * .1;
+    if (candidate < score) {
+      score = candidate;
+      best = { left, top, side, tail };
+    }
+  }
+  return best;
+}

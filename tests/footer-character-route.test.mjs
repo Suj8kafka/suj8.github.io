@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { findFooterStop, planFooterRoute } from '../assets/js/footer-character-route.js';
+import { findFooterStop, planFooterRoute, placeFooterBubble } from '../assets/js/footer-character-route.js';
 
 test('routes use a direct path in clear space and go around protected controls', () => {
   const args = { from: { x: 50, y: 150 }, to: { x: 450, y: 150 }, width: 500, height: 300, radius: 20 };
@@ -52,4 +52,40 @@ test('the bottom standing row can use the safe space beside footer navigation an
   assert.ok(stop);
   assert.equal(stop.y, 378);
   assert.ok(stop.y - stop.size - 6 >= 270);
+});
+
+test('bubbles stay within the footer and avoid controls, lettering and the standing figure', () => {
+  const obstacles = [{ left: 0, right: 300, top: 0, bottom: 100 }, { left: 430, right: 600, top: 180, bottom: 260 }];
+  const args = { anchor: { x: 390, y: 240, size: 136 }, width: 600, height: 400, bubbleWidth: 200, bubbleHeight: 110, obstacles };
+  const bubble = placeFooterBubble(args);
+  assert.ok(bubble);
+  const rect = { left: bubble.left, right: bubble.left + 200, top: bubble.top, bottom: bubble.top + 110 };
+  assert.ok(rect.left >= 8 && rect.right <= 592 && rect.top >= 8 && rect.bottom <= 392);
+  // The atlas has transparent margins around the visible figure.
+  for (const block of [...obstacles, { left: 373.68, right: 406.32, top: 104, bottom: 240 }]) {
+    assert.ok(rect.right <= block.left || rect.left >= block.right || rect.bottom <= block.top || rect.top >= block.bottom);
+  }
+});
+
+test('bubble tails point at the nearby head instead of using distant free space', () => {
+  for (const size of [72, 136, 242]) {
+    const anchor = { x: 320, y: size + 90, size };
+    const bubble = placeFooterBubble({ anchor, width: 700, height: 500, bubbleWidth: 144, bubbleHeight: 68 });
+    assert.ok(bubble);
+    const head = { x: anchor.x, y: anchor.y - size * .87 };
+    const nearestX = Math.max(bubble.left, Math.min(bubble.left + 144, head.x));
+    const nearestY = Math.max(bubble.top, Math.min(bubble.top + 68, head.y));
+    assert.ok(Math.hypot(nearestX - head.x, nearestY - head.y) <= Math.max(28, size * .14 + 6));
+    assert.ok(bubble.tail >= 12);
+    assert.ok(bubble.tail <= (bubble.side === 'above' ? 144 : 68) - 12);
+  }
+  assert.equal(placeFooterBubble({ anchor: { x: 300, y: 240, size: 136 }, width: 900, height: 500,
+    bubbleWidth: 144, bubbleHeight: 68, obstacles: [{ left: 150, right: 450, top: 0, bottom: 300 }] }), null,
+  'Available space elsewhere in the footer cannot detach the bubble from the character');
+});
+
+test('no bubble is placed when it cannot fit without covering protected content', () => {
+  const args = { anchor: { x: 200, y: 160, size: 100 }, width: 400, height: 220, bubbleWidth: 220, bubbleHeight: 110 };
+  assert.equal(placeFooterBubble({ ...args, obstacles: [{ left: 0, right: 400, top: 0, bottom: 220 }] }), null);
+  assert.equal(placeFooterBubble({ ...args, bubbleWidth: 500 }), null);
 });

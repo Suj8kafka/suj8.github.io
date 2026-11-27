@@ -1,4 +1,5 @@
 import { motionIsReduced } from './display-state.js?v=20261123-performance';
+import { createHeaderLocation } from './header-location.js';
 // Let the browser own scroll positions; a viewport-sized blur fades with scroll speed.
 export function createScrollNavigation({ document, window }) {
   const root = document.documentElement;
@@ -19,6 +20,7 @@ export function createScrollNavigation({ document, window }) {
   let constrained = (window.navigator?.deviceMemory > 0 && window.navigator.deviceMemory <= 4)
     || (window.navigator?.hardwareConcurrency > 0 && window.navigator.hardwareConcurrency <= 4);
   let fullEffects = false;
+  const headerLocation = createHeaderLocation({ document, window, header, compact: compactHeader, initialY, queue: onScroll });
 
   function listen(target, event, callback, options = { passive: true }) {
     target?.addEventListener(event, callback, options);
@@ -75,9 +77,10 @@ export function createScrollNavigation({ document, window }) {
   function onFrame(time) {
     frame = 0;
     if (destroyed) return;
-    if (!active && compactHeader.matches) return;
+    if (!active && compactHeader.matches) { headerLocation.update(0); return; }
     const y = window.scrollY;
     updateHeader(y);
+    headerLocation.update(y);
     if (!active) return;
     const delta = Math.max(16, time - active.previousTime);
     // Use lighter blur if actual scroll frames repeatedly miss their budget.
@@ -141,7 +144,7 @@ export function createScrollNavigation({ document, window }) {
   listen(document, 'keydown', event => { if (navigationKeys.has(event.key)) cancel(); });
   listen(document, 'visibilitychange', () => { if (document.hidden) cancel(); });
   listen(window, 'pagehide', cancel);
-  listen(window, 'resize', () => { updateEffects(); onScroll(); });
+  listen(window, 'resize', () => { updateEffects(); headerLocation.refresh(); onScroll(); });
   listen(reducedMotion, 'change', onMotionChange);
   listen(document, 'display-preferences:change', onMotionChange);
   listen(finePointer, 'change', updateEffects);
@@ -152,6 +155,7 @@ export function createScrollNavigation({ document, window }) {
     cancel(); destroyed = true;
     window.cancelAnimationFrame(frame); clearTimers();
     listeners.forEach(remove => remove());
+    headerLocation.destroy();
     streak.remove(); delete root.dataset.scrollEffects;
   } };
 }
